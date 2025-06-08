@@ -1,0 +1,723 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/avatar.png">
+  <link rel="icon" href="/img/avatar.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="守心">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="项目介绍项目地址：https:&#x2F;&#x2F;github.com&#x2F;jaeles-project&#x2F;gospider goSpider 是一款静态爬虫，之前读了 crawlergo 动态爬虫，现在来看一看静态爬虫。 介绍如下：  url：  sitemap 站点地图 robots.txt Wayback Machine、Common Crawl、Virus Total、Alien Vault 从外部获取 url">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GoSpider 源码学习">
+<meta property="og:url" content="https://liancccc.github.io/2024/03/12/%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/GoSpider/index.html">
+<meta property="og:site_name" content="liancccc&#39;s blog">
+<meta property="og:description" content="项目介绍项目地址：https:&#x2F;&#x2F;github.com&#x2F;jaeles-project&#x2F;gospider goSpider 是一款静态爬虫，之前读了 crawlergo 动态爬虫，现在来看一看静态爬虫。 介绍如下：  url：  sitemap 站点地图 robots.txt Wayback Machine、Common Crawl、Virus Total、Alien Vault 从外部获取 url">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240323004407171.png?imageSlim">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240323013127911.png?imageSlim">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240323033408855.png?imageSlim">
+<meta property="article:published_time" content="2024-03-12T13:24:30.000Z">
+<meta property="article:modified_time" content="2025-06-08T07:32:14.621Z">
+<meta property="article:author" content="守心">
+<meta property="article:tag" content="源码学习">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240323004407171.png?imageSlim">
+  
+  
+  
+  <title>GoSpider 源码学习 - liancccc&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"liancccc.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":false},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>琉璃魄</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/lbxx.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="GoSpider 源码学习"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-03-12 21:24" pubdate>
+          2024年3月12日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          33 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">GoSpider 源码学习</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="项目介绍"><a href="#项目介绍" class="headerlink" title="项目介绍"></a>项目介绍</h2><p>项目地址：<a target="_blank" rel="noopener" href="https://github.com/jaeles-project/gospider">https://github.com/jaeles-project/gospider</a></p>
+<p>goSpider 是一款静态爬虫，之前读了 crawlergo 动态爬虫，现在来看一看静态爬虫。</p>
+<p>介绍如下：</p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240323004407171.png?imageSlim" srcset="/img/loading.gif" lazyload alt="image-20240323004407171"></p>
+<p>url：</p>
+<ul>
+<li>sitemap 站点地图</li>
+<li>robots.txt</li>
+<li>Wayback Machine、Common Crawl、Virus Total、Alien Vault 从外部获取 url 和 <a target="_blank" rel="noopener" href="https://github.com/lc/gau">lc&#x2F;gau</a> 差不多</li>
+<li>响应中提取</li>
+</ul>
+<p>响应：</p>
+<ul>
+<li>subdomains</li>
+<li>aws-s3</li>
+</ul>
+<h2 id="项目结构"><a href="#项目结构" class="headerlink" title="项目结构"></a>项目结构</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs shell">├── core<br>│   ├── crawler.go				# 爬虫		<br>│   ├── grep.go					# 提取子域名、S3<br>│   ├── linkfinder.go			# 从响应中寻找路径<br>│   ├── logger.go				# 日志<br>│   ├── othersource.go			# 其他源 ( 外部获取 )<br>│   ├── output.go				# 输出<br>│   ├── robots.go				# 从 robots.txt 中提取<br>│   ├── sitemap.go				# 从站点地图中提取<br>│   ├── utils.go				# 工具<br>│   └── version.go<br>├── Dockerfile<br>├── main.go<br>├── README.md<br>└── stringset<br>    ├── filter.go				# 链接判重<br>    └── set.go<br></code></pre></td></tr></table></figure>
+
+<h2 id="源码学习"><a href="#源码学习" class="headerlink" title="源码学习"></a>源码学习</h2><p>crawler.go 是爬行的具体实现，先看一下 NewCrawler：</p>
+<p>这里可以看到它使用了 colly 爬虫框架去完成整个爬虫的初始化操作。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">NewCrawler</span><span class="hljs-params">(site *url.URL, cmd *cobra.Command)</span></span> *Crawler &#123;<br>	<span class="hljs-comment">// 获取根域名</span><br>	domain := GetDomain(site)<br>	<span class="hljs-keyword">if</span> domain == <span class="hljs-string">&quot;&quot;</span> &#123;<br>		Logger.Error(<span class="hljs-string">&quot;Failed to parse domain&quot;</span>)<br>		os.Exit(<span class="hljs-number">1</span>)<br>	&#125;<br>	Logger.Infof(<span class="hljs-string">&quot;Start crawling: %s&quot;</span>, site)<br><br>	quiet, _ := cmd.Flags().GetBool(<span class="hljs-string">&quot;quiet&quot;</span>)<br>	jsonOutput, _ := cmd.Flags().GetBool(<span class="hljs-string">&quot;json&quot;</span>)<br>	maxDepth, _ := cmd.Flags().GetInt(<span class="hljs-string">&quot;depth&quot;</span>)<br>	concurrent, _ := cmd.Flags().GetInt(<span class="hljs-string">&quot;concurrent&quot;</span>)<br>	delay, _ := cmd.Flags().GetInt(<span class="hljs-string">&quot;delay&quot;</span>)<br>	randomDelay, _ := cmd.Flags().GetInt(<span class="hljs-string">&quot;random-delay&quot;</span>)<br>	length, _ := cmd.Flags().GetBool(<span class="hljs-string">&quot;length&quot;</span>)<br>	raw, _ := cmd.Flags().GetBool(<span class="hljs-string">&quot;raw&quot;</span>)<br>	subs, _ := cmd.Flags().GetBool(<span class="hljs-string">&quot;subs&quot;</span>)<br>	<span class="hljs-comment">// 使用 colly 爬虫</span><br>	c := colly.NewCollector(<br>		colly.Async(<span class="hljs-literal">true</span>),			<span class="hljs-comment">// 异步</span><br>		colly.MaxDepth(maxDepth),	<span class="hljs-comment">// 深度</span><br>		colly.IgnoreRobotsTxt(),	<span class="hljs-comment">// 忽略 robots</span><br>	)<br><br>	<span class="hljs-comment">// Setup http client</span><br>	client := &amp;http.Client&#123;&#125;<br><br>	<span class="hljs-comment">// Set proxy</span><br>	proxy, _ := cmd.Flags().GetString(<span class="hljs-string">&quot;proxy&quot;</span>)<br>	<span class="hljs-keyword">if</span> proxy != <span class="hljs-string">&quot;&quot;</span> &#123;<br>		Logger.Infof(<span class="hljs-string">&quot;Proxy: %s&quot;</span>, proxy)<br>		pU, err := url.Parse(proxy)<br>		<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>			Logger.Error(<span class="hljs-string">&quot;Failed to set proxy&quot;</span>)<br>		&#125; <span class="hljs-keyword">else</span> &#123;<br>        	<span class="hljs-comment">// 设置代理 http.ProxyURL 这个东西是我之前不知道的 学到了</span><br>			DefaultHTTPTransport.Proxy = http.ProxyURL(pU)<br>		&#125;<br>	&#125;<br><br>	<span class="hljs-comment">// Set request timeout</span><br>	timeout, _ := cmd.Flags().GetInt(<span class="hljs-string">&quot;timeout&quot;</span>)<br>	<span class="hljs-keyword">if</span> timeout == <span class="hljs-number">0</span> &#123;<br>		Logger.Info(<span class="hljs-string">&quot;Your input timeout is 0. Gospider will set it to 10 seconds&quot;</span>)<br>		client.Timeout = <span class="hljs-number">10</span> * time.Second<br>	&#125; <span class="hljs-keyword">else</span> &#123;<br>		client.Timeout = time.Duration(timeout) * time.Second<br>	&#125;<br><br>	<span class="hljs-comment">// Disable redirect</span><br>	noRedirect, _ := cmd.Flags().GetBool(<span class="hljs-string">&quot;no-redirect&quot;</span>)<br>    <span class="hljs-comment">// 处理重定向</span><br>	<span class="hljs-keyword">if</span> noRedirect &#123;<br>		client.CheckRedirect = <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(req *http.Request, via []*http.Request)</span></span> <span class="hljs-type">error</span> &#123;<br>			nextLocation := req.Response.Header.Get(<span class="hljs-string">&quot;Location&quot;</span>)<br>			Logger.Debugf(<span class="hljs-string">&quot;Found Redirect: %s&quot;</span>, nextLocation)<br>			<span class="hljs-comment">// Allow in redirect from http to https or in same hostname</span><br>			<span class="hljs-comment">// We just check contain hostname or not because we set URLFilter in main collector so if</span><br>			<span class="hljs-comment">// the URL is https://otherdomain.com/?url=maindomain.com, it will reject it</span><br>			<span class="hljs-keyword">if</span> strings.Contains(nextLocation, site.Hostname()) &#123;<br>				Logger.Infof(<span class="hljs-string">&quot;Redirecting to: %s&quot;</span>, nextLocation)<br>				<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span><br>			&#125;<br>			<span class="hljs-keyword">return</span> http.ErrUseLastResponse<br>		&#125;<br>	&#125;<br><br>	<span class="hljs-comment">// Set client transport</span><br>	client.Transport = DefaultHTTPTransport<br>	c.SetClient(client)<br><br>	<span class="hljs-comment">// Get headers here to overwrite if &quot;burp&quot; flag used</span><br>	<span class="hljs-comment">// 从 burp 的请求报文中获取 Cookie 和 请求头 设置到 colly 请求中</span><br>	burpFile, _ := cmd.Flags().GetString(<span class="hljs-string">&quot;burp&quot;</span>)<br>	<span class="hljs-keyword">if</span> burpFile != <span class="hljs-string">&quot;&quot;</span> &#123;<br>		bF, err := os.Open(burpFile)<br>		<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>			Logger.Errorf(<span class="hljs-string">&quot;Failed to open Burp File: %s&quot;</span>, err)<br>		&#125; <span class="hljs-keyword">else</span> &#123;<br>			rd := bufio.NewReader(bF)<br>			req, err := http.ReadRequest(rd)<br>			<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>				Logger.Errorf(<span class="hljs-string">&quot;Failed to Parse Raw Request in %s: %s&quot;</span>, burpFile, err)<br>			&#125; <span class="hljs-keyword">else</span> &#123;<br>				<span class="hljs-comment">// Set cookie</span><br>				c.OnRequest(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(r *colly.Request)</span></span> &#123;<br>					r.Headers.Set(<span class="hljs-string">&quot;Cookie&quot;</span>, GetRawCookie(req.Cookies()))<br>				&#125;)<br>				<span class="hljs-comment">// Set headers</span><br>				c.OnRequest(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(r *colly.Request)</span></span> &#123;<br>					<span class="hljs-keyword">for</span> k, v := <span class="hljs-keyword">range</span> req.Header &#123;<br>						r.Headers.Set(strings.TrimSpace(k), strings.TrimSpace(v[<span class="hljs-number">0</span>]))<br>					&#125;<br>				&#125;)<br><br>			&#125;<br>		&#125;<br>	&#125;<br><br>	<span class="hljs-comment">// Set cookies </span><br>	cookie, _ := cmd.Flags().GetString(<span class="hljs-string">&quot;cookie&quot;</span>)<br>	<span class="hljs-keyword">if</span> cookie != <span class="hljs-string">&quot;&quot;</span> &amp;&amp; burpFile == <span class="hljs-string">&quot;&quot;</span> &#123;<br>		c.OnRequest(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(r *colly.Request)</span></span> &#123;<br>			r.Headers.Set(<span class="hljs-string">&quot;Cookie&quot;</span>, cookie)<br>		&#125;)<br>	&#125;<br><br>	<span class="hljs-comment">// Set headers</span><br>	headers, _ := cmd.Flags().GetStringArray(<span class="hljs-string">&quot;header&quot;</span>)<br>	<span class="hljs-keyword">if</span> burpFile == <span class="hljs-string">&quot;&quot;</span> &#123;<br>		<span class="hljs-keyword">for</span> _, h := <span class="hljs-keyword">range</span> headers &#123;<br>			headerArgs := strings.SplitN(h, <span class="hljs-string">&quot;:&quot;</span>, <span class="hljs-number">2</span>)<br>			headerKey := strings.TrimSpace(headerArgs[<span class="hljs-number">0</span>])<br>			headerValue := strings.TrimSpace(headerArgs[<span class="hljs-number">1</span>])<br>			c.OnRequest(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(r *colly.Request)</span></span> &#123;<br>				r.Headers.Set(headerKey, headerValue)<br>			&#125;)<br>		&#125;<br>	&#125;<br><br>	<span class="hljs-comment">// Set User-Agent 使用 colly 提供的 UA 头</span><br>	randomUA, _ := cmd.Flags().GetString(<span class="hljs-string">&quot;user-agent&quot;</span>)<br>	<span class="hljs-keyword">switch</span> ua := strings.ToLower(randomUA); &#123;<br>	<span class="hljs-keyword">case</span> ua == <span class="hljs-string">&quot;mobi&quot;</span>:<br>		extensions.RandomMobileUserAgent(c)<br>	<span class="hljs-keyword">case</span> ua == <span class="hljs-string">&quot;web&quot;</span>:<br>		extensions.RandomUserAgent(c)<br>	<span class="hljs-keyword">default</span>:<br>		c.UserAgent = ua<br>	&#125;<br><br>	<span class="hljs-comment">// Set referer 添加 Referer</span><br>	extensions.Referer(c)<br><br>	<span class="hljs-comment">// Init Output</span><br>	<span class="hljs-keyword">var</span> output *Output<br>	outputFolder, _ := cmd.Flags().GetString(<span class="hljs-string">&quot;output&quot;</span>)<br>	<span class="hljs-keyword">if</span> outputFolder != <span class="hljs-string">&quot;&quot;</span> &#123;<br>		filename := strings.ReplaceAll(site.Hostname(), <span class="hljs-string">&quot;.&quot;</span>, <span class="hljs-string">&quot;_&quot;</span>)<br>		output = NewOutput(outputFolder, filename)<br>	&#125;<br><br>	<span class="hljs-comment">// Init Length Filter</span><br>	filterLength_slice := []<span class="hljs-type">int</span>&#123;&#125;<br>	filterLength, _ := cmd.Flags().GetString(<span class="hljs-string">&quot;filter-length&quot;</span>)<br>	<span class="hljs-comment">// 长度过滤</span><br>	<span class="hljs-keyword">if</span> filterLength != <span class="hljs-string">&quot;&quot;</span> &#123;<br>		lengthArgs := strings.Split(filterLength, <span class="hljs-string">&quot;,&quot;</span>)<br>		<span class="hljs-keyword">for</span> i := <span class="hljs-number">0</span>; i &lt; <span class="hljs-built_in">len</span>(lengthArgs); i++ &#123;<br>			<span class="hljs-keyword">if</span> i, err := strconv.Atoi(lengthArgs[i]); err == <span class="hljs-literal">nil</span> &#123;<br>				filterLength_slice = <span class="hljs-built_in">append</span>(filterLength_slice, i)<br>			&#125;<br>		&#125;<br>	&#125;<br><br>	<span class="hljs-comment">// Set url whitelist regex</span><br>	reg := <span class="hljs-string">&quot;&quot;</span><br>	<span class="hljs-keyword">if</span> subs &#123;<br>		reg = site.Hostname()<br>	&#125; <span class="hljs-keyword">else</span> &#123;<br>		reg = <span class="hljs-string">&quot;(?:https|http)://&quot;</span> + site.Hostname()<br>	&#125;<br><br>	sRegex := regexp.MustCompile(reg)<br>	c.URLFilters = <span class="hljs-built_in">append</span>(c.URLFilters, sRegex)<br><br>	<span class="hljs-comment">// Set Limit Rule</span><br>	err := c.Limit(&amp;colly.LimitRule&#123;<br>		DomainGlob:  <span class="hljs-string">&quot;*&quot;</span>,<br>		Parallelism: concurrent,<br>		Delay:       time.Duration(delay) * time.Second,<br>		RandomDelay: time.Duration(randomDelay) * time.Second,<br>	&#125;)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		Logger.Errorf(<span class="hljs-string">&quot;Failed to set Limit Rule: %s&quot;</span>, err)<br>		os.Exit(<span class="hljs-number">1</span>)<br>	&#125;<br><br>	<span class="hljs-comment">// GoSpider default disallowed regex</span><br>    <span class="hljs-comment">// 不爬的东西</span><br>	disallowedRegex := <span class="hljs-string">`(?i)\.(png|apng|bmp|gif|ico|cur|jpg|jpeg|jfif|pjp|pjpeg|svg|tif|tiff|webp|xbm|3gp|aac|flac|mpg|mpeg|mp3|mp4|m4a|m4v|m4p|oga|ogg|ogv|mov|wav|webm|eot|woff|woff2|ttf|otf|css)(?:\?|#|$)`</span><br>	c.DisallowedURLFilters = <span class="hljs-built_in">append</span>(c.DisallowedURLFilters, regexp.MustCompile(disallowedRegex))<br><br>	<span class="hljs-comment">// Set optional blacklist url regex</span><br>	blacklists, _ := cmd.Flags().GetString(<span class="hljs-string">&quot;blacklist&quot;</span>)<br>	<span class="hljs-keyword">if</span> blacklists != <span class="hljs-string">&quot;&quot;</span> &#123;<br>		c.DisallowedURLFilters = <span class="hljs-built_in">append</span>(c.DisallowedURLFilters, regexp.MustCompile(blacklists))<br>	&#125;<br><br>	<span class="hljs-comment">// Set optional whitelist url regex</span><br>    <span class="hljs-comment">// 白名单</span><br>	whiteLists, _ := cmd.Flags().GetString(<span class="hljs-string">&quot;whitelist&quot;</span>)<br>	<span class="hljs-keyword">if</span> whiteLists != <span class="hljs-string">&quot;&quot;</span> &#123;<br>		c.URLFilters = <span class="hljs-built_in">make</span>([]*regexp.Regexp, <span class="hljs-number">0</span>)<br>		c.URLFilters = <span class="hljs-built_in">append</span>(c.URLFilters, regexp.MustCompile(whiteLists))<br>	&#125;<br><br>	whiteListDomain, _ := cmd.Flags().GetString(<span class="hljs-string">&quot;whitelist-domain&quot;</span>)<br>	<span class="hljs-keyword">if</span> whiteListDomain != <span class="hljs-string">&quot;&quot;</span> &#123;<br>		c.URLFilters = <span class="hljs-built_in">make</span>([]*regexp.Regexp, <span class="hljs-number">0</span>)<br>		c.URLFilters = <span class="hljs-built_in">append</span>(c.URLFilters, regexp.MustCompile(<span class="hljs-string">&quot;http(s)?://&quot;</span>+whiteListDomain))<br>	&#125;<br>	<span class="hljs-comment">// linkFinderCollector</span><br>	linkFinderCollector := c.Clone()<br>	<span class="hljs-comment">// Try to request as much as Javascript source and don&#x27;t care about domain.</span><br>	<span class="hljs-comment">// The result of link finder will be send to Link Finder Collector to check is it working or not.</span><br>	linkFinderCollector.URLFilters = <span class="hljs-literal">nil</span><br>	<span class="hljs-keyword">if</span> whiteLists != <span class="hljs-string">&quot;&quot;</span> &#123;<br>		linkFinderCollector.URLFilters = <span class="hljs-built_in">append</span>(linkFinderCollector.URLFilters, regexp.MustCompile(whiteLists))<br>	&#125;<br>	<span class="hljs-keyword">if</span> whiteListDomain != <span class="hljs-string">&quot;&quot;</span> &#123;<br>		linkFinderCollector.URLFilters = <span class="hljs-built_in">append</span>(linkFinderCollector.URLFilters, regexp.MustCompile(<span class="hljs-string">&quot;http(s)?://&quot;</span>+whiteListDomain))<br>	&#125;<br><br>	<span class="hljs-keyword">return</span> &amp;Crawler&#123;<br>		cmd:                 cmd,<br>		C:                   c,<br>		LinkFinderCollector: linkFinderCollector,<br>		site:                site,<br>		Quiet:               quiet,<br>		Input:               site.String(),<br>		JsonOutput:          jsonOutput,<br>		length:              length,<br>		raw:                 raw,<br>		domain:              domain,<br>		Output:              output,<br>		urlSet:              stringset.NewStringFilter(),<br>		subSet:              stringset.NewStringFilter(),<br>		jsSet:               stringset.NewStringFilter(),<br>		formSet:             stringset.NewStringFilter(),<br>		awsSet:              stringset.NewStringFilter(),<br>		filterLength_slice:  filterLength_slice,<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>再看下它是如果处理链接的：</p>
+<p>主要是使用 colly 的 OnHTML、OnResponse 去完成了链接提取操作：</p>
+<ol>
+<li>href &#x3D;&gt; Request.Visit 访问</li>
+<li>form[action] &#x3D;&gt; 添加到 formSet</li>
+<li>input[type&#x3D;”file”] &#x3D;&gt; 添加到 uploadFormSet</li>
+<li>[src] &#x3D;&gt; js、json、xml 链接 &#x3D;&gt; feedLinkfinder 进行链接提取操作</li>
+<li>响应 &#x3D;&gt; 提取 subdomain、aws_s3</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// Start 初始化链接</span><br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(crawler *Crawler)</span></span> Start(linkfinder <span class="hljs-type">bool</span>) &#123;<br>	<span class="hljs-comment">// Setup Link Finder </span><br>	<span class="hljs-keyword">if</span> linkfinder &#123;<br>        <span class="hljs-comment">// 链接提取模块</span><br>		crawler.setupLinkFinder()<br>	&#125;<br><br>	<span class="hljs-comment">// Handle url 从 href 中寻找链接</span><br>	crawler.C.OnHTML(<span class="hljs-string">&quot;[href]&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(e *colly.HTMLElement)</span></span> &#123;<br>		urlString := e.Request.AbsoluteURL(e.Attr(<span class="hljs-string">&quot;href&quot;</span>))<br>		<span class="hljs-comment">// 从链接到完整的 URL</span><br>		urlString = FixUrl(crawler.site, urlString)<br>		<span class="hljs-keyword">if</span> urlString == <span class="hljs-string">&quot;&quot;</span> &#123;<br>			<span class="hljs-keyword">return</span><br>		&#125;<br>		<span class="hljs-comment">// 没爬过的</span><br>		<span class="hljs-keyword">if</span> !crawler.urlSet.Duplicate(urlString) &#123;<br>			outputFormat := fmt.Sprintf(<span class="hljs-string">&quot;[href] - %s&quot;</span>, urlString)<br>			<span class="hljs-keyword">if</span> crawler.JsonOutput &#123;<br>				sout := SpiderOutput&#123;<br>					Input:      crawler.Input,<br>					Source:     <span class="hljs-string">&quot;body&quot;</span>,<br>					OutputType: <span class="hljs-string">&quot;form&quot;</span>,<br>					Output:     urlString,<br>				&#125;<br>				<span class="hljs-keyword">if</span> data, err := jsoniter.MarshalToString(sout); err == <span class="hljs-literal">nil</span> &#123;<br>					outputFormat = data<br>					fmt.Println(outputFormat)<br>				&#125;<br>			&#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> !crawler.Quiet &#123;<br>				fmt.Println(outputFormat)<br>			&#125;<br>			<span class="hljs-keyword">if</span> crawler.Output != <span class="hljs-literal">nil</span> &#123;<br>				crawler.Output.WriteToFile(outputFormat)<br>			&#125;<br>			<span class="hljs-comment">// 添加到任务中</span><br>			_ = e.Request.Visit(urlString)<br>		&#125;<br>	&#125;)<br><br>	<span class="hljs-comment">// Handle form</span><br>	<span class="hljs-comment">// 将 form 表单中的 url 放到 formSet 中 </span><br>	crawler.C.OnHTML(<span class="hljs-string">&quot;form[action]&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(e *colly.HTMLElement)</span></span> &#123;<br>		formUrl := e.Request.URL.String()<br>		<span class="hljs-keyword">if</span> !crawler.formSet.Duplicate(formUrl) &#123;<br>			outputFormat := fmt.Sprintf(<span class="hljs-string">&quot;[form] - %s&quot;</span>, formUrl)<br>			<span class="hljs-keyword">if</span> crawler.JsonOutput &#123;<br>				sout := SpiderOutput&#123;<br>					Input:      crawler.Input,<br>					Source:     <span class="hljs-string">&quot;body&quot;</span>,<br>					OutputType: <span class="hljs-string">&quot;form&quot;</span>,<br>					Output:     formUrl,<br>				&#125;<br>				<span class="hljs-keyword">if</span> data, err := jsoniter.MarshalToString(sout); err == <span class="hljs-literal">nil</span> &#123;<br>					outputFormat = data<br>					fmt.Println(outputFormat)<br>				&#125;<br>			&#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> !crawler.Quiet &#123;<br>				fmt.Println(outputFormat)<br>			&#125;<br>			<span class="hljs-keyword">if</span> crawler.Output != <span class="hljs-literal">nil</span> &#123;<br>				crawler.Output.WriteToFile(outputFormat)<br>			&#125;<br><br>		&#125;<br>	&#125;)<br><br>	<span class="hljs-comment">// Find Upload Form</span><br>	<span class="hljs-comment">// 获取 文件上传类表单的 url</span><br>	uploadFormSet := stringset.NewStringFilter()<br>	crawler.C.OnHTML(<span class="hljs-string">`input[type=&quot;file&quot;]`</span>, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(e *colly.HTMLElement)</span></span> &#123;<br>		uploadUrl := e.Request.URL.String()<br>		<span class="hljs-keyword">if</span> !uploadFormSet.Duplicate(uploadUrl) &#123;<br>			outputFormat := fmt.Sprintf(<span class="hljs-string">&quot;[upload-form] - %s&quot;</span>, uploadUrl)<br>			<span class="hljs-keyword">if</span> crawler.JsonOutput &#123;<br>				sout := SpiderOutput&#123;<br>					Input:      crawler.Input,<br>					Source:     <span class="hljs-string">&quot;body&quot;</span>,<br>					OutputType: <span class="hljs-string">&quot;upload-form&quot;</span>,<br>					Output:     uploadUrl,<br>				&#125;<br>				<span class="hljs-keyword">if</span> data, err := jsoniter.MarshalToString(sout); err == <span class="hljs-literal">nil</span> &#123;<br>					outputFormat = data<br>					fmt.Println(outputFormat)<br>				&#125;<br>			&#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> !crawler.Quiet &#123;<br>				fmt.Println(outputFormat)<br>			&#125;<br>			<span class="hljs-keyword">if</span> crawler.Output != <span class="hljs-literal">nil</span> &#123;<br>				crawler.Output.WriteToFile(outputFormat)<br>			&#125;<br>		&#125;<br><br>	&#125;)<br><br>	<span class="hljs-comment">// Handle js files 收集 js xml json 链接 feedLinkfinder</span><br>	crawler.C.OnHTML(<span class="hljs-string">&quot;[src]&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(e *colly.HTMLElement)</span></span> &#123;<br>		jsFileUrl := e.Request.AbsoluteURL(e.Attr(<span class="hljs-string">&quot;src&quot;</span>))<br>		jsFileUrl = FixUrl(crawler.site, jsFileUrl)<br>		<span class="hljs-keyword">if</span> jsFileUrl == <span class="hljs-string">&quot;&quot;</span> &#123;<br>			<span class="hljs-keyword">return</span><br>		&#125;<br><br>		fileExt := GetExtType(jsFileUrl)<br>		<span class="hljs-keyword">if</span> fileExt == <span class="hljs-string">&quot;.js&quot;</span> || fileExt == <span class="hljs-string">&quot;.xml&quot;</span> || fileExt == <span class="hljs-string">&quot;.json&quot;</span> &#123;<br>			crawler.feedLinkfinder(jsFileUrl, <span class="hljs-string">&quot;javascript&quot;</span>, <span class="hljs-string">&quot;body&quot;</span>)<br>		&#125;<br>	&#125;)<br>	<span class="hljs-comment">// 对于响应 =&gt; 从中寻找链接或者AWSS3</span><br>	crawler.C.OnResponse(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(response *colly.Response)</span></span> &#123;<br>		respStr := DecodeChars(<span class="hljs-type">string</span>(response.Body))<br><br>		<span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(crawler.filterLength_slice) == <span class="hljs-number">0</span> || !contains(crawler.filterLength_slice, <span class="hljs-built_in">len</span>(respStr)) &#123;<br><br>			<span class="hljs-comment">// Verify which link is working</span><br>			u := response.Request.URL.String()<br>			outputFormat := fmt.Sprintf(<span class="hljs-string">&quot;[url] - [code-%d] - %s&quot;</span>, response.StatusCode, u)<br><br>			<span class="hljs-keyword">if</span> crawler.length &#123;<br>				outputFormat = fmt.Sprintf(<span class="hljs-string">&quot;[url] - [code-%d] - [len_%d] - %s&quot;</span>, response.StatusCode, <span class="hljs-built_in">len</span>(respStr), u)<br>			&#125;<br><br>			<span class="hljs-keyword">if</span> crawler.JsonOutput &#123;<br>				sout := SpiderOutput&#123;<br>					Input:      crawler.Input,<br>					Source:     <span class="hljs-string">&quot;body&quot;</span>,<br>					OutputType: <span class="hljs-string">&quot;url&quot;</span>,<br>					StatusCode: response.StatusCode,<br>					Output:     u,<br>					Length:     strings.Count(respStr, <span class="hljs-string">&quot;\n&quot;</span>),<br>				&#125;<br>				<span class="hljs-keyword">if</span> data, err := jsoniter.MarshalToString(sout); err == <span class="hljs-literal">nil</span> &#123;<br>					outputFormat = data<br>				&#125;<br>			&#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> crawler.Quiet &#123;<br>				outputFormat = u<br>			&#125;<br>			fmt.Println(outputFormat)<br>			<span class="hljs-keyword">if</span> crawler.Output != <span class="hljs-literal">nil</span> &#123;<br>				crawler.Output.WriteToFile(outputFormat)<br>			&#125;<br>			<span class="hljs-comment">// 确定是目标的响应的话就收集一下子域名和 AWSS3 信息</span><br>			<span class="hljs-keyword">if</span> InScope(response.Request.URL, crawler.C.URLFilters) &#123;<br>				crawler.findSubdomains(respStr)<br>				crawler.findAWSS3(respStr)<br>			&#125;<br><br>			<span class="hljs-keyword">if</span> crawler.raw &#123;<br>				outputFormat := fmt.Sprintf(<span class="hljs-string">&quot;[Raw] - \n%s\n&quot;</span>, respStr) <span class="hljs-comment">// PRINTCLEAN RAW for link visited only</span><br>				<span class="hljs-keyword">if</span> !crawler.Quiet &#123;<br>					fmt.Println(outputFormat)<br>				&#125;<br>				<span class="hljs-keyword">if</span> crawler.Output != <span class="hljs-literal">nil</span> &#123;<br>					crawler.Output.WriteToFile(outputFormat)<br>				&#125;<br>			&#125;<br>		&#125;<br>	&#125;)<br>	<span class="hljs-comment">// 错误响应的输出</span><br>	crawler.C.OnError(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(response *colly.Response, err <span class="hljs-type">error</span>)</span></span> &#123;<br>		Logger.Debugf(<span class="hljs-string">&quot;Error request: %s - Status code: %v - Error: %s&quot;</span>, response.Request.URL.String(), response.StatusCode, err)<br>		<span class="hljs-comment">/*</span><br><span class="hljs-comment">			1xx Informational</span><br><span class="hljs-comment">			2xx Success</span><br><span class="hljs-comment">			3xx Redirection</span><br><span class="hljs-comment">			4xx Client Error</span><br><span class="hljs-comment">			5xx Server Error</span><br><span class="hljs-comment">		*/</span><br>		<span class="hljs-keyword">if</span> response.StatusCode == <span class="hljs-number">404</span> || response.StatusCode == <span class="hljs-number">429</span> || response.StatusCode &lt; <span class="hljs-number">100</span> || response.StatusCode &gt;= <span class="hljs-number">500</span> &#123;<br>			<span class="hljs-keyword">return</span><br>		&#125;<br><br>		u := response.Request.URL.String()<br>		outputFormat := fmt.Sprintf(<span class="hljs-string">&quot;[url] - [code-%d] - %s&quot;</span>, response.StatusCode, u)<br><br>		<span class="hljs-keyword">if</span> crawler.JsonOutput &#123;<br>			sout := SpiderOutput&#123;<br>				Input:      crawler.Input,<br>				Source:     <span class="hljs-string">&quot;body&quot;</span>,<br>				OutputType: <span class="hljs-string">&quot;url&quot;</span>,<br>				StatusCode: response.StatusCode,<br>				Output:     u,<br>				Length:     strings.Count(DecodeChars(<span class="hljs-type">string</span>(response.Body)), <span class="hljs-string">&quot;\n&quot;</span>),<br>			&#125;<br>			<span class="hljs-keyword">if</span> data, err := jsoniter.MarshalToString(sout); err == <span class="hljs-literal">nil</span> &#123;<br>				outputFormat = data<br>				fmt.Println(outputFormat)<br>			&#125;<br>		&#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> crawler.Quiet &#123;<br>			fmt.Println(u)<br>		&#125; <span class="hljs-keyword">else</span> &#123;<br>			fmt.Println(outputFormat)<br>		&#125;<br><br>		<span class="hljs-keyword">if</span> crawler.Output != <span class="hljs-literal">nil</span> &#123;<br>			crawler.Output.WriteToFile(outputFormat)<br>		&#125;<br>	&#125;)<br>	<span class="hljs-comment">// 访问目标</span><br>	err := crawler.C.Visit(crawler.site.String())<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		Logger.Errorf(<span class="hljs-string">&quot;Failed to start %s: %s&quot;</span>, crawler.site.String(), err)<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>先看一下 setupLinkFinder 是怎么实现链接提取的：</p>
+<p>这里为 colly 添加了一个响应处理，主要工作：</p>
+<ol>
+<li>子域名、S3</li>
+<li>使用 LinkFinder 提取响应中的路径对路径进行拼接获取 URL</li>
+<li>如果是 js 、json 的就还是交给 feedLinkfinder 处理</li>
+<li>不是的话就访问这个拼接好的链接</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(crawler *Crawler)</span></span> setupLinkFinder() &#123;<br>    <span class="hljs-comment">// 处理响应</span><br>	crawler.LinkFinderCollector.OnResponse(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(response *colly.Response)</span></span> &#123;<br>		<span class="hljs-keyword">if</span> response.StatusCode == <span class="hljs-number">404</span> || response.StatusCode == <span class="hljs-number">429</span> || response.StatusCode &lt; <span class="hljs-number">100</span> &#123;<br>			<span class="hljs-keyword">return</span><br>		&#125;<br>		respStr := <span class="hljs-type">string</span>(response.Body)<br>		<span class="hljs-comment">// 响应长度过滤器</span><br>		<span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(crawler.filterLength_slice) == <span class="hljs-number">0</span> || !contains(crawler.filterLength_slice, <span class="hljs-built_in">len</span>(respStr)) &#123;<br><br>			<span class="hljs-comment">// Verify which link is working </span><br>			u := response.Request.URL.String()<br>			<span class="hljs-comment">//....</span><br>			<span class="hljs-comment">// 判断请求的 url 是否是匹配当前目标正则或者白名单</span><br>			<span class="hljs-keyword">if</span> InScope(response.Request.URL, crawler.C.URLFilters) &#123;<br>				<span class="hljs-comment">// 提取子域名和 S3</span><br>				crawler.findSubdomains(respStr)<br>				crawler.findAWSS3(respStr)<br>				<span class="hljs-comment">// 从响应中提取路径</span><br>				paths, err := LinkFinder(respStr)<br>				<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>					Logger.Error(err)<br>					<span class="hljs-keyword">return</span><br>				&#125;<br><br>				currentPathURL, err := url.Parse(u)<br>				currentPathURLerr := <span class="hljs-literal">false</span><br>				<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>					currentPathURLerr = <span class="hljs-literal">true</span><br>				&#125;<br><br>				<span class="hljs-keyword">for</span> _, relPath := <span class="hljs-keyword">range</span> paths &#123;<br>					<span class="hljs-keyword">var</span> outputFormat <span class="hljs-type">string</span><br>					<span class="hljs-comment">// output ...</span><br>					rebuildURL := <span class="hljs-string">&quot;&quot;</span><br>                    <span class="hljs-comment">// 使用当前的 URL 或者站点 URL 拼接路径获取 URL =&gt; ResolveReference ( 学到了这个 url 路径拼接 )</span><br>					<span class="hljs-keyword">if</span> !currentPathURLerr &#123;<br>						rebuildURL = FixUrl(currentPathURL, relPath)<br>					&#125; <span class="hljs-keyword">else</span> &#123;<br>						rebuildURL = FixUrl(crawler.site, relPath)<br>					&#125;<br><br>					<span class="hljs-keyword">if</span> rebuildURL == <span class="hljs-string">&quot;&quot;</span> &#123;<br>						<span class="hljs-keyword">continue</span><br>					&#125;<br><br>					<span class="hljs-comment">// Try to request JS path</span><br>					<span class="hljs-comment">// Try to generate URLs with main site</span><br>					fileExt := GetExtType(rebuildURL)<br>					<span class="hljs-keyword">if</span> fileExt == <span class="hljs-string">&quot;.js&quot;</span> || fileExt == <span class="hljs-string">&quot;.xml&quot;</span> || fileExt == <span class="hljs-string">&quot;.json&quot;</span> || fileExt == <span class="hljs-string">&quot;.map&quot;</span> &#123;<br>						crawler.feedLinkfinder(rebuildURL, <span class="hljs-string">&quot;linkfinder&quot;</span>, <span class="hljs-string">&quot;javascript&quot;</span>)<br>					&#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> !crawler.urlSet.Duplicate(rebuildURL) &#123;<br>						<span class="hljs-keyword">if</span> crawler.JsonOutput &#123;<br>							sout := SpiderOutput&#123;<br>								Input:      crawler.Input,<br>								Source:     response.Request.URL.String(),<br>								OutputType: <span class="hljs-string">&quot;linkfinder&quot;</span>,<br>								Output:     rebuildURL,<br>							&#125;<br>							<span class="hljs-keyword">if</span> data, err := jsoniter.MarshalToString(sout); err == <span class="hljs-literal">nil</span> &#123;<br>								outputFormat = data<br>							&#125;<br>						&#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> !crawler.Quiet &#123;<br>							outputFormat = fmt.Sprintf(<span class="hljs-string">&quot;[linkfinder] - %s&quot;</span>, rebuildURL)<br>						&#125;<br><br>						fmt.Println(outputFormat)<br><br>						<span class="hljs-keyword">if</span> crawler.Output != <span class="hljs-literal">nil</span> &#123;<br>							crawler.Output.WriteToFile(outputFormat)<br>						&#125;<br>						<span class="hljs-comment">// 添加访问</span><br>						_ = crawler.C.Visit(rebuildURL)<br>					&#125;<br><br>					<span class="hljs-comment">// Try to generate URLs with the site where Javascript file host in (must be in main or sub domain)</span><br>					<span class="hljs-comment">// 访问这个拼接好的路径 ~</span><br>					urlWithJSHostIn := FixUrl(crawler.site, relPath)<br>					<span class="hljs-keyword">if</span> urlWithJSHostIn != <span class="hljs-string">&quot;&quot;</span> &#123;<br>						fileExt := GetExtType(urlWithJSHostIn)<br>						<span class="hljs-keyword">if</span> fileExt == <span class="hljs-string">&quot;.js&quot;</span> || fileExt == <span class="hljs-string">&quot;.xml&quot;</span> || fileExt == <span class="hljs-string">&quot;.json&quot;</span> || fileExt == <span class="hljs-string">&quot;.map&quot;</span> &#123;<br>							crawler.feedLinkfinder(urlWithJSHostIn, <span class="hljs-string">&quot;linkfinder&quot;</span>, <span class="hljs-string">&quot;javascript&quot;</span>)<br>						&#125; <span class="hljs-keyword">else</span> &#123;<br>                            <span class="hljs-comment">// 有没有爬过 这里就是直接去利用了 </span><br>							<span class="hljs-keyword">if</span> crawler.urlSet.Duplicate(urlWithJSHostIn) &#123;<br>								<span class="hljs-keyword">continue</span><br>							&#125; <span class="hljs-keyword">else</span> &#123;<br>                                <span class="hljs-comment">// 添加访问该链接</span><br>								_ = crawler.C.Visit(urlWithJSHostIn) <span class="hljs-comment">//not print care for lost link</span><br>							&#125;<br>						&#125;<br><br>					&#125;<br><br>				&#125;<br><br>			&#125;<br>		&#125;<br>	&#125;)<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>它这里的 crawler.urlSet.Duplicate(urlWithJSHostIn) 就是直接判断 这个 map 里面是否存在来判断是否爬取过了，请求去重这里没怎么做…</p>
+<p>这里先看一下 LinkFinder 它用于从响应中提取路径：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">var</span> linkFinderRegex = regexp.MustCompile(<span class="hljs-string">`(?:&quot;|&#x27;)(((?:[a-zA-Z]&#123;1,10&#125;://|//)[^&quot;&#x27;/]&#123;1,&#125;\.[a-zA-Z]&#123;2,&#125;[^&quot;&#x27;]&#123;0,&#125;)|((?:/|\.\./|\./)[^&quot;&#x27;&gt;&lt;,;| *()(%%$^/\\\[\]][^&quot;&#x27;&gt;&lt;,;|()]&#123;1,&#125;)|([a-zA-Z0-9_\-/]&#123;1,&#125;/[a-zA-Z0-9_\-/]&#123;1,&#125;\.(?:[a-zA-Z]&#123;1,4&#125;|action)(?:[\?|#][^&quot;|&#x27;]&#123;0,&#125;|))|([a-zA-Z0-9_\-/]&#123;1,&#125;/[a-zA-Z0-9_\-/]&#123;3,&#125;(?:[\?|#][^&quot;|&#x27;]&#123;0,&#125;|))|([a-zA-Z0-9_\-]&#123;1,&#125;\.(?:php|asp|aspx|jsp|json|action|html|js|txt|xml)(?:[\?|#][^&quot;|&#x27;]&#123;0,&#125;|)))(?:&quot;|&#x27;)`</span>)<br><br><span class="hljs-comment">// LinkFinder 从响应中寻找路径信息</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">LinkFinder</span><span class="hljs-params">(source <span class="hljs-type">string</span>)</span></span> ([]<span class="hljs-type">string</span>, <span class="hljs-type">error</span>) &#123;<br>	<span class="hljs-keyword">var</span> links []<span class="hljs-type">string</span><br>	<span class="hljs-comment">// source = strings.ToLower(source)</span><br>    <span class="hljs-comment">// 响应过大 先对响应进行处理 提高正则表达式的效率</span><br>	<span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(source) &gt; <span class="hljs-number">1000000</span> &#123;<br>		source = strings.ReplaceAll(source, <span class="hljs-string">&quot;;&quot;</span>, <span class="hljs-string">&quot;;\r\n&quot;</span>)<br>		source = strings.ReplaceAll(source, <span class="hljs-string">&quot;,&quot;</span>, <span class="hljs-string">&quot;,\r\n&quot;</span>)<br>	&#125;<br>	source = DecodeChars(source)<br><br>	match := linkFinderRegex.FindAllStringSubmatch(source, <span class="hljs-number">-1</span>)<br>	<span class="hljs-keyword">for</span> _, m := <span class="hljs-keyword">range</span> match &#123;<br>        <span class="hljs-comment">// 使用 regexp.MustCompile(`[\t\r\n]+`).ReplaceAllString 替换掉换行空格等</span><br>		matchGroup1 := FilterNewLines(m[<span class="hljs-number">1</span>])<br>		<span class="hljs-keyword">if</span> matchGroup1 == <span class="hljs-string">&quot;&quot;</span> &#123;<br>			<span class="hljs-keyword">continue</span><br>		&#125;<br>		links = <span class="hljs-built_in">append</span>(links, matchGroup1)<br>	&#125;<br>    <span class="hljs-comment">// 链接验重 判断之前是否爬过了 map[url][bool] </span><br>	links = Unique(links)<br>	<span class="hljs-keyword">return</span> links, <span class="hljs-literal">nil</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这个先加换行再进行正则 GPT 这里给出的好处：</p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240323013127911.png?imageSlim" srcset="/img/loading.gif" lazyload alt="image-20240323013127911"></p>
+<p>然后看下这个 FixUrl 它是用于拼接 url 和爬到的路径的：</p>
+<p>它使用了 ResolveReference 进行这个操作，它会自动处理绝对路径、相对路径，如果路径是 url 的话就不做拼接直接返回这个 url ，挺方便的。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">FixUrl</span><span class="hljs-params">(mainSite *url.URL, nextLoc <span class="hljs-type">string</span>)</span></span> <span class="hljs-type">string</span> &#123;<br>	nextLocUrl, err := url.Parse(nextLoc)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-string">&quot;&quot;</span><br>	&#125;<br>	<span class="hljs-keyword">return</span> mainSite.ResolveReference(nextLocUrl).String()<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>然后就是 feedLinkfinder 对于 js 这种文件的操作：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(crawler *Crawler)</span></span> feedLinkfinder(jsFileUrl <span class="hljs-type">string</span>, OutputType <span class="hljs-type">string</span>, source <span class="hljs-type">string</span>) &#123;<br>	<span class="hljs-comment">// 判断是否爬过这个 JS</span><br>	<span class="hljs-keyword">if</span> !crawler.jsSet.Duplicate(jsFileUrl) &#123;<br>		<span class="hljs-comment">// ....</span><br><br>		<span class="hljs-comment">// Send Javascript to Link Finder Collector</span><br>        <span class="hljs-comment">// 直接去访问 就行了 提取还是 setupLinkFinder</span><br>		_ = crawler.LinkFinderCollector.Visit(jsFileUrl)<br><br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>它还对每个请求都检测了子域名和 s3 ：</p>
+<p>这里也是通过正则去提取的，这里其实可以看到俩函数的结构是相同的，可以把这些正则放到配置文件，然后之后去遍历这样子，方便后续添加新的规则：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// SUBRE 子域名的正则表达式</span><br><span class="hljs-keyword">const</span> SUBRE = <span class="hljs-string">`(?i)(([a-zA-Z0-9]&#123;1&#125;|[_a-zA-Z0-9]&#123;1&#125;[_a-zA-Z0-9-]&#123;0,61&#125;[a-zA-Z0-9]&#123;1&#125;)[.]&#123;1&#125;)+`</span><br><br><span class="hljs-keyword">var</span> AWSS3 = regexp.MustCompile(<span class="hljs-string">`(?i)[a-z0-9.-]+\.s3\.amazonaws\.com|[a-z0-9.-]+\.s3-[a-z0-9-]\.amazonaws\.com|[a-z0-9.-]+\.s3-website[.-](eu|ap|us|ca|sa|cn)|//s3\.amazonaws\.com/[a-z0-9._-]+|//s3-[a-z0-9-]+\.amazonaws\.com/[a-z0-9._-]+`</span>)<br><br><span class="hljs-comment">// SubdomainRegex returns a Regexp object initialized to match</span><br><span class="hljs-comment">// subdomain names that end with the domain provided by the parameter.</span><br><span class="hljs-comment">// 通过根域名生成对应子域名的正则表达式</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">subdomainRegex</span><span class="hljs-params">(domain <span class="hljs-type">string</span>)</span></span> *regexp.Regexp &#123;<br>	<span class="hljs-comment">// Change all the periods into literal periods for the regex</span><br>	<span class="hljs-comment">// . 修改为正则的点 [.]</span><br>	d := strings.Replace(domain, <span class="hljs-string">&quot;.&quot;</span>, <span class="hljs-string">&quot;[.]&quot;</span>, <span class="hljs-number">-1</span>)<br>	<span class="hljs-keyword">return</span> regexp.MustCompile(SUBRE + d)<br>&#125;<br><br><span class="hljs-comment">// GetSubdomains 从数据源 ( 响应信息 ) 中获取子域名</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">GetSubdomains</span><span class="hljs-params">(source, domain <span class="hljs-type">string</span>)</span></span> []<span class="hljs-type">string</span> &#123;<br>	<span class="hljs-keyword">var</span> subs []<span class="hljs-type">string</span><br>	re := subdomainRegex(domain)<br>	<span class="hljs-keyword">for</span> _, match := <span class="hljs-keyword">range</span> re.FindAllStringSubmatch(source, <span class="hljs-number">-1</span>) &#123;<br>		subs = <span class="hljs-built_in">append</span>(subs, CleanSubdomain(match[<span class="hljs-number">0</span>]))<br>	&#125;<br>	<span class="hljs-keyword">return</span> subs<br>&#125;<br><br><span class="hljs-comment">// GetAWSS3 AWS_S3 存储桶的 URL</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">GetAWSS3</span><span class="hljs-params">(source <span class="hljs-type">string</span>)</span></span> []<span class="hljs-type">string</span> &#123;<br>	<span class="hljs-keyword">var</span> aws []<span class="hljs-type">string</span><br>	<span class="hljs-keyword">for</span> _, match := <span class="hljs-keyword">range</span> AWSS3.FindAllStringSubmatch(source, <span class="hljs-number">-1</span>) &#123;<br>		aws = <span class="hljs-built_in">append</span>(aws, DecodeChars(match[<span class="hljs-number">0</span>]))<br>	&#125;<br>	<span class="hljs-keyword">return</span> aws<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>robots 中提取：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// ParseRobots 从 robots 中寻找 url</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">ParseRobots</span><span class="hljs-params">(site *url.URL, crawler *Crawler, c *colly.Collector, wg *sync.WaitGroup)</span></span> &#123;<br>	<span class="hljs-keyword">defer</span> wg.Done()<br>	robotsURL := site.String() + <span class="hljs-string">&quot;/robots.txt&quot;</span><br><br>	resp, err := http.Get(robotsURL)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span><br>	&#125;<br>	<span class="hljs-keyword">if</span> resp.StatusCode == <span class="hljs-number">200</span> &#123;<br>		Logger.Infof(<span class="hljs-string">&quot;Found robots.txt: %s&quot;</span>, robotsURL)<br>		body, err := ioutil.ReadAll(resp.Body)<br>		<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>			<span class="hljs-keyword">return</span><br>		&#125;<br>		lines := strings.Split(<span class="hljs-type">string</span>(body), <span class="hljs-string">&quot;\n&quot;</span>)<br>		<span class="hljs-comment">// 这里的正则匹配 Disallow: Allow: 部分</span><br>		<span class="hljs-keyword">var</span> re = regexp.MustCompile(<span class="hljs-string">&quot;.*llow: &quot;</span>)<br>		<span class="hljs-keyword">for</span> _, line := <span class="hljs-keyword">range</span> lines &#123;<br>			<span class="hljs-keyword">if</span> strings.Contains(line, <span class="hljs-string">&quot;llow: &quot;</span>) &#123;<br>				<span class="hljs-comment">// 移除 Dis... 部分 ( 正则 )</span><br>				url := re.ReplaceAllString(line, <span class="hljs-string">&quot;&quot;</span>)<br>				url = FixUrl(site, url)<br>				<span class="hljs-keyword">if</span> url == <span class="hljs-string">&quot;&quot;</span> &#123;<br>					<span class="hljs-keyword">continue</span><br>				&#125;<br>				outputFormat := fmt.Sprintf(<span class="hljs-string">&quot;[robots] - %s&quot;</span>, url)<br><br>				<span class="hljs-keyword">if</span> crawler.JsonOutput &#123;<br>					sout := SpiderOutput&#123;<br>						Input:      crawler.Input,<br>						Source:     <span class="hljs-string">&quot;robots&quot;</span>,<br>						OutputType: <span class="hljs-string">&quot;url&quot;</span>,<br>						Output:     url,<br>					&#125;<br>					<span class="hljs-keyword">if</span> data, err := jsoniter.MarshalToString(sout); err == <span class="hljs-literal">nil</span> &#123;<br>						outputFormat = data<br>					&#125;<br>				&#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> crawler.Quiet &#123;<br>					outputFormat = url<br>				&#125;<br>				fmt.Println(outputFormat)<br>				<span class="hljs-keyword">if</span> crawler.Output != <span class="hljs-literal">nil</span> &#123;<br>					crawler.Output.WriteToFile(outputFormat)<br>				&#125;<br>				_ = c.Visit(url)<br>			&#125;<br>		&#125;<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>站点地图，使用 gopher-parse-sitemap 库进行的 sitemap 解析：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">ParseSiteMap</span><span class="hljs-params">(site *url.URL, crawler *Crawler, c *colly.Collector, wg *sync.WaitGroup)</span></span> &#123;<br>	<span class="hljs-keyword">defer</span> wg.Done()<br>	sitemapUrls := []<span class="hljs-type">string</span>&#123;<span class="hljs-string">&quot;/sitemap.xml&quot;</span>, <span class="hljs-string">&quot;/sitemap_news.xml&quot;</span>, <span class="hljs-string">&quot;/sitemap_index.xml&quot;</span>, <span class="hljs-string">&quot;/sitemap-index.xml&quot;</span>, <span class="hljs-string">&quot;/sitemapindex.xml&quot;</span>,<br>		<span class="hljs-string">&quot;/sitemap-news.xml&quot;</span>, <span class="hljs-string">&quot;/post-sitemap.xml&quot;</span>, <span class="hljs-string">&quot;/page-sitemap.xml&quot;</span>, <span class="hljs-string">&quot;/portfolio-sitemap.xml&quot;</span>, <span class="hljs-string">&quot;/home_slider-sitemap.xml&quot;</span>, <span class="hljs-string">&quot;/category-sitemap.xml&quot;</span>,<br>		<span class="hljs-string">&quot;/author-sitemap.xml&quot;</span>&#125;<br><br>	<span class="hljs-keyword">for</span> _, path := <span class="hljs-keyword">range</span> sitemapUrls &#123;<br>		<span class="hljs-comment">// Ignore error when that not valid sitemap.xml path</span><br>		Logger.Infof(<span class="hljs-string">&quot;Trying to find %s&quot;</span>, site.String()+path)<br>		_ = sitemap.ParseFromSite(site.String()+path, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(entry sitemap.Entry)</span></span> <span class="hljs-type">error</span> &#123;<br>			outputFormat := fmt.Sprintf(<span class="hljs-string">&quot;[sitemap] - %s&quot;</span>, entry.GetLocation())<br><br>			<span class="hljs-keyword">if</span> crawler.JsonOutput &#123;<br>				sout := SpiderOutput&#123;<br>					Input:      crawler.Input,<br>					Source:     <span class="hljs-string">&quot;sitemap&quot;</span>,<br>					OutputType: <span class="hljs-string">&quot;url&quot;</span>,<br>					Output:     entry.GetLocation(),<br>				&#125;<br>				<span class="hljs-keyword">if</span> data, err := jsoniter.MarshalToString(sout); err == <span class="hljs-literal">nil</span> &#123;<br>					outputFormat = data<br>				&#125;<br>			&#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> crawler.Quiet &#123;<br>				outputFormat = entry.GetLocation()<br>			&#125;<br>			fmt.Println(outputFormat)<br>			<span class="hljs-keyword">if</span> crawler.Output != <span class="hljs-literal">nil</span> &#123;<br>				crawler.Output.WriteToFile(outputFormat)<br>			&#125;<br>			_ = c.Visit(entry.GetLocation())<br>			<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span><br>		&#125;)<br>	&#125;<br><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这里还有一些第三方的 url 收集，就是 Wayback Machine、Common Crawl、Virus Total、Alien Vault 这些：</p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240323033408855.png?imageSlim" srcset="/img/loading.gif" lazyload alt="image-20240323033408855"></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">getWaybackURLs</span><span class="hljs-params">(domain <span class="hljs-type">string</span>, noSubs <span class="hljs-type">bool</span>)</span></span> ([]wurl, <span class="hljs-type">error</span>) &#123;<br>	subsWildcard := <span class="hljs-string">&quot;*.&quot;</span><br>	<span class="hljs-keyword">if</span> noSubs &#123;<br>		subsWildcard = <span class="hljs-string">&quot;&quot;</span><br>	&#125;<br>	<span class="hljs-comment">// 从一个网站存档中获取响应</span><br>	res, err := http.Get(<br>		fmt.Sprintf(<span class="hljs-string">&quot;http://web.archive.org/cdx/search/cdx?url=%s%s/*&amp;output=json&amp;collapse=urlkey&quot;</span>, subsWildcard, domain),<br>	)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> []wurl&#123;&#125;, err<br>	&#125;<br><br>	raw, err := ioutil.ReadAll(res.Body)<br><br>	res.Body.Close()<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> []wurl&#123;&#125;, err<br>	&#125;<br><br>	<span class="hljs-keyword">var</span> wrapper [][]<span class="hljs-type">string</span><br>	err = json.Unmarshal(raw, &amp;wrapper)<br><br>	out := <span class="hljs-built_in">make</span>([]wurl, <span class="hljs-number">0</span>, <span class="hljs-built_in">len</span>(wrapper))<br><br>	skip := <span class="hljs-literal">true</span><br>	<span class="hljs-keyword">for</span> _, urls := <span class="hljs-keyword">range</span> wrapper &#123;<br>		<span class="hljs-comment">// The first item is always just the string &quot;original&quot;,</span><br>		<span class="hljs-comment">// so we should skip the first item</span><br>		<span class="hljs-keyword">if</span> skip &#123;<br>			skip = <span class="hljs-literal">false</span><br>			<span class="hljs-keyword">continue</span><br>		&#125;<br>		out = <span class="hljs-built_in">append</span>(out, wurl&#123;date: urls[<span class="hljs-number">1</span>], url: urls[<span class="hljs-number">2</span>]&#125;)<br>	&#125;<br><br>	<span class="hljs-keyword">return</span> out, <span class="hljs-literal">nil</span><br><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="学习总结"><a href="#学习总结" class="headerlink" title="学习总结"></a>学习总结</h2><ol>
+<li>学到了 colly 爬虫框架的使用</li>
+<li>http.ProxyURL(pU)、ResolveReference</li>
+</ol>
+<p>不过还有一些地方可以再优化一下，比如请求队列去重，GoSpider 并没有做这个操作，还有对于 aws-s3 这些响应中敏感信息的提取可以去写一个配置文件来实现这个操作，有助于后期增添新的规则，动态爬虫也可以实现这一操作。</p>
+<p>看到网上使用 GoSpider 后会使用 uro 进行链接去重，后面可以看看。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%8A%80%E6%9C%AF/" class="category-chain-item">技术</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/" class="print-no-link">#源码学习</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>GoSpider 源码学习</div>
+      <div>https://liancccc.github.io/2024/03/12/源码学习/GoSpider/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>守心</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年3月12日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/12/28/%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/frp/" title="frp 源码学习">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">frp 源码学习</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/03/12/%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/crawlergo/" title="crawlergo 源码学习">
+                        <span class="hidden-mobile">crawlergo 源码学习</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
