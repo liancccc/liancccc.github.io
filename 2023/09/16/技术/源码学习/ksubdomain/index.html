@@ -1,0 +1,820 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/avatar.png">
+  <link rel="icon" href="/img/avatar.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="守心">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="项目介绍KSubdomain 是一款基于无状态技术的子域名爆破工具，带来前所未有的扫描速度和极低的内存占用。 告别传统工具的效率瓶颈，体验闪电般的 DNS 查询，同时拥有可靠的状态表重发机制，确保结果的完整性。 KSubdomain 支持 Windows、Linux 和 macOS，是进行大规模DNS资产探测的理想选择。 项目地址：https:&#x2F;&#x2F;github.com&#x2F;boy-hack&#x2F;ksubd">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ksubdomain 源码学习">
+<meta property="og:url" content="https://liancccc.github.io/2023/09/16/%E6%8A%80%E6%9C%AF/%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/ksubdomain/index.html">
+<meta property="og:site_name" content="liancccc&#39;s blog">
+<meta property="og:description" content="项目介绍KSubdomain 是一款基于无状态技术的子域名爆破工具，带来前所未有的扫描速度和极低的内存占用。 告别传统工具的效率瓶颈，体验闪电般的 DNS 查询，同时拥有可靠的状态表重发机制，确保结果的完整性。 KSubdomain 支持 Windows、Linux 和 macOS，是进行大规模DNS资产探测的理想选择。 项目地址：https:&#x2F;&#x2F;github.com&#x2F;boy-hack&#x2F;ksubd">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/202309151713181.png?imageSlim">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/202309151737291.png?imageSlim">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/202309151926753.png?imageSlim">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/202309151926384.png?imageSlim">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/202309162132121.png?imageSlim">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/202309162227404.png?imageSlim">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/202309162246765.png?imageSlim">
+<meta property="article:published_time" content="2023-09-16T15:07:53.000Z">
+<meta property="article:modified_time" content="2025-06-11T12:30:07.782Z">
+<meta property="article:author" content="守心">
+<meta property="article:tag" content="源码学习">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/202309151713181.png?imageSlim">
+  
+  
+  
+  <title>ksubdomain 源码学习 - liancccc&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"liancccc.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":false},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>琉璃魄</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/lbxx.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="ksubdomain 源码学习"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-09-16 23:07" pubdate>
+          2023年9月16日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          34 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">ksubdomain 源码学习</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="项目介绍"><a href="#项目介绍" class="headerlink" title="项目介绍"></a>项目介绍</h2><p><strong>KSubdomain 是一款基于无状态技术的子域名爆破工具，带来前所未有的扫描速度和极低的内存占用。</strong> 告别传统工具的效率瓶颈，体验闪电般的 DNS 查询，同时拥有可靠的状态表重发机制，确保结果的完整性。 KSubdomain 支持 Windows、Linux 和 macOS，是进行大规模DNS资产探测的理想选择。</p>
+<p>项目地址：<a target="_blank" rel="noopener" href="https://github.com/boy-hack/ksubdomain">https://github.com/boy-hack/ksubdomain</a></p>
+<h2 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h2><h3 id="无状态"><a href="#无状态" class="headerlink" title="无状态"></a>无状态</h3><p>无状态连接是指无需关系 TCP、UDP 协议状态，不占用系统协议栈资源，忘记 SYN、ACK、FIN、TIMEWIT，不进行会话组包。在实现上也有可能把必要的信息存放在数据包本身。如 masscan、zmp 都使用了这种无状态技术。</p>
+<h3 id="pcap"><a href="#pcap" class="headerlink" title="pcap"></a>pcap</h3><p>Pcap是 <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%94%B5%E5%AD%90%E8%AE%A1%E7%AE%97%E6%9C%BA">计算机</a> <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86">网络管理</a>领域中一个用于 <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%95%B8%E6%93%9A%E5%8C%85%E5%88%86%E6%9E%90%E5%99%A8">捕获网络流量</a>的 <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E6%8E%A5%E5%8F%A3">应用程序接口</a>（API）。其名称来源于“抓包”（英语：packet capture）（并非它的正确名称）。Pcap是用 <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/C%E8%AF%AD%E8%A8%80">C语言</a>编写的。在 <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%B1%BBUnix%E7%B3%BB%E7%BB%9F">类Unix系统</a>中libpcap <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%87%BD%E5%BC%8F%E5%BA%AB">库</a>实现了pcap；在 <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Microsoft_Windows">Microsoft Windows</a>上，则由Npcap库移植了libpcap， <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Windows_7">Windows 7</a>中可以使用WinPcap库的移植，但现已不再维护。</p>
+<p>监控软件可以使用 pcap 来捕获在 <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%9B%BB%E8%85%A6%E7%B6%B2%E8%B7%AF">计算机网络</a>上传输的 <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%B6%B2%E8%B7%AF%E5%B0%81%E5%8C%85">网络数据包</a>。</p>
+<h3 id="DNS协议"><a href="#DNS协议" class="headerlink" title="DNS协议"></a>DNS协议</h3><p>DNS 域名解析协议，它的作用就是将域名解析为 IP 地址。</p>
+<h4 id="报文格式"><a href="#报文格式" class="headerlink" title="报文格式"></a>报文格式</h4><p>DNS 协议可以使用 UDP 或者 TCP 进行传输，使用的端口号都为 53，但大多数情况下 DNS 都使用 UDP 进行传输。</p>
+<p>DNS 报文包括请求报文和应答报文，它们格式是相同的，如下所示：</p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/202309151713181.png?imageSlim" srcset="/img/loading.gif" lazyload alt="img"></p>
+<h4 id="报文头部"><a href="#报文头部" class="headerlink" title="报文头部"></a>报文头部</h4><ul>
+<li>标识 <code>(identifier)</code>：一个 16 位的 ID ，在应答中原样返回，以此匹配请求和应答；</li>
+<li>标志 <code>(flags)</code>：描述 DNS 报文的类别和工作特性，共 16 位；</li>
+<li>问题记录数 <code>(question count)</code>：一个 16 位整数，表示问题节中的记录个数；</li>
+<li>答案记录数 <code>(answer count)</code>：一个 16 位整数，表示答案节中的记录个数；</li>
+<li>授权信息记录数 <code>(authority record count)</code> ：一个 16 位整数，表示授权信息节中的记录个数；</li>
+<li>附加信息记录数 <code>(additional record count)</code> ：一个 16 位整数，表示附加信息节中的记录个数；</li>
+</ul>
+<p>标志：</p>
+<ul>
+<li><code>QR</code>：用来区别请求和应答，0 表示请求报文，1 表示应答报文，占 1 位</li>
+<li>操作码 <code>(Opcode)</code>：用来定义操作类型，占 4 位<ul>
+<li>0 代表标准查询（ 正向解析 ）</li>
+<li>1 代表反向查询（ 反向解析 ）</li>
+<li>2 代表服务器状态请求</li>
+</ul>
+</li>
+<li><code>AA</code> ： 权威回答<code>(authoritative answer)</code>，意味着当前查询结果是由域名的权威服务器给出的；</li>
+<li><code>TC</code> ： 截短<code>(truncated)</code>，使用 UDP 时，如果应答超过 512 字节，只返回前 512 个字节；</li>
+<li><code>RD</code> ：期望递归 <code>(recursion desired)</code>，在请求中设置，并在应答中返回；<ul>
+<li>该位为 1 时，服务器必须处理这个请求：如果服务器没有授权回答，它必须替客户端请求其他 DNS 服务器，这也是所谓的 递归查询 ；</li>
+<li>该位为 0 时，如果服务器没有授权回答，它就返回一个能够处理该查询的服务器列表给客户端，由客户端自己进行 迭代查询 ；</li>
+</ul>
+</li>
+<li><code>RA</code> ：可递归 <code>(recursion available)</code>，如果服务器支持递归查询，就会在应答中设置该位，以告知客户端</li>
+<li>保留：这 3 位目前未用，留作未来扩展；</li>
+<li>响应码 <code>(response code)</code>：占 4 位，表示请求结果，常见的值包括：<ul>
+<li>0 表示没有差错；</li>
+<li>3 表示名字差错，该差错由权威服务器返回，表示待查询的域名不存在；</li>
+</ul>
+</li>
+</ul>
+<h4 id="问题记录"><a href="#问题记录" class="headerlink" title="问题记录"></a>问题记录</h4><p>DNS 报文数据部分由 4 个变长部分组成，请求报文中常常只有问题部分有内容，而其他 3 个部分的资源记录数为 0 。</p>
+<p>DNS 问题部分由一组问题记录组成，包含如下内容：</p>
+<ul>
+<li>待查询域名 <code>(name)</code></li>
+<li>查询类型 <code>(type)</code></li>
+<li>查询类别 <code>(class)</code></li>
+</ul>
+<p>查询类型：</p>
+<table>
+<thead>
+<tr>
+<th align="left">查询类型</th>
+<th align="left">名称代码</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">1</td>
+<td align="left">A</td>
+<td align="left">IPv4地址</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="left">NS</td>
+<td align="left">名称服务器</td>
+</tr>
+<tr>
+<td align="left">5</td>
+<td align="left">CNAME</td>
+<td align="left">规范名称</td>
+</tr>
+<tr>
+<td align="left">15</td>
+<td align="left">MX</td>
+<td align="left">电子邮件交互</td>
+</tr>
+<tr>
+<td align="left">16</td>
+<td align="left">TXT</td>
+<td align="left">文本信息</td>
+</tr>
+<tr>
+<td align="left">28</td>
+<td align="left">AAAA</td>
+<td align="left">IPv6地址</td>
+</tr>
+</tbody></table>
+<p>查询类别：取 1 时表示 Internet 协议</p>
+<h4 id="资源记录"><a href="#资源记录" class="headerlink" title="资源记录"></a>资源记录</h4><p>服务端处理查询请求后，需要向客户端发送应答报文；域名查询结果作为资源记录，保存在答案以及其后两节中。</p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/202309151737291.png?imageSlim" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>资源记录结构和问题记录非常相似，它总共有 6 个字段，前 3 个和问题记录完全一样：</p>
+<ul>
+<li>被查询域名</li>
+<li>查询类型</li>
+<li>类</li>
+<li>有效期 <code>(TTL)</code>：域名记录一般不会频繁改动，所以在有效期内可以将结果缓存起来，降低请求频率；</li>
+<li>数据长度 <code>(Resource Data Length)</code>：即查询结果的长度；</li>
+<li>数据 <code>(Resource Data)</code> ：即查询结果；</li>
+</ul>
+<h4 id="抓包分析"><a href="#抓包分析" class="headerlink" title="抓包分析"></a>抓包分析</h4><p>请求报文：问题这里就是 <code>baidu.com</code> 的 A 记录：</p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/202309151926753.png?imageSlim" srcset="/img/loading.gif" lazyload alt="image-20230915192613680"></p>
+<p>响应报文：</p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/202309151926384.png?imageSlim" srcset="/img/loading.gif" lazyload alt="image-20230915192659251"></p>
+<h2 id="项目介绍-1"><a href="#项目介绍-1" class="headerlink" title="项目介绍"></a>项目介绍</h2><p>ksubdomain 使用 pcap 发包和接收数据，会直接将数据包发送至网卡，不经过系统，使速度大大提升。</p>
+<p>由于又是 udp 协议，数据包丢失的情况很多，所以 ksubdomain 在程序中建立了“状态表”，用于检测数据包的状态，当数据包发送时，会记录下状态，当收到了这个数据包的回应时，会从状态表去除，如果一段时间发现数据包没有动作，便可以认为这个数据包已经丢失了，于是会进行重发，当重发到达一定次数时，就可以舍弃该数据包了。</p>
+<p>上面说 ksubdomain 是无状态发包，如何建立确认状态呢？</p>
+<p>根据 DNS 协议和 UDP 协议的一些特点，DNS 协议中 ID 字段，UDP 协议中 SrcPort 字段可以携带数据，在我们收到返回包时，这些字段的数据不会改变。所以利用这些字段的值来确认这个包是我们需要的，并且找到状态表中这个包的位置。</p>
+<h2 id="项目结构"><a href="#项目结构" class="headerlink" title="项目结构"></a>项目结构</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs shell">D:.<br>│  ksubdomain.yaml		# 网卡配置信息<br>├─cmd	# 命令参数相关<br>│  └─ksubdomain<br>│          cmd.go<br>│          enum.go		# 枚举模式<br>│          test.go		# 测试本地网卡的最大发送速度<br>│          verify.go	# 验证模式<br>├─core<br>│  │  banner.go			# Banner 信息<br>│  │  subdata.go		# 子域名相关(内嵌,获取切片)<br>│  │  util.go			# 工具类<br>│  │  wildcard.go		# 泛解析域名判断<br>│  ├─device		<br>│  │      device.go		# 获取网卡信息,初始化 pcap<br>│  │      struct.go<br>│  ├─dns<br>│  │      ns.go			# NS 记录<br>│  │      ns_test.go<br>│  ├─gologger<br>│  │      gologger.go	# 日志<br>│  └─options<br>│          options.go	# 配置信息及相关方法<br>└─runner<br>    │  recv.go			# 捕获数据包并获取其中的答案记录<br>    │  result.go		# 结果相关<br>    │  retry.go			# 超时重置机制<br>    │  runner.go		# 枚举主函数<br>    │  send.go			# 使用 gopacket 发送自定义的 DSN 数据包<br>    │  testspeed.go		# 测试本地网卡的最大发送速度<br>    │  wildcard.go		# 泛解析过滤<br>    ├─outputter			# 输出相关<br>    ├─processbar		# 过程(成功,失败...)<br>    ├─result			# 结果结构体<br>    └─statusdb			# 使用 sync.Map 实现一个内存简易读写数据库<br></code></pre></td></tr></table></figure>
+
+<h2 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h2><p>枚举模块大致流程：</p>
+<ol>
+<li>根据根域名及前缀拼接获取总子域名</li>
+<li>通过请求域名然后捕获数据包提取本机的网卡信息</li>
+<li>启动接收线程 ，启动发送线程 ，启动输出线程</li>
+<li>向发送线程中传入总子域名目标</li>
+<li>发送完成后启动重试机制的线程</li>
+<li>然后就是一个死的 <code>for</code> 循环 + <code>select...case</code>，定时检测目标是否检测完成</li>
+<li>检测完成，退出各个线程，关闭各通道</li>
+</ol>
+<p><code>enum.go</code>：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// 获取网卡配置</span><br>opt.EtherInfo = options.GetDeviceConfig()<br>ctx := context.Background()<br><span class="hljs-comment">// 创建一个 runner</span><br>r, err := runner.New(opt)<br><span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>    gologger.Fatalf(<span class="hljs-string">&quot;%s\n&quot;</span>, err.Error())<br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span><br>&#125;<br><span class="hljs-comment">// 启动枚举</span><br>r.RunEnumeration(ctx)<br>r.Close()<br></code></pre></td></tr></table></figure>
+
+<p>先看下获取网卡配置：</p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/202309162132121.png?imageSlim" srcset="/img/loading.gif" lazyload alt="image-20230916213233036"></p>
+<p>主要是 <code>device.AutoGetDevices()</code> ：</p>
+<p>这个主要就是去使用 <code>net.LookupHost(domain)</code> 发起一个 DNS 请求，然后抓网卡包获取 DNS 数据包且问题为 <code>domain</code> 的，然后从它的 <code>Ethernet </code> 获取信息。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">AutoGetDevices</span><span class="hljs-params">()</span></span> *EtherTable &#123;<br>	domain := core.RandomStr(<span class="hljs-number">4</span>) + <span class="hljs-string">&quot;.i.hacking8.com&quot;</span><br>	signal := <span class="hljs-built_in">make</span>(<span class="hljs-keyword">chan</span> *EtherTable)<br>	<span class="hljs-comment">// 获取所有设备</span><br>	devices, err := pcap.FindAllDevs()<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		gologger.Fatalf(<span class="hljs-string">&quot;获取网络设备失败:%s\n&quot;</span>, err.Error())<br>	&#125;<br>	data := <span class="hljs-built_in">make</span>(<span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]net.IP)<br>	keys := []<span class="hljs-type">string</span>&#123;&#125;<br>	<span class="hljs-comment">// 获取 ipv4 且不是回环地址的设备名称</span><br>	<span class="hljs-keyword">for</span> _, d := <span class="hljs-keyword">range</span> devices &#123;<br>		<span class="hljs-keyword">for</span> _, address := <span class="hljs-keyword">range</span> d.Addresses &#123;<br>			ip := address.IP<br>			<span class="hljs-keyword">if</span> ip.To4() != <span class="hljs-literal">nil</span> &amp;&amp; !ip.IsLoopback() &#123;<br>				data[d.Name] = ip<br>				keys = <span class="hljs-built_in">append</span>(keys, d.Name)<br>			&#125;<br>		&#125;<br>	&#125;<br>	ctx := context.Background()<br>	<span class="hljs-comment">// 在初始上下文的基础上创建一个有取消功能的上下文</span><br>	ctx, cancel := context.WithCancel(ctx)<br>	<span class="hljs-keyword">for</span> _, drviceName := <span class="hljs-keyword">range</span> keys &#123;<br>		<span class="hljs-keyword">go</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(drviceName <span class="hljs-type">string</span>, domain <span class="hljs-type">string</span>, ctx context.Context)</span></span> &#123;<br>			<span class="hljs-keyword">var</span> (<br>				snapshot_len <span class="hljs-type">int32</span>         = <span class="hljs-number">1024</span><br>				promiscuous  <span class="hljs-type">bool</span>          = <span class="hljs-literal">false</span><br>				timeout      time.Duration = <span class="hljs-number">-1</span> * time.Second<br>				handle       *pcap.Handle<br>			)<br>			<span class="hljs-keyword">var</span> err <span class="hljs-type">error</span><br>			<span class="hljs-comment">// 使用 pcap.OpenLive 打开设备的抓包会话</span><br>			handle, err = pcap.OpenLive(<br>				drviceName,   <span class="hljs-comment">// 设备名</span><br>				snapshot_len, <span class="hljs-comment">// 捕获数据包的最大长度</span><br>				promiscuous,  <span class="hljs-comment">// 不启用混杂模式 ( 只要发给自己的数据包 )</span><br>				timeout,      <span class="hljs-comment">// 超时机制, -1 则一直等待重试</span><br>			)<br>			<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>				gologger.Errorf(<span class="hljs-string">&quot;pcap打开失败:%s\n&quot;</span>, err.Error())<br>				<span class="hljs-keyword">return</span><br>			&#125;<br>			<span class="hljs-keyword">defer</span> handle.Close()<br>			<span class="hljs-comment">// Use the handle as a packet source to process all packets</span><br>			<span class="hljs-comment">// 创建一个数据包源，用于处理所有捕获到的数据包</span><br>			packetSource := gopacket.NewPacketSource(handle, handle.LinkType())<br>			<span class="hljs-keyword">for</span> &#123;<br>				<span class="hljs-keyword">select</span> &#123;<br>				<span class="hljs-keyword">case</span> &lt;-ctx.Done():<br>					<span class="hljs-keyword">return</span><br>				<span class="hljs-keyword">default</span>:<br>					<span class="hljs-comment">// 获取一个数据包</span><br>					packet, err := packetSource.NextPacket()<br>					gologger.Printf(<span class="hljs-string">&quot;.&quot;</span>)<br>					<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>						<span class="hljs-keyword">continue</span><br>					&#125;<br>					<span class="hljs-comment">// 检查数据包是否包含 DNS 层</span><br>					<span class="hljs-keyword">if</span> dnsLayer := packet.Layer(layers.LayerTypeDNS); dnsLayer != <span class="hljs-literal">nil</span> &#123;<br>						dns, _ := dnsLayer.(*layers.DNS)<br>						<span class="hljs-comment">// 判断是否为应答报文</span><br>						<span class="hljs-keyword">if</span> !dns.QR &#123;<br>							<span class="hljs-keyword">continue</span><br>						&#125;<br>						<span class="hljs-keyword">for</span> _, v := <span class="hljs-keyword">range</span> dns.Questions &#123;<br>							<span class="hljs-keyword">if</span> <span class="hljs-type">string</span>(v.Name) == domain &#123;<br>								ethLayer := packet.Layer(layers.LayerTypeEthernet)<br>								<span class="hljs-keyword">if</span> ethLayer != <span class="hljs-literal">nil</span> &#123;<br>									eth := ethLayer.(*layers.Ethernet)<br>									<span class="hljs-comment">// 获取信息</span><br>									etherTable := EtherTable&#123;<br>										SrcIp:  data[drviceName],<br>										Device: drviceName,<br>										SrcMac: SelfMac(eth.DstMAC),<br>										DstMac: SelfMac(eth.SrcMAC),<br>									&#125;<br>									signal &lt;- &amp;etherTable<br>									<span class="hljs-keyword">return</span><br>								&#125;<br>							&#125;<br>						&#125;<br>					&#125;<br>				&#125;<br>			&#125;<br>		&#125;(drviceName, domain, ctx)<br>	&#125;<br>	<span class="hljs-keyword">for</span> &#123;<br>		<span class="hljs-keyword">select</span> &#123;<br>		<span class="hljs-comment">// 获取配置信息后退出协程</span><br>		<span class="hljs-keyword">case</span> c := &lt;-signal:<br>			cancel()<br>			fmt.Print(<span class="hljs-string">&quot;\n&quot;</span>)<br>			<span class="hljs-keyword">return</span> c<br>		<span class="hljs-keyword">default</span>:<br>			<span class="hljs-comment">// 发起 DNS 请求, 从数据包中获取硬件信息</span><br>			_, _ = net.LookupHost(domain)<br>			time.Sleep(time.Second * <span class="hljs-number">1</span>)<br>		&#125;<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><code>runner.New(opt)</code>：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">New</span><span class="hljs-params">(opt *options.Options)</span></span> (*runner, <span class="hljs-type">error</span>) &#123;<br>	<span class="hljs-keyword">var</span> err <span class="hljs-type">error</span><br>	version := pcap.Version()<br>	r := <span class="hljs-built_in">new</span>(runner)<br>	gologger.Infof(version + <span class="hljs-string">&quot;\n&quot;</span>)<br>	r.options = opt<br>	r.hm = statusdb.CreateMemoryDB()<br>	gologger.Infof(<span class="hljs-string">&quot;Default DNS:%s\n&quot;</span>, core.SliceToString(opt.Resolvers))<br>	<span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(opt.SpecialResolvers) &gt; <span class="hljs-number">0</span> &#123;<br>		<span class="hljs-keyword">var</span> keys []<span class="hljs-type">string</span><br>		<span class="hljs-keyword">for</span> k, _ := <span class="hljs-keyword">range</span> opt.SpecialResolvers &#123;<br>			keys = <span class="hljs-built_in">append</span>(keys, k)<br>		&#125;<br>		gologger.Infof(<span class="hljs-string">&quot;Special DNS:%s\n&quot;</span>, core.SliceToString(keys))<br>	&#125;<br>	<span class="hljs-comment">// 打开 Pcap 捕获数据包</span><br>	r.handle, err = device.PcapInit(opt.EtherInfo.Device)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err<br>	&#125;<br>	<span class="hljs-comment">// 根据发包总数和 timeout 时间来分配每秒速度</span><br>	allPacket := opt.DomainTotal<br>	calcLimit := <span class="hljs-type">float64</span>(allPacket/opt.TimeOut) * <span class="hljs-number">0.85</span><br>	<span class="hljs-keyword">if</span> calcLimit &lt; <span class="hljs-number">5000</span> &#123;<br>		calcLimit = <span class="hljs-number">5000</span><br>	&#125;<br>	limit := <span class="hljs-type">int</span>(math.Min(calcLimit, <span class="hljs-type">float64</span>(opt.Rate)))<br>	<span class="hljs-comment">// 限制单位时间内允许通过的请求数目</span><br>	r.limit = ratelimit.New(limit)<br>	gologger.Infof(<span class="hljs-string">&quot;Domain Count:%d\n&quot;</span>, r.options.DomainTotal)<br>	gologger.Infof(<span class="hljs-string">&quot;Rate:%dpps\n&quot;</span>, limit)<br><br>	r.sender = <span class="hljs-built_in">make</span>(<span class="hljs-keyword">chan</span> <span class="hljs-type">string</span>, <span class="hljs-number">99</span>)        <span class="hljs-comment">// 协程发送缓冲</span><br>	r.recver = <span class="hljs-built_in">make</span>(<span class="hljs-keyword">chan</span> result.Result, <span class="hljs-number">99</span>) <span class="hljs-comment">// 协程接收缓冲</span><br>	<span class="hljs-comment">// 获取一个空闲的端口</span><br>	freePort, err := freeport.GetFreePort()<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err<br>	&#125;<br>	<span class="hljs-comment">// 获取 layers 类型</span><br>	r.dnsType, err = options.DnsType(opt.DnsType)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err<br>	&#125;<br>	r.freeport = freePort<br>	gologger.Infof(<span class="hljs-string">&quot;FreePort:%d\n&quot;</span>, freePort)<br>	r.dnsid = <span class="hljs-number">0x2021</span> <span class="hljs-comment">// set dnsid 65500</span><br>	r.maxRetry = opt.Retry<br>	r.timeout = <span class="hljs-type">int64</span>(opt.TimeOut)<br>	r.fisrtloadChanel = <span class="hljs-built_in">make</span>(<span class="hljs-keyword">chan</span> <span class="hljs-type">string</span>)<br>	r.startTime = time.Now()<br>	<span class="hljs-keyword">return</span> r, <span class="hljs-literal">nil</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>然后就是一个 <code>RunEnumeration</code>：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *runner)</span></span> RunEnumeration(ctx context.Context) &#123;<br>	ctx, cancel := context.WithCancel(ctx)<br>	<span class="hljs-keyword">defer</span> cancel()<br>	<span class="hljs-keyword">go</span> r.recvChanel(ctx) <span class="hljs-comment">// 启动接收线程</span><br>	<span class="hljs-keyword">go</span> r.sendCycle()     <span class="hljs-comment">// 启动发送线程</span><br>	<span class="hljs-keyword">go</span> r.handleResult()  <span class="hljs-comment">// 处理结果，打印输出</span><br>	<span class="hljs-keyword">go</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> &#123;<br>		<span class="hljs-comment">// 向发送线程中传入目标域名</span><br>		<span class="hljs-keyword">for</span> domain := <span class="hljs-keyword">range</span> r.options.Domain &#123;<br>			r.sender &lt;- domain<br>		&#125;<br>		r.fisrtloadChanel &lt;- <span class="hljs-string">&quot;ok&quot;</span><br>	&#125;()<br>	<span class="hljs-keyword">var</span> isLoadOver <span class="hljs-type">bool</span> = <span class="hljs-literal">false</span><br>	<span class="hljs-comment">// 1s 定时器</span><br>	t := time.NewTicker(<span class="hljs-number">1</span> * time.Second)<br>	<span class="hljs-keyword">defer</span> t.Stop()<br>	<span class="hljs-comment">// 等待协程运行完成</span><br>	<span class="hljs-keyword">for</span> &#123;<br>		<span class="hljs-keyword">select</span> &#123;<br>		<span class="hljs-comment">// 每秒都发送一次, 判断是否完成</span><br>        <span class="hljs-comment">// 完成之后 return 出 for 循环, defer cancel() 退出接收协程 </span><br>		<span class="hljs-keyword">case</span> &lt;-t.C:<br>			r.printStatus()<br>			<span class="hljs-keyword">if</span> isLoadOver &#123;<br>				<span class="hljs-keyword">if</span> r.hm.Length() &lt;= <span class="hljs-number">0</span> &#123;<br>					gologger.Printf(<span class="hljs-string">&quot;\n&quot;</span>)<br>					gologger.Infof(<span class="hljs-string">&quot;扫描完毕&quot;</span>)<br>					<span class="hljs-keyword">return</span><br>				&#125;<br>			&#125;<br>		<span class="hljs-comment">// 目标域名发送完成后就开始进行重试测试</span><br>		<span class="hljs-keyword">case</span> &lt;-r.fisrtloadChanel:<br>			<span class="hljs-keyword">go</span> r.retry(ctx)<br>			isLoadOver = <span class="hljs-literal">true</span><br>		<span class="hljs-comment">// 程序结束</span><br>		<span class="hljs-keyword">case</span> &lt;-ctx.Done():<br>			<span class="hljs-keyword">return</span><br>		&#125;<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p> <code>sendCycle() </code>，</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *runner)</span></span> sendCycle() &#123;<br>	<span class="hljs-keyword">for</span> domain := <span class="hljs-keyword">range</span> r.sender &#123;<br>		<span class="hljs-comment">// 启动速率限制</span><br>		r.limit.Take()<br>		<span class="hljs-comment">// 判断是否为重试的目标</span><br>		v, ok := r.hm.Get(domain)<br>		<span class="hljs-keyword">if</span> !ok &#123;<br>			v = statusdb.Item&#123;<br>				Domain:      domain,<br>                <span class="hljs-comment">// 获取一个随机的 DNS 服务器地址, 或者根据域名获取特殊的 DNS 服务器地址</span><br>				Dns:         r.choseDns(domain),<br>				Time:        time.Now(),<br>				Retry:       <span class="hljs-number">0</span>,<br>				DomainLevel: <span class="hljs-number">0</span>,<br>			&#125;<br>			r.hm.Add(domain, v)<br>		&#125; <span class="hljs-keyword">else</span> &#123;<br>			<span class="hljs-comment">// 重试次数 +1</span><br>			v.Retry += <span class="hljs-number">1</span><br>			v.Time = time.Now()<br>			v.Dns = r.choseDns(domain)<br>			r.hm.Set(domain, v)<br>		&#125;<br>		<span class="hljs-comment">// 发送操作</span><br>		send(domain, v.Dns, r.options.EtherInfo, r.dnsid, <span class="hljs-type">uint16</span>(r.freeport), r.handle, r.dnsType)<br>		<span class="hljs-comment">// 并发安全的计数器 +1</span><br>		atomic.AddUint64(&amp;r.sendIndex, <span class="hljs-number">1</span>)<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>看一下 <code>send</code> 使用<code>pacp</code> 网卡进行发包：</p>
+<p>其实就是模拟一个 DNS 协议的包，然后在 DNS 的 ID 字段携带一个标识，这个就是用来区分是否为 Ksubdomain 发送的请求包。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// send 使用 gopacket 去发送数据包</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">send</span><span class="hljs-params">(domain <span class="hljs-type">string</span>, dnsname <span class="hljs-type">string</span>, ether *device.EtherTable, dnsid <span class="hljs-type">uint16</span>, freeport <span class="hljs-type">uint16</span>, handle *pcap.Handle, dnsType layers.DNSType)</span></span> &#123;<br>    <span class="hljs-comment">// dns 服务器地址</span><br>	DstIp := net.ParseIP(dnsname).To4()<br>	eth := &amp;layers.Ethernet&#123;<br>		SrcMAC:       ether.SrcMac.HardwareAddr(),<br>		DstMAC:       ether.DstMac.HardwareAddr(),<br>		EthernetType: layers.EthernetTypeIPv4,<br>	&#125;<br>	<span class="hljs-comment">// Our IPv4 header</span><br>	ip := &amp;layers.IPv4&#123;<br>		Version:    <span class="hljs-number">4</span>,<br>		IHL:        <span class="hljs-number">5</span>,<br>		TOS:        <span class="hljs-number">0</span>,<br>		Length:     <span class="hljs-number">0</span>, <span class="hljs-comment">// FIX</span><br>		Id:         <span class="hljs-number">0</span>,<br>		Flags:      layers.IPv4DontFragment,<br>		FragOffset: <span class="hljs-number">0</span>,<br>		TTL:        <span class="hljs-number">255</span>,<br>		Protocol:   layers.IPProtocolUDP,<br>		Checksum:   <span class="hljs-number">0</span>,<br>		SrcIP:      ether.SrcIp,<br>		DstIP:      DstIp,<br>	&#125;<br>	<span class="hljs-comment">// Our UDP header</span><br>	udp := &amp;layers.UDP&#123;<br>		SrcPort: layers.UDPPort(freeport),<br>		DstPort: layers.UDPPort(<span class="hljs-number">53</span>),<br>	&#125;<br>	<span class="hljs-comment">// Our DNS header</span><br>	dns := &amp;layers.DNS&#123;<br>        <span class="hljs-comment">// Ksubdomain 的标识 0x2021 </span><br>		ID:      dnsid,<br>		QDCount: <span class="hljs-number">1</span>,<br>		RD:      <span class="hljs-literal">true</span>, <span class="hljs-comment">//递归查询标识</span><br>	&#125;<br>	dns.Questions = <span class="hljs-built_in">append</span>(dns.Questions,<br>		layers.DNSQuestion&#123;<br>			Name:  []<span class="hljs-type">byte</span>(domain),<br>			Type:  dnsType,<br>			Class: layers.DNSClassIN,<br>		&#125;)<br>	<span class="hljs-comment">// Our UDP header</span><br>	_ = udp.SetNetworkLayerForChecksum(ip)<br>	buf := gopacket.NewSerializeBuffer()<br>    <span class="hljs-comment">// 把所有层序列化到缓冲区中</span><br>	err := gopacket.SerializeLayers(<br>		buf,<br>		gopacket.SerializeOptions&#123;<br>			ComputeChecksums: <span class="hljs-literal">true</span>, <span class="hljs-comment">// automatically compute checksums</span><br>			FixLengths:       <span class="hljs-literal">true</span>,<br>		&#125;,<br>		eth, ip, udp, dns,<br>	)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		gologger.Warningf(<span class="hljs-string">&quot;SerializeLayers faild:%s\n&quot;</span>, err.Error())<br>	&#125;<br>    <span class="hljs-comment">// 发送</span><br>	err = handle.WritePacketData(buf.Bytes())<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		gologger.Warningf(<span class="hljs-string">&quot;WritePacketDate error:%s\n&quot;</span>, err.Error())<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>看一下接收操作：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *runner)</span></span> recvChanel(ctx context.Context) <span class="hljs-type">error</span> &#123;<br>	<span class="hljs-keyword">var</span> (<br>		snapshotLen = <span class="hljs-number">65536</span><br>		timeout     = <span class="hljs-number">-1</span> * time.Second<br>		err         <span class="hljs-type">error</span><br>	)<br>	<span class="hljs-comment">// 创建一个 pcap 句柄</span><br>	inactive, err := pcap.NewInactiveHandle(r.options.EtherInfo.Device)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> err<br>	&#125;<br>	err = inactive.SetSnapLen(snapshotLen)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> err<br>	&#125;<br>	<span class="hljs-keyword">defer</span> inactive.CleanUp()<br>	<span class="hljs-keyword">if</span> err = inactive.SetTimeout(timeout); err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> err<br>	&#125;<br>	err = inactive.SetImmediateMode(<span class="hljs-literal">true</span>)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> err<br>	&#125;<br>	<span class="hljs-comment">// 启动开始监听抓包</span><br>	handle, err := inactive.Activate()<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> err<br>	&#125;<br>	<span class="hljs-keyword">defer</span> handle.Close()<br>	<span class="hljs-comment">// 设置过滤器</span><br>	err = handle.SetBPFFilter(fmt.Sprintf(<span class="hljs-string">&quot;udp and src port 53 and dst port %d&quot;</span>, r.freeport))<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> errors.New(fmt.Sprintf(<span class="hljs-string">&quot;SetBPFFilter Faild:%s&quot;</span>, err.Error()))<br>	&#125;<br><br>	<span class="hljs-comment">// Listening</span><br><br>	<span class="hljs-keyword">var</span> udp layers.UDP<br>	<span class="hljs-keyword">var</span> dns layers.DNS<br>	<span class="hljs-keyword">var</span> eth layers.Ethernet<br>	<span class="hljs-keyword">var</span> ipv4 layers.IPv4<br>	<span class="hljs-keyword">var</span> ipv6 layers.IPv6<br>	<span class="hljs-comment">// 解码器</span><br>	parser := gopacket.NewDecodingLayerParser(<br>		layers.LayerTypeEthernet, &amp;eth, &amp;ipv4, &amp;ipv6, &amp;udp, &amp;dns)<br><br>	<span class="hljs-keyword">var</span> data []<span class="hljs-type">byte</span><br>	<span class="hljs-keyword">var</span> decoded []gopacket.LayerType<br>	<span class="hljs-keyword">for</span> &#123;<br>		<span class="hljs-keyword">select</span> &#123;<br>		<span class="hljs-keyword">case</span> &lt;-ctx.Done():<br>			<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span><br>		<span class="hljs-keyword">default</span>:<br>			data, _, err = handle.ReadPacketData()<br>			<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>				<span class="hljs-keyword">continue</span><br>			&#125;<br>			err = parser.DecodeLayers(data, &amp;decoded)<br>			<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>				<span class="hljs-keyword">continue</span><br>			&#125;<br>			<span class="hljs-comment">// 是否为应答报文</span><br>			<span class="hljs-keyword">if</span> !dns.QR &#123;<br>				<span class="hljs-keyword">continue</span><br>			&#125;<br>			<span class="hljs-comment">// 是否为 Ksubdomain 发送的数据包</span><br>			<span class="hljs-keyword">if</span> dns.ID != r.dnsid &#123;<br>				<span class="hljs-keyword">continue</span><br>			&#125;<br>			<span class="hljs-comment">// DNS 请求成功计数器 +1</span><br>			atomic.AddUint64(&amp;r.recvIndex, <span class="hljs-number">1</span>)<br>			<span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(dns.Questions) == <span class="hljs-number">0</span> &#123;<br>				<span class="hljs-keyword">continue</span><br>			&#125;<br>			<span class="hljs-comment">// 获取可解析的子域名</span><br>			subdomain := <span class="hljs-type">string</span>(dns.Questions[<span class="hljs-number">0</span>].Name)<br>			<span class="hljs-comment">// 从 Map 中删除, 这里就证明了 DNS 请求成功, 但不能确定是否可解析</span><br>			r.hm.Del(subdomain)<br>			<span class="hljs-comment">// 看是否有答案返回, 有说明是可解析的, 也就是一个存在的域名</span><br>			<span class="hljs-keyword">if</span> dns.ANCount &gt; <span class="hljs-number">0</span> &#123;<br>				<span class="hljs-comment">// 成功的计数器 +1</span><br>				atomic.AddUint64(&amp;r.successIndex, <span class="hljs-number">1</span>)<br>				<span class="hljs-keyword">var</span> answers []<span class="hljs-type">string</span><br>				<span class="hljs-keyword">for</span> _, v := <span class="hljs-keyword">range</span> dns.Answers &#123;<br>					<span class="hljs-comment">// 获取答案记录值, A,AAA...</span><br>					answer, err := dnsRecord2String(v)<br>					<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>						<span class="hljs-keyword">continue</span><br>					&#125;<br>					answers = <span class="hljs-built_in">append</span>(answers, answer)<br>				&#125;<br>				<span class="hljs-comment">// 放入结果通道</span><br>				r.recver &lt;- result.Result&#123;<br>					Subdomain: subdomain,<br>					Answers:   answers,<br>				&#125;<br>			&#125;<br>		&#125;<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这里抓下包，这个 ID 就是 “无状态” 模式下，确定是 Ksubdomain 的方法：</p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/202309162227404.png?imageSlim" srcset="/img/loading.gif" lazyload alt="image-20230916222710286"></p>
+<p>再看一下重试机制：</p>
+<p>当目标域名发送完成后就开启重试协程：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *runner)</span></span> retry(ctx context.Context) &#123;<br>	t := time.NewTicker(<span class="hljs-number">1</span> * time.Second)<br>	<span class="hljs-keyword">defer</span> t.Stop()<br>	<span class="hljs-keyword">for</span> &#123;<br>		<span class="hljs-keyword">select</span> &#123;<br>		<span class="hljs-keyword">case</span> &lt;-ctx.Done():<br>			<span class="hljs-keyword">return</span><br>		<span class="hljs-keyword">case</span> &lt;-t.C:<br>			now := time.Now()<br>			r.hm.Scan(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(key <span class="hljs-type">string</span>, v statusdb.Item)</span></span> <span class="hljs-type">error</span> &#123;<br>                <span class="hljs-comment">// 当前重试次数 &gt; 0 且 当前重试次数 &gt; 最大重试次数</span><br>				<span class="hljs-keyword">if</span> r.maxRetry &gt; <span class="hljs-number">0</span> &amp;&amp; v.Retry &gt; r.maxRetry &#123;<br>					r.hm.Del(key)<br>					atomic.AddUint64(&amp;r.faildIndex, <span class="hljs-number">1</span>)<br>					<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span><br>				&#125;<br>                <span class="hljs-comment">// 数据包发送的时间和当前时间是否超过指定的超时时间</span><br>				<span class="hljs-keyword">if</span> <span class="hljs-type">int64</span>(now.Sub(v.Time)) &gt;= r.timeout &#123;<br>					<span class="hljs-comment">// 重新发送</span><br>					r.sender &lt;- key<br>				&#125;<br>				<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span><br>			&#125;)<br>		&#125;<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这个 Scan 就是去遍历每一个键值对，然后去进行重试方面的测试：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *StatusDb)</span></span> Scan(f <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(key <span class="hljs-type">string</span>, value Item)</span></span> <span class="hljs-type">error</span>) &#123;<br>	r.Items.Range(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(key, value <span class="hljs-keyword">interface</span>&#123;&#125;)</span></span> <span class="hljs-type">bool</span> &#123;<br>		k := key.(<span class="hljs-type">string</span>)<br>		item := value.(Item)<br>		f(k, item)<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">true</span><br>	&#125;)<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>然后就是 <code>defer cancel()</code>，关闭各种管道啥的</p>
+<img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/202309162246765.png?imageSlim" srcset="/img/loading.gif" lazyload alt="image-20230916224651715" style="zoom:67%;" />
+
+<h2 id="学习总结"><a href="#学习总结" class="headerlink" title="学习总结"></a>学习总结</h2><p>大概看了一遍代码后学习到了不少东西：</p>
+<ul>
+<li><code>strings.Builder </code> 构建字符串</li>
+<li><code>Printf</code> 中使用 <code>\r</code> 实现类动态更新</li>
+<li><code>//go:embed file</code> 内嵌文件到变量中</li>
+<li><code>sync.Map</code> 的使用</li>
+<li><code>atomic.AddUint64(&amp;r.recvIndex, 1)</code> 并发安全的计数器操作</li>
+<li>多个协程之间使用管道进行数据传递且通过 <code>死循环 + 多路复用 + 上下文 + time.NewTicker</code> 控制协程退出</li>
+</ul>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://paper.seebug.org/1325/">ksubdomain 无状态域名爆破工具</a></li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%8A%80%E6%9C%AF/" class="category-chain-item">技术</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/" class="print-no-link">#源码学习</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>ksubdomain 源码学习</div>
+      <div>https://liancccc.github.io/2023/09/16/技术/源码学习/ksubdomain/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>守心</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年9月16日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/11/15/%E6%8A%80%E6%9C%AF/%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/CVE-2023-5360/" title="CVE-2023-5360 WordPress Royal Elementor 任意文件上传">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">CVE-2023-5360 WordPress Royal Elementor 任意文件上传</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/09/15/%E6%8A%80%E6%9C%AF/%E5%BC%80%E5%8F%91/GoPacket/" title="Golang GoPacket 库简单使用">
+                        <span class="hidden-mobile">Golang GoPacket 库简单使用</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
