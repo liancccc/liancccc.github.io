@@ -19,24 +19,31 @@
   <meta name="author" content="守心">
   <meta name="keywords" content="">
   
-    <meta name="description" content="思维导图 推荐帆书 app ~   笔记洞察核心诉求，不仅仅是对方的，还有自己的，我给对方发消息的核心诉求是什么？现在回想，其实很多时候，我给好朋友发消息的时候，我可能都不知道自己为什么要发消息。可以把要说的话写在纸上，先自己能够了解自己的核心诉求是什么了，然后再进行修改再和对方说。 评论里看到了一句感觉很好的话：  交流的目的是为传达爱愿。对工作的爱愿，对人的爱愿，对物的爱愿，对项目的爱愿。不要">
+    <meta name="description" content="记录一下写的关于 POC 监控的相关工具。到现在写了 3 个版本了，后续大概就是在第三个版本基础上去做。 因为工作需要去找网上的 POC 然后写插件，所以学校事情完成后就开始着手开发。 当时 Github 上的确有相关 CVE POC 监控的项目，但都是 Github 搜索关键词，对于 nuclei、msf、wy876 这种基于 pr 和 commit 更新好像是没有发现的，所以只能自己写了。 2">
 <meta property="og:type" content="article">
-<meta property="og:title" content="《 我有点儿胆怯，但想和你好好说话 》">
-<meta property="og:url" content="https://liancccc.github.io/2025/06/15/%E7%94%9F%E6%B4%BB/%E7%B2%BE%E7%A5%9E%E9%A3%9F%E7%B2%AE/%E6%88%91%E6%9C%89%E7%82%B9%E5%84%BF%E8%83%86%E6%80%AF%EF%BC%8C%E4%BD%86%E6%83%B3%E5%92%8C%E4%BD%A0%E5%A5%BD%E5%A5%BD%E8%AF%B4%E8%AF%9D/index.html">
+<meta property="og:title" content="POC监控历程">
+<meta property="og:url" content="https://liancccc.github.io/2025/07/12/%E6%8A%80%E6%9C%AF/%E5%85%B6%E4%BB%96/%E6%BC%8F%E6%B4%9E%E7%9B%91%E6%8E%A7/index.html">
 <meta property="og:site_name" content="liancccc&#39;s blog">
-<meta property="og:description" content="思维导图 推荐帆书 app ~   笔记洞察核心诉求，不仅仅是对方的，还有自己的，我给对方发消息的核心诉求是什么？现在回想，其实很多时候，我给好朋友发消息的时候，我可能都不知道自己为什么要发消息。可以把要说的话写在纸上，先自己能够了解自己的核心诉求是什么了，然后再进行修改再和对方说。 评论里看到了一句感觉很好的话：  交流的目的是为传达爱愿。对工作的爱愿，对人的爱愿，对物的爱愿，对项目的爱愿。不要">
+<meta property="og:description" content="记录一下写的关于 POC 监控的相关工具。到现在写了 3 个版本了，后续大概就是在第三个版本基础上去做。 因为工作需要去找网上的 POC 然后写插件，所以学校事情完成后就开始着手开发。 当时 Github 上的确有相关 CVE POC 监控的项目，但都是 Github 搜索关键词，对于 nuclei、msf、wy876 这种基于 pr 和 commit 更新好像是没有发现的，所以只能自己写了。 2">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/%E6%88%91%E6%9C%89%E7%82%B9%E5%84%BF%E8%83%86%E6%80%AF%EF%BC%8C%E4%BD%86%E6%83%B3%E5%92%8C%E4%BD%A0%E5%A5%BD%E5%A5%BD%E8%AF%B4%E8%AF%9D_1749972728018.jpg">
-<meta property="article:published_time" content="2025-06-15T14:25:09.000Z">
-<meta property="article:modified_time" content="2025-06-21T13:37:30.250Z">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20250712174824558.png?imageSlim">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20250712174900972.png?imageSlim">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20250712174942750.png?imageSlim">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20250712175412195.png?imageSlim">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20250712175521950.png?imageSlim">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20250712175533559.png?imageSlim">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20250712181453164.png?imageSlim">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20250712180816872.png?imageSlim">
+<meta property="article:published_time" content="2025-07-12T04:08:51.000Z">
+<meta property="article:modified_time" content="2025-07-12T10:17:50.435Z">
 <meta property="article:author" content="守心">
-<meta property="article:tag" content="精神食粮">
+<meta property="article:tag" content="其他">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/%E6%88%91%E6%9C%89%E7%82%B9%E5%84%BF%E8%83%86%E6%80%AF%EF%BC%8C%E4%BD%86%E6%83%B3%E5%92%8C%E4%BD%A0%E5%A5%BD%E5%A5%BD%E8%AF%B4%E8%AF%9D_1749972728018.jpg">
+<meta name="twitter:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20250712174824558.png?imageSlim">
   
   
   
-  <title>《 我有点儿胆怯，但想和你好好说话 》 - liancccc&#39;s blog</title>
+  <title>POC监控历程 - liancccc&#39;s blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -202,7 +209,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="《 我有点儿胆怯，但想和你好好说话 》"></span>
+            <span id="subtitle" data-typed-text="POC监控历程"></span>
           
         </div>
 
@@ -213,8 +220,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2025-06-15 22:25" pubdate>
-          2025年6月15日 晚上
+        <time datetime="2025-07-12 12:08" pubdate>
+          2025年7月12日 中午
         </time>
       </span>
     
@@ -225,7 +232,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          188 字
+          677 字
         
       </span>
     
@@ -236,7 +243,7 @@
         
         
         
-          2 分钟
+          6 分钟
         
       </span>
     
@@ -273,21 +280,37 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">《 我有点儿胆怯，但想和你好好说话 》</h1>
+            <h1 id="seo-header">POC监控历程</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="思维导图"><a href="#思维导图" class="headerlink" title="思维导图"></a>思维导图</h2><blockquote>
-<p>推荐帆书 app ~</p>
-</blockquote>
-<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/%E6%88%91%E6%9C%89%E7%82%B9%E5%84%BF%E8%83%86%E6%80%AF%EF%BC%8C%E4%BD%86%E6%83%B3%E5%92%8C%E4%BD%A0%E5%A5%BD%E5%A5%BD%E8%AF%B4%E8%AF%9D_1749972728018.jpg" srcset="/img/loading.gif" lazyload alt="我有点儿胆怯，但想和你好好说话_1749972728018"></p>
-<h2 id="笔记"><a href="#笔记" class="headerlink" title="笔记"></a>笔记</h2><p>洞察核心诉求，不仅仅是对方的，还有自己的，我给对方发消息的核心诉求是什么？现在回想，其实很多时候，我给好朋友发消息的时候，我可能都不知道自己为什么要发消息。可以把要说的话写在纸上，先自己能够了解自己的核心诉求是什么了，然后再进行修改再和对方说。</p>
-<p>评论里看到了一句感觉很好的话：</p>
-<ul>
-<li>交流的目的是为传达爱愿。对工作的爱愿，对人的爱愿，对物的爱愿，对项目的爱愿。不要忘记交流的目的是传达爱愿。</li>
-</ul>
-<p>共情式倾听</p>
+                <p>记录一下写的关于 POC 监控的相关工具。到现在写了 3 个版本了，后续大概就是在第三个版本基础上去做。</p>
+<p>因为工作需要去找网上的 POC 然后写插件，所以学校事情完成后就开始着手开发。</p>
+<p>当时 Github 上的确有相关 CVE POC 监控的项目，但都是 Github 搜索关键词，对于 nuclei、msf、wy876 这种基于 pr 和 commit 更新好像是没有发现的，所以只能自己写了。</p>
+<h2 id="2024-08"><a href="#2024-08" class="headerlink" title="2024-08"></a>2024-08</h2><p>Golang 开发，简单的爬虫配合 cel 表达式实现信息过滤，数据源比较全，还有 NVD 漏洞。</p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20250712174824558.png?imageSlim" srcset="/img/loading.gif" lazyload alt="image-20250712174824558"></p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20250712174900972.png?imageSlim" srcset="/img/loading.gif" lazyload alt="image-20250712174900972"></p>
+<p>直接用 Go 做的定时任务，可以在配置文件中修改。</p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20250712174942750.png?imageSlim" srcset="/img/loading.gif" lazyload alt="image-20250712174942750"></p>
+<h2 id="2024-11"><a href="#2024-11" class="headerlink" title="2024-11"></a>2024-11</h2><p>逻辑还是之前的逻辑，但是使用 Go Gin + Mysql + Vue 实现的开发，前后端分离。</p>
+<p>前端是基于 pure-admin-thin 后台项目管理系统为基础进行开发的，整体也算体验了一次 Golang 的 WEB 开发。</p>
+<p>也算是实操了一下 WEB 项目的架构，之前只是单独的 Gin 知识。</p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20250712175412195.png?imageSlim" srcset="/img/loading.gif" lazyload alt="image-20250712175412195"></p>
+<p>整体来讲就是这样：</p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20250712175521950.png?imageSlim" srcset="/img/loading.gif" lazyload alt="image-20250712175521950"></p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20250712175533559.png?imageSlim" srcset="/img/loading.gif" lazyload alt="image-20250712175533559"></p>
+<p>因为搭建原因弃用。</p>
+<p>之前服务器重置过一次，然后重新部署的时候发现有点太麻烦了，因为原本的任务和相关的过滤表达式都没有备份，重新添加太过麻烦了。所以在第三版之前使用的都是第一个版本。</p>
+<h2 id="2025-05"><a href="#2025-05" class="headerlink" title="2025-05"></a>2025-05</h2><p>因为发现其实一些博客、微信公众号是很多 POC 的来源，但是在第一个版本中其实并不太好添加，要在原本数据源监测模块添加逻辑，然后重新编译，没有办法打到简单方便的目的。</p>
+<p>所以这版本就直接用 Python 来写了，Python 爬虫 + Linux 的 Crontab 计划任务，想添加数据源加个脚本，加个计划任务就可以了。</p>
+<p>而且 Python 写这种爬虫比 Go 要好写多了，目前是把数据推送到钉钉还有另外一个 Github 的<a target="_blank" rel="noopener" href="https://lianccccc.github.io/">博客</a>上面，也存储有原始的 JSON 数据，方便后续写个 WEB 去更好的展示。</p>
+<p>并且还配合了 AI 替代了之前通过 cel 表达式来过滤无用信息的办法。</p>
+<p>DeepSeek 真的蛮划算的，一个月不到 10 块钱，hhhh</p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20250712181453164.png?imageSlim" srcset="/img/loading.gif" lazyload alt="image-20250712181453164"></p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20250712180816872.png?imageSlim" srcset="/img/loading.gif" lazyload alt="image-20250712180816872"></p>
+<h2 id="2025-07"><a href="#2025-07" class="headerlink" title="2025-07"></a>2025-07</h2><p>对 POC 监控没有什么改版，又单独写了一个 AI POC 转换的模块，和监测是分开的，监测到的可以用 AI 转换的 POC 就存储为指定格式，然后定时同步到 AI 转换扫描的机器上面去扫，目前看来是有效果的，只是和人是比不了的。</p>
+<p>后续就准备开始 WEB 的开发了</p>
 
                 
               </div>
@@ -306,7 +329,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/%E7%94%9F%E6%B4%BB/" class="category-chain-item">生活</a>
+  <a href="/categories/%E6%8A%80%E6%9C%AF/" class="category-chain-item">技术</a>
   
   
 
@@ -321,7 +344,7 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/%E7%B2%BE%E7%A5%9E%E9%A3%9F%E7%B2%AE/" class="print-no-link">#精神食粮</a>
+        <a href="/tags/%E5%85%B6%E4%BB%96/" class="print-no-link">#其他</a>
       
     </div>
   
@@ -333,8 +356,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>《 我有点儿胆怯，但想和你好好说话 》</div>
-      <div>https://liancccc.github.io/2025/06/15/生活/精神食粮/我有点儿胆怯，但想和你好好说话/</div>
+      <div>POC监控历程</div>
+      <div>https://liancccc.github.io/2025/07/12/技术/其他/漏洞监控/</div>
     </div>
     <div class="license-meta">
       
@@ -346,7 +369,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2025年6月15日</div>
+          <div>2025年7月12日</div>
         </div>
       
       
@@ -373,6 +396,23 @@
 
 
 
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/06/21/%E6%8A%80%E6%9C%AF/%E5%BC%80%E5%8F%91/%E5%BE%AE%E4%BF%A1%E5%85%AC%E4%BC%97%E5%8F%B7%E5%AE%9A%E6%97%B6%E7%9B%91%E6%8E%A7/" title="微信公众号定时监控">
+                        <span class="hidden-mobile">微信公众号定时监控</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
               
             </div>
 
