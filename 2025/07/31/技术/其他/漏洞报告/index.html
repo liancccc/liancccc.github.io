@@ -19,36 +19,28 @@
   <meta name="author" content="守心">
   <meta name="keywords" content="">
   
-    <meta property="og:type" content="article">
-<meta property="og:title" content="大觉禅寺">
-<meta property="og:url" content="https://liancccc.github.io/2025/02/08/%E7%94%9F%E6%B4%BB/%E6%BA%9C%E8%BE%BE/%E5%A4%A7%E8%A7%89%E7%A6%85%E5%AF%BA/index.html">
+    <meta name="description" content="在之前的 “CVE-2025-30406 CentreStack ViewState 反序列化漏洞分析” 说过有个硬编码的 API_KEY。 是国外的一个销售 CRM 平台：  因为没有上啥 SRC 就直接写邮件了：  对方已经修复放出来记录一下：   还是 CEO 的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="记录一下 通过邮件报告漏洞">
+<meta property="og:url" content="https://liancccc.github.io/2025/07/31/%E6%8A%80%E6%9C%AF/%E5%85%B6%E4%BB%96/%E6%BC%8F%E6%B4%9E%E6%8A%A5%E5%91%8A/index.html">
 <meta property="og:site_name" content="liancccc&#39;s blog">
+<meta property="og:description" content="在之前的 “CVE-2025-30406 CentreStack ViewState 反序列化漏洞分析” 说过有个硬编码的 API_KEY。 是国外的一个销售 CRM 平台：  因为没有上啥 SRC 就直接写邮件了：  对方已经修复放出来记录一下：   还是 CEO 的">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/1749373404604.jpg">
-<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/1749373404653.jpg">
-<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/1749373404645.jpg">
-<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/1749373404638.jpg">
-<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/1749373404630.jpg">
-<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/1749373404621.jpg">
-<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/1749373404613.jpg">
-<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/1749373404596.jpg">
-<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/1749373404587.jpg">
-<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/1749373404576.jpg">
-<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/1749373404565.jpg">
-<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/1749373404557.jpg">
-<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/1749373404551.jpg">
-<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/1749373404535.jpg">
-<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/1749373404523.jpg">
-<meta property="article:published_time" content="2025-02-08T14:25:09.000Z">
-<meta property="article:modified_time" content="2025-06-08T09:42:43.149Z">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20250731105415201.png">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20250731105529846.png">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20250731105603792.png">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20250731110002470.png">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20250731105754212.png">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20250731105620665.png">
+<meta property="article:published_time" content="2025-07-31T02:41:56.000Z">
+<meta property="article:modified_time" content="2025-07-31T03:04:39.135Z">
 <meta property="article:author" content="守心">
-<meta property="article:tag" content="溜达">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/1749373404604.jpg">
+<meta name="twitter:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20250731105415201.png">
   
   
   
-  <title>大觉禅寺 - liancccc&#39;s blog</title>
+  <title>记录一下 通过邮件报告漏洞 - liancccc&#39;s blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -214,7 +206,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="大觉禅寺"></span>
+            <span id="subtitle" data-typed-text="记录一下 通过邮件报告漏洞"></span>
           
         </div>
 
@@ -225,8 +217,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2025-02-08 22:25" pubdate>
-          2025年2月8日 晚上
+        <time datetime="2025-07-31 10:41" pubdate>
+          2025年7月31日 上午
         </time>
       </span>
     
@@ -237,7 +229,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          0 字
+          66 字
         
       </span>
     
@@ -285,26 +277,22 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">大觉禅寺</h1>
+            <h1 id="seo-header">记录一下 通过邮件报告漏洞</h1>
             
             
               <div class="markdown-body">
                 
-                <p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/1749373404604.jpg" srcset="/img/loading.gif" lazyload alt="1749373404604"></p>
-<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/1749373404653.jpg" srcset="/img/loading.gif" lazyload alt="1749373404653"></p>
-<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/1749373404645.jpg" srcset="/img/loading.gif" lazyload alt="1749373404645"></p>
-<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/1749373404638.jpg" srcset="/img/loading.gif" lazyload alt="1749373404638"></p>
-<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/1749373404630.jpg" srcset="/img/loading.gif" lazyload alt="1749373404630"></p>
-<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/1749373404621.jpg" srcset="/img/loading.gif" lazyload alt="1749373404621"></p>
-<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/1749373404613.jpg" srcset="/img/loading.gif" lazyload alt="1749373404613"></p>
-<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/1749373404596.jpg" srcset="/img/loading.gif" lazyload alt="1749373404596"></p>
-<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/1749373404587.jpg" srcset="/img/loading.gif" lazyload alt="1749373404587"></p>
-<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/1749373404576.jpg" srcset="/img/loading.gif" lazyload alt="1749373404576"></p>
-<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/1749373404565.jpg" srcset="/img/loading.gif" lazyload alt="1749373404565"></p>
-<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/1749373404557.jpg" srcset="/img/loading.gif" lazyload alt="1749373404557"></p>
-<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/1749373404551.jpg" srcset="/img/loading.gif" lazyload alt="1749373404551"></p>
-<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/1749373404535.jpg" srcset="/img/loading.gif" lazyload alt="1749373404535"></p>
-<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/1749373404523.jpg" srcset="/img/loading.gif" lazyload alt="1749373404523"></p>
+                <p>在之前的 “CVE-2025-30406 CentreStack ViewState 反序列化漏洞分析” 说过有个硬编码的 API_KEY。</p>
+<p>是国外的一个销售 CRM 平台：</p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20250731105415201.png" srcset="/img/loading.gif" lazyload alt="image-20250731105415201"></p>
+<p>因为没有上啥 SRC 就直接写邮件了：</p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20250731105529846.png" srcset="/img/loading.gif" lazyload alt="image-20250731105529846"></p>
+<p>对方已经修复放出来记录一下：</p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20250731105603792.png" srcset="/img/loading.gif" lazyload alt="image-20250731105603792"></p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20250731110002470.png" srcset="/img/loading.gif" lazyload alt="image-20250731110002470"></p>
+<p>还是 CEO 的</p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20250731105754212.png" srcset="/img/loading.gif" lazyload alt="image-20250731105754212"></p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20250731105620665.png" srcset="/img/loading.gif" lazyload alt="image-20250731105620665"></p>
 
                 
               </div>
@@ -323,7 +311,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/%E7%94%9F%E6%B4%BB/" class="category-chain-item">生活</a>
+  <a href="/categories/%E5%85%B6%E4%BB%96/" class="category-chain-item">其他</a>
   
   
 
@@ -335,13 +323,6 @@
     </div>
   
   
-    <div class="post-meta">
-      <i class="iconfont icon-tags"></i>
-      
-        <a href="/tags/%E6%BA%9C%E8%BE%BE/" class="print-no-link">#溜达</a>
-      
-    </div>
-  
 </div>
 
 
@@ -350,8 +331,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>大觉禅寺</div>
-      <div>https://liancccc.github.io/2025/02/08/生活/溜达/大觉禅寺/</div>
+      <div>记录一下 通过邮件报告漏洞</div>
+      <div>https://liancccc.github.io/2025/07/31/技术/其他/漏洞报告/</div>
     </div>
     <div class="license-meta">
       
@@ -363,7 +344,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2025年2月8日</div>
+          <div>2025年7月31日</div>
         </div>
       
       
@@ -395,18 +376,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2025/02/08/%E7%94%9F%E6%B4%BB/%E6%BA%9C%E8%BE%BE/%E5%9C%86%E6%98%8E%E5%9B%AD%E9%81%97%E5%9D%80%E5%85%AC%E5%9B%AD/" title="圆明园遗址公园">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">圆明园遗址公园</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2025/02/08/%E7%94%9F%E6%B4%BB/%E6%BA%9C%E8%BE%BE/%E6%99%AF%E5%B1%B1%E5%85%AC%E5%9B%AD/" title="景山公园">
-                        <span class="hidden-mobile">景山公园</span>
+                      <a href="/2025/07/17/%E6%8A%80%E6%9C%AF/%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/CVE-2025-53833/" title="CVE-2025-53833 LaRecipe 服务端模板注入漏洞">
+                        <span class="hidden-mobile">CVE-2025-53833 LaRecipe 服务端模板注入漏洞</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
