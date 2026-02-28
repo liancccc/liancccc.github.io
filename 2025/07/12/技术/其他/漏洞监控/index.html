@@ -19,12 +19,12 @@
   <meta name="author" content="守心">
   <meta name="keywords" content="">
   
-    <meta name="description" content="记录一下写的关于 POC 监控的相关工具。到现在写了 3 个版本了，后续大概就是在第三个版本基础上去做。 因为工作需要去找网上的 POC 然后写插件，所以学校事情完成后就开始着手开发。 当时 Github 上的确有相关 CVE POC 监控的项目，但都是 Github 搜索关键词，对于 nuclei、msf、wy876 这种基于 pr 和 commit 更新好像是没有发现的，所以只能自己写了。 2">
+    <meta name="description" content="前言从实习到毕业的主要工作其实都是做最新漏洞跟进，然后写利用工具，丰富漏洞库。 但是最新漏洞的来源多种多样，在 24 年其实网上关于此类工具或者平台特别的少，大部分就是 Github API 搜索 CVE-2024 或者接入一些漏洞库 API 获取资讯。 之前还有 8 佬的 Hacking 信息流，但是后面关站了，所以工作就很麻烦了，在没有主线工作的时候就需要跟进漏洞，到处找真的特别累。 所以从">
 <meta property="og:type" content="article">
-<meta property="og:title" content="POC监控历程">
+<meta property="og:title" content="threat-sail POC 监控">
 <meta property="og:url" content="https://liancccc.github.io/2025/07/12/%E6%8A%80%E6%9C%AF/%E5%85%B6%E4%BB%96/%E6%BC%8F%E6%B4%9E%E7%9B%91%E6%8E%A7/index.html">
 <meta property="og:site_name" content="liancccc&#39;s blog">
-<meta property="og:description" content="记录一下写的关于 POC 监控的相关工具。到现在写了 3 个版本了，后续大概就是在第三个版本基础上去做。 因为工作需要去找网上的 POC 然后写插件，所以学校事情完成后就开始着手开发。 当时 Github 上的确有相关 CVE POC 监控的项目，但都是 Github 搜索关键词，对于 nuclei、msf、wy876 这种基于 pr 和 commit 更新好像是没有发现的，所以只能自己写了。 2">
+<meta property="og:description" content="前言从实习到毕业的主要工作其实都是做最新漏洞跟进，然后写利用工具，丰富漏洞库。 但是最新漏洞的来源多种多样，在 24 年其实网上关于此类工具或者平台特别的少，大部分就是 Github API 搜索 CVE-2024 或者接入一些漏洞库 API 获取资讯。 之前还有 8 佬的 Hacking 信息流，但是后面关站了，所以工作就很麻烦了，在没有主线工作的时候就需要跟进漏洞，到处找真的特别累。 所以从">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20250712174824558.png?imageSlim">
 <meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20250712174900972.png?imageSlim">
@@ -35,7 +35,7 @@
 <meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20250712181453164.png?imageSlim">
 <meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20250712180816872.png?imageSlim">
 <meta property="article:published_time" content="2025-07-12T04:08:51.000Z">
-<meta property="article:modified_time" content="2025-07-12T10:17:50.435Z">
+<meta property="article:modified_time" content="2026-02-28T08:52:15.858Z">
 <meta property="article:author" content="守心">
 <meta property="article:tag" content="其他">
 <meta name="twitter:card" content="summary_large_image">
@@ -43,7 +43,7 @@
   
   
   
-  <title>POC监控历程 - liancccc&#39;s blog</title>
+  <title>threat-sail POC 监控 - liancccc&#39;s blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -77,6 +77,10 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/font.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
@@ -103,7 +107,7 @@
   <header>
     
 
-<div class="header-inner" style="height: 70vh;">
+<div class="header-inner" style="height: 50vh;">
   <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
@@ -209,7 +213,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="POC监控历程"></span>
+            <span id="subtitle" data-typed-text="threat-sail POC 监控"></span>
           
         </div>
 
@@ -229,23 +233,7 @@
 
   <div class="mt-1">
     
-      <span class="post-meta mr-2">
-        <i class="iconfont icon-chart"></i>
-        
-          677 字
-        
-      </span>
-    
 
-    
-      <span class="post-meta mr-2">
-        <i class="iconfont icon-clock-fill"></i>
-        
-        
-        
-          6 分钟
-        
-      </span>
     
 
     
@@ -280,20 +268,64 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">POC监控历程</h1>
+            <h1 id="seo-header">threat-sail POC 监控</h1>
             
             
               <div class="markdown-body">
                 
-                <p>记录一下写的关于 POC 监控的相关工具。到现在写了 3 个版本了，后续大概就是在第三个版本基础上去做。</p>
-<p>因为工作需要去找网上的 POC 然后写插件，所以学校事情完成后就开始着手开发。</p>
-<p>当时 Github 上的确有相关 CVE POC 监控的项目，但都是 Github 搜索关键词，对于 nuclei、msf、wy876 这种基于 pr 和 commit 更新好像是没有发现的，所以只能自己写了。</p>
-<h2 id="2024-08"><a href="#2024-08" class="headerlink" title="2024-08"></a>2024-08</h2><p>Golang 开发，简单的爬虫配合 cel 表达式实现信息过滤，数据源比较全，还有 NVD 漏洞。</p>
+                <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>从实习到毕业的主要工作其实都是做最新漏洞跟进，然后写利用工具，丰富漏洞库。</p>
+<p>但是最新漏洞的来源多种多样，在 24 年其实网上关于此类工具或者平台特别的少，大部分就是 Github API 搜索 CVE-2024 或者接入一些漏洞库 API 获取资讯。</p>
+<p>之前还有 8 佬的 Hacking 信息流，但是后面关站了，所以工作就很麻烦了，在没有主线工作的时候就需要跟进漏洞，到处找真的特别累。</p>
+<p>所以从 24 年 8 月就开始计划去写了，中间陆陆续续写过几个版本，下面会有介绍，25 年 8 月离职后就没怎么再更新关注了。还有很多需要优化，但是也没心力管。</p>
+<p>最新的已经找不到了，离职后隔了一段时间才想起来开源到 Github，中途换过系统玩，乱七八糟的备份。</p>
+<p>Github <a target="_blank" rel="noopener" href="https://github.com/liancccc/threat-sail-api-public">https://github.com/liancccc/threat-sail-api-public</a></p>
+<h2 id="功能"><a href="#功能" class="headerlink" title="功能"></a>功能</h2><p>定时爬虫 &#x3D;&gt; POC&#x2F;EXP数据源 &#x3D;&gt; AI &#x3D;&gt; 展示&amp;推送</p>
+<p>数据源：</p>
+<ul>
+<li>Github<ul>
+<li>关键词搜索</li>
+<li>指定仓库 commit | issus 记录</li>
+<li>用户新增仓库</li>
+<li>安全公告</li>
+</ul>
+</li>
+<li>安全团队博客文章<ul>
+<li>horizon3.ai</li>
+<li>projectdiscovery</li>
+<li>rapid7</li>
+<li>watchtowr</li>
+<li>….</li>
+</ul>
+</li>
+<li>微信公众号文章</li>
+<li>RSS 订阅<ul>
+<li>exploit-db</li>
+<li>research.eye.security</li>
+<li>….</li>
+</ul>
+</li>
+<li>推特第三方 API<ul>
+<li>用户</li>
+<li>关键词</li>
+</ul>
+</li>
+<li>NVD 漏洞库<ul>
+<li>参考链接中筛选 POC&#x2F;EXP</li>
+</ul>
+</li>
+</ul>
+<p>定时从各种数据源抓取信息然后由 AI 进行信息分析总结，比如 nuclei 的 issus 有很多无用的 XSS 或者非 POC 的，经过 AI 过滤就可以知道他不是 POC&#x2F;EXP，如果是那么就可以获取到这个 POC 关于漏洞的中文描述。</p>
+<p>对于很多的文章，比如微信公众号、博客、链接基本都是访问截图然后丢给 AI，这种比那种 AI 爬虫要好用。</p>
+<p>AI 过滤总结后就就会根据设定的重要数据源选择是否推送到钉钉中。</p>
+<p>实话说，工具帮了很多的忙，之前统计过，一些重要的漏洞比各种应急响应中心的发布更早。</p>
+<p>threat-sail 平台之外，又做了简单的串通 Demo，后面就离职啦。</p>
+<p>最新 POC&#x2F;EXP &#x3D;&gt; AI 提取指纹&#x2F;产品 &#x3D;&gt; 内部测绘平台指纹库检索 &#x3D;&gt; AI 将 POC 转换为内部的 pocsuite3 格式 &#x3D;&gt; 拉取国外公网目标 &#x3D;&gt; 批量测试 &#x3D;&gt; 提交内部漏洞库 &#x3D;&gt; 钉钉推送</p>
+<h2 id="历程"><a href="#历程" class="headerlink" title="历程"></a>历程</h2><h3 id="2024-08"><a href="#2024-08" class="headerlink" title="2024-08"></a>2024-08</h3><p>Golang 开发，简单的爬虫配合 cel 表达式实现信息过滤，数据源比较全，还有 NVD 漏洞。</p>
 <p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20250712174824558.png?imageSlim" srcset="/img/loading.gif" lazyload alt="image-20250712174824558"></p>
 <p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20250712174900972.png?imageSlim" srcset="/img/loading.gif" lazyload alt="image-20250712174900972"></p>
 <p>直接用 Go 做的定时任务，可以在配置文件中修改。</p>
 <p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20250712174942750.png?imageSlim" srcset="/img/loading.gif" lazyload alt="image-20250712174942750"></p>
-<h2 id="2024-11"><a href="#2024-11" class="headerlink" title="2024-11"></a>2024-11</h2><p>逻辑还是之前的逻辑，但是使用 Go Gin + Mysql + Vue 实现的开发，前后端分离。</p>
+<h3 id="2024-11"><a href="#2024-11" class="headerlink" title="2024-11"></a>2024-11</h3><p>逻辑还是之前的逻辑，但是使用 Go Gin + Mysql + Vue 实现的开发，前后端分离。</p>
 <p>前端是基于 pure-admin-thin 后台项目管理系统为基础进行开发的，整体也算体验了一次 Golang 的 WEB 开发。</p>
 <p>也算是实操了一下 WEB 项目的架构，之前只是单独的 Gin 知识。</p>
 <p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20250712175412195.png?imageSlim" srcset="/img/loading.gif" lazyload alt="image-20250712175412195"></p>
@@ -302,15 +334,14 @@
 <p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20250712175533559.png?imageSlim" srcset="/img/loading.gif" lazyload alt="image-20250712175533559"></p>
 <p>因为搭建原因弃用。</p>
 <p>之前服务器重置过一次，然后重新部署的时候发现有点太麻烦了，因为原本的任务和相关的过滤表达式都没有备份，重新添加太过麻烦了。所以在第三版之前使用的都是第一个版本。</p>
-<h2 id="2025-05"><a href="#2025-05" class="headerlink" title="2025-05"></a>2025-05</h2><p>因为发现其实一些博客、微信公众号是很多 POC 的来源，但是在第一个版本中其实并不太好添加，要在原本数据源监测模块添加逻辑，然后重新编译，没有办法打到简单方便的目的。</p>
+<h3 id="2025-05"><a href="#2025-05" class="headerlink" title="2025-05"></a>2025-05</h3><p>因为发现其实一些博客、微信公众号是很多 POC 的来源，但是在第一个版本中其实并不太好添加，要在原本数据源监测模块添加逻辑，然后重新编译，没有办法打到简单方便的目的。</p>
 <p>所以这版本就直接用 Python 来写了，Python 爬虫 + Linux 的 Crontab 计划任务，想添加数据源加个脚本，加个计划任务就可以了。</p>
 <p>而且 Python 写这种爬虫比 Go 要好写多了，目前是把数据推送到钉钉还有另外一个 Github 的<a target="_blank" rel="noopener" href="https://lianccccc.github.io/">博客</a>上面，也存储有原始的 JSON 数据，方便后续写个 WEB 去更好的展示。</p>
 <p>并且还配合了 AI 替代了之前通过 cel 表达式来过滤无用信息的办法。</p>
 <p>DeepSeek 真的蛮划算的，一个月不到 10 块钱，hhhh</p>
 <p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20250712181453164.png?imageSlim" srcset="/img/loading.gif" lazyload alt="image-20250712181453164"></p>
 <p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20250712180816872.png?imageSlim" srcset="/img/loading.gif" lazyload alt="image-20250712180816872"></p>
-<h2 id="2025-07"><a href="#2025-07" class="headerlink" title="2025-07"></a>2025-07</h2><p>对 POC 监控没有什么改版，又单独写了一个 AI POC 转换的模块，和监测是分开的，监测到的可以用 AI 转换的 POC 就存储为指定格式，然后定时同步到 AI 转换扫描的机器上面去扫，目前看来是有效果的，只是和人是比不了的。</p>
-<p>后续就准备开始 WEB 的开发了</p>
+<h3 id="2025-07"><a href="#2025-07" class="headerlink" title="2025-07"></a>2025-07</h3><p>最新版本 懒得写</p>
 
                 
               </div>
@@ -356,7 +387,7 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>POC监控历程</div>
+      <div>threat-sail POC 监控</div>
       <div>https://liancccc.github.io/2025/07/12/技术/其他/漏洞监控/</div>
     </div>
     <div class="license-meta">
