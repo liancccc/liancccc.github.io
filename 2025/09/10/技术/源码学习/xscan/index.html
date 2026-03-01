@@ -1,0 +1,727 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/avatar.png">
+  <link rel="icon" href="/img/avatar.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="守心">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="xscan 旧版本在知识星球开源了，看一看，主要看 XSS 检测逻辑   项目结构123456789101112xscan-1.2&#x2F;├── cmd&#x2F;xscan&#x2F;          # 主程序入口├── core&#x2F;               # 核心功能模块│   ├── refxss&#x2F;         # XSS检测核心│   ├── spider&#x2F;         # 爬虫模块│   ├──">
+<meta property="og:type" content="article">
+<meta property="og:title" content="xscan 源码学习">
+<meta property="og:url" content="https://liancccc.github.io/2025/09/10/%E6%8A%80%E6%9C%AF/%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/xscan/index.html">
+<meta property="og:site_name" content="liancccc&#39;s blog">
+<meta property="og:description" content="xscan 旧版本在知识星球开源了，看一看，主要看 XSS 检测逻辑   项目结构123456789101112xscan-1.2&#x2F;├── cmd&#x2F;xscan&#x2F;          # 主程序入口├── core&#x2F;               # 核心功能模块│   ├── refxss&#x2F;         # XSS检测核心│   ├── spider&#x2F;         # 爬虫模块│   ├──">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/xscan%201.png">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/Pasted%20image%2020250725112243.png">
+<meta property="article:published_time" content="2025-09-10T04:08:13.000Z">
+<meta property="article:modified_time" content="2026-03-01T15:20:28.800Z">
+<meta property="article:author" content="守心">
+<meta property="article:tag" content="源码学习">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/xscan%201.png">
+  
+  
+  
+  <title>xscan 源码学习 - liancccc&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/font.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"liancccc.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":false},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 50vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>琉璃魄</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/lbxx.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="xscan 源码学习"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-09-10 12:08" pubdate>
+          2025年9月10日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">xscan 源码学习</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>xscan 旧版本在知识星球开源了，看一看，主要看 XSS 检测逻辑</p>
+</blockquote>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/xscan%201.png" srcset="/img/loading.gif" lazyload></p>
+<h2 id="项目结构"><a href="#项目结构" class="headerlink" title="项目结构"></a>项目结构</h2><figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs nix">xscan-<span class="hljs-number">1.2</span><span class="hljs-symbol">/</span><br>├── cmd<span class="hljs-operator">/</span>xscan<span class="hljs-symbol">/</span>          <span class="hljs-comment"># 主程序入口</span><br>├── core<span class="hljs-symbol">/</span>               <span class="hljs-comment"># 核心功能模块</span><br>│   ├── refxss<span class="hljs-symbol">/</span>         <span class="hljs-comment"># XSS检测核心</span><br>│   ├── spider<span class="hljs-symbol">/</span>         <span class="hljs-comment"># 爬虫模块</span><br>│   ├── parser<span class="hljs-symbol">/</span>         <span class="hljs-comment"># 解析器模块</span><br>│   ├── httpx<span class="hljs-symbol">/</span>          <span class="hljs-comment"># HTTP客户端</span><br>│   ├── queue<span class="hljs-symbol">/</span>          <span class="hljs-comment"># 队列管理</span><br>│   ├── stringset<span class="hljs-symbol">/</span>      <span class="hljs-comment"># 字符串集合处理</span><br>│   └── logger<span class="hljs-symbol">/</span>         <span class="hljs-comment"># 日志模块</span><br>├── go.mod              <span class="hljs-comment"># Go模块依赖</span><br>└── readme.md           <span class="hljs-comment"># 项目说明</span><br></code></pre></td></tr></table></figure>
+<h2 id="源码学习"><a href="#源码学习" class="headerlink" title="源码学习"></a>源码学习</h2><h3 id="队列模块"><a href="#队列模块" class="headerlink" title="队列模块"></a>队列模块</h3><p><code>core/queue</code><br><code>core/queue/leveldb_queue.go</code> &#x3D;&gt; 基于 <code>goleveldb</code> 的数据存储<br><code>core/queue/queue.go</code> &#x3D;&gt; Go 实现队列数据结构<br><a target="_blank" rel="noopener" href="https://github.com/syndtr/goleveldb">syndtr&#x2F;goleveldb: LevelDB key&#x2F;value database in Go.</a><br>一个键值数据库，基于文件实现存储 <code>leveldb_queue.go</code> 封装：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">package</span> queue  <br>  <br><span class="hljs-keyword">import</span> (  <br>    <span class="hljs-string">&quot;github.com/syndtr/goleveldb/leveldb&quot;</span>  <br>    <span class="hljs-string">&quot;sync&quot;</span>)  <br>  <br><span class="hljs-keyword">type</span> LevelQueue <span class="hljs-keyword">struct</span> &#123;  <br>    Db   *leveldb.DB  <br>    lock sync.Mutex  <br>&#125;  <br>  <br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">NewLevelQueue</span><span class="hljs-params">()</span></span> (*LevelQueue, <span class="hljs-type">error</span>) &#123;  <br>    db, err := leveldb.OpenFile(<span class="hljs-string">&quot;./db/block.db&quot;</span>, <span class="hljs-literal">nil</span>)  <br>    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;  <br>       <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err  <br>    &#125;  <br>    <span class="hljs-keyword">return</span> &amp;LevelQueue&#123;Db: db, lock: sync.Mutex&#123;&#125;&#125;, <span class="hljs-literal">nil</span>  <br>&#125;  <br>  <br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(l *LevelQueue)</span></span> Close() &#123;  <br>    l.Db.Close()  <br>&#125;  <br>  <br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(l *LevelQueue)</span></span> Push(v []<span class="hljs-type">byte</span>) <span class="hljs-type">error</span> &#123;  <br>    <span class="hljs-keyword">return</span> l.Db.Put(v, <span class="hljs-literal">nil</span>, <span class="hljs-literal">nil</span>)  <br>&#125;  <br>  <br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(l *LevelQueue)</span></span> Len() <span class="hljs-type">int</span> &#123;  <br>    db := l.Db  <br>    iter := db.NewIterator(<span class="hljs-literal">nil</span>, <span class="hljs-literal">nil</span>)  <br>    index := <span class="hljs-number">0</span>  <br>    <span class="hljs-keyword">for</span> iter.Next() &#123;  <br>       index += <span class="hljs-number">1</span>  <br>    &#125;  <br>    iter.Release()  <br>    <span class="hljs-keyword">return</span> index  <br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="爬虫模块"><a href="#爬虫模块" class="headerlink" title="爬虫模块"></a>爬虫模块</h3><p>xscan 采用的是静态爬虫 + 第三方的 Wayback，和之前看过的 gospider 类似不过也有不同。</p>
+<h4 id="静态爬虫"><a href="#静态爬虫" class="headerlink" title="静态爬虫"></a>静态爬虫</h4><p><code>core\spider\spider.go</code><br>Start &#x3D;&gt; feed &#x3D;&gt; Visit &#x3D;&gt; handleResult<br>主要逻辑在 <code>feed()</code> 中：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(c *Crawler)</span></span> feed() &#123;  <br>    <span class="hljs-keyword">var</span> wg sync.WaitGroup  <br>    c.feedChain = <span class="hljs-built_in">make</span>(<span class="hljs-keyword">chan</span> SpiderOutput)  <br>    <span class="hljs-comment">// 1. 多协程调用 Visit 进行链接爬取</span><br>    p, _ := ants.NewPoolWithFunc(c.processNum, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(i <span class="hljs-keyword">interface</span>&#123;&#125;)</span></span> &#123;  <br>       s := i.(SpiderOutput)  <br>       c.Visit(s)  <br>       wg.Done()  <br>    &#125;)  <br>    <span class="hljs-keyword">defer</span> p.Release()  <br>    <span class="hljs-comment">// 2. 启动一个协程把 Visit 拿出来放到 feedChain 中, 当数据到达 10w 就停止</span><br>    <span class="hljs-keyword">go</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> &#123;  <br>       maxSize := <span class="hljs-number">100000</span>  <br>       index := <span class="hljs-number">0</span>  <br>       db := c.queue.Db  <br>       iter := db.NewIterator(<span class="hljs-literal">nil</span>, <span class="hljs-literal">nil</span>)  <br>       <span class="hljs-keyword">for</span> iter.Next() &#123;  <br>          <span class="hljs-keyword">if</span> index &gt; maxSize &#123;  <br>             <span class="hljs-keyword">break</span>  <br>          &#125;  <br>          v := Decode(iter.Key())  <br>          c.feedChain &lt;- v  <br>          db.Delete(iter.Key(), <span class="hljs-literal">nil</span>)  <br>          index += <span class="hljs-number">1</span>  <br>       &#125;  <br>       iter.Release()  <br>       <span class="hljs-built_in">close</span>(c.feedChain)  <br>    &#125;()  <br>    <span class="hljs-comment">// 3. 调用回调函数处理拿出来的链接  </span><br>    <span class="hljs-keyword">for</span> r := <span class="hljs-keyword">range</span> c.feedChain &#123;  <br>       n := r  <br>       <span class="hljs-keyword">if</span> c.callback != <span class="hljs-literal">nil</span> &#123;  <br>          c.callback(n)  <br>       &#125;  <br>       wg.Add(<span class="hljs-number">1</span>)  <br>       _ = p.Invoke(n)  <br>    &#125;  <br>    time.Sleep(time.Second * <span class="hljs-number">5</span>)  <br>    wg.Wait()  <br>&#125;<br></code></pre></td></tr></table></figure>
+<p>就是一个不断深入爬取的过程。<br>然后看 Visit 的逻辑：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(c *Crawler)</span></span> Visit(p SpiderOutput) &#123;  <br>    c.limitSecond.Take()  <br>    <span class="hljs-comment">// 1. 发起请求  </span><br>    output := p.Output  <br>    req, err := c.hp.NewRequest(p.Method, output, <span class="hljs-literal">nil</span>, <span class="hljs-literal">nil</span>)  <br>    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;  <br>       logrus.WithError(err).Debugln()  <br>       <span class="hljs-keyword">return</span>  <br>    &#125;  <br>    referer := req.Header.Get(<span class="hljs-string">&quot;Referer&quot;</span>)  <br>    <span class="hljs-keyword">if</span> referer == <span class="hljs-string">&quot;&quot;</span> &#123;  <br>       req.Header.Set(<span class="hljs-string">&quot;Referer&quot;</span>, p.Input)  <br>    &#125;  <br>    resp, err := c.hp.Do(req)  <br>    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;  <br>       logrus.WithError(err).Debugf(<span class="hljs-string">&quot;spider请求失败:%s&quot;</span>, req.URL.String())  <br>       <span class="hljs-keyword">return</span>  <br>    &#125;  <br>    <span class="hljs-comment">// 2. 处理响应 =&gt; 提取新的链接  </span><br>    c.handleResult(resp)  <br>&#125;<br></code></pre></td></tr></table></figure>
+<p><code>handleResult</code> 逻辑可以看出 1.2 的静态爬虫比较简陋，只是 href 和表单，和 gospider 有差距。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(c *Crawler)</span></span> handleResult(nResp *httpx.Response) &#123;  <br>    doc, err := goquery.NewDocumentFromReader(strings.NewReader(nResp.Text))  <br>    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;  <br>       logrus.WithError(err).Warningf(<span class="hljs-string">&quot;goquery解析失败&quot;</span>)  <br>       <span class="hljs-keyword">return</span>  <br>    &#125;  <br>  <br>    <span class="hljs-comment">// 寻找href  </span><br>    reqUrl := nResp.Req.URL  <br>    doc.Find(<span class="hljs-string">&quot;[href]&quot;</span>).Each(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(i <span class="hljs-type">int</span>, s *goquery.Selection)</span></span> &#123;  <br>       href, ok := s.Attr(<span class="hljs-string">&quot;href&quot;</span>)  <br>       <span class="hljs-keyword">if</span> ok &#123;  <br>          urlString := UrlJoin(reqUrl, href)  <br>          <span class="hljs-keyword">if</span> c.filterUrl(urlString, httpx.GET) &#123;  <br>             <span class="hljs-keyword">return</span>  <br>          &#125;  <br>          out := SpiderOutput&#123;  <br>             Input:  reqUrl.String(),  <br>             Source: <span class="hljs-string">&quot;href&quot;</span>,  <br>             Output: urlString,  <br>             Header: header2map(nResp.Req.Header),  <br>             Method: httpx.GET,  <br>             Body:   <span class="hljs-string">&quot;&quot;</span>,  <br>          &#125;  <br>          c.queue.Push(Encode(out))  <br>       &#125;  <br>    &#125;)  <br>  <br>    <span class="hljs-comment">//form action  </span><br>    doc.Find(<span class="hljs-string">&quot;form[action]&quot;</span>).Each(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(i <span class="hljs-type">int</span>, s *goquery.Selection)</span></span> &#123;  <br>       action, ok := s.Attr(<span class="hljs-string">&quot;action&quot;</span>)  <br>       method, ok2 := s.Attr(<span class="hljs-string">&quot;method&quot;</span>)  <br>       <span class="hljs-keyword">if</span> !ok2 &#123;  <br>          method = <span class="hljs-string">&quot;GET&quot;</span>  <br>       &#125;  <br>       method = strings.ToUpper(method)  <br>       <span class="hljs-keyword">if</span> ok &#123;  <br>          action_url := UrlJoin(nResp.Req.URL, action)  <br>          <span class="hljs-keyword">if</span> c.filterUrl(action_url, method) &#123;  <br>             <span class="hljs-keyword">return</span>  <br>          &#125;  <br>          p := url.Values&#123;&#125;  <br>          s.Find(<span class="hljs-string">&quot;input[name]&quot;</span>).Each(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(i <span class="hljs-type">int</span>, selection *goquery.Selection)</span></span> &#123;  <br>             name, exist := selection.Attr(<span class="hljs-string">&quot;name&quot;</span>)  <br>             v, exist2 := selection.Attr(<span class="hljs-string">&quot;value&quot;</span>)  <br>             <span class="hljs-keyword">if</span> !exist &#123;  <br>                <span class="hljs-keyword">return</span>  <br>             &#125;  <br>             <span class="hljs-keyword">if</span> !exist2 &#123;  <br>                v = core.RandomStr(<span class="hljs-number">4</span>)  <br>             &#125;  <br>             p.Set(name, v)  <br>          &#125;)  <br>          nResp.Req.Header.Set(<span class="hljs-string">&quot;Content-Type&quot;</span>, <span class="hljs-string">&quot;application/x-www-form-urlencoded&quot;</span>)  <br>          out := SpiderOutput&#123;  <br>             Input:  reqUrl.String(),  <br>             Source: <span class="hljs-string">&quot;form&quot;</span>,  <br>             Output: action_url,  <br>             Header: header2map(nResp.Req.Header),  <br>             Method: method,  <br>             Body:   p.Encode(),  <br>          &#125;  <br>          c.queue.Push(Encode(out))  <br>       &#125;  <br>    &#125;)  <br></code></pre></td></tr></table></figure>
+<p>不过整体的爬虫队列是基于 leveldb 文件存储实现的，而不是都在内存中，这个可以借鉴。<br><code>handleResult</code> 获取到的链接都封装为 <code>SpiderOutput</code> 然后放到队列中，<code>feed()</code> <code>[2]</code> 处的协程会拿出来再丢给回调函数。<br>回调函数在入口处定义， 把数据封装好再提交到携程池中继续爬取，直到 10w：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">spiderCallback</span><span class="hljs-params">(out spider.SpiderOutput)</span></span> &#123;  <br>    logrus.WithField(<span class="hljs-string">&quot;URL&quot;</span>, out.Output).WithField(<span class="hljs-string">&quot;Input&quot;</span>, out.Input).Debugln()  <br>    <span class="hljs-keyword">var</span> postdata []<span class="hljs-type">byte</span>  <br>    <span class="hljs-keyword">if</span> out.Body != <span class="hljs-string">&quot;&quot;</span> &#123;  <br>       postdata = []<span class="hljs-type">byte</span>(out.Body)  <br>    &#125;  <br>    p := refxss.Parameter&#123;  <br>       Url:     out.Output,  <br>       Method:  out.Method,  <br>       POST:    postdata,  <br>       Headers: out.Header,  <br>    &#125;  <br>    wg.Add()  <br>    _ = xssPool.Invoke(p)  <br>&#125;<br></code></pre></td></tr></table></figure>
+<h4 id="第三方"><a href="#第三方" class="headerlink" title="第三方"></a>第三方</h4><p>在 <code>core/spider/source.go</code> 中定义了通过 web.archive.org 来获取链接，不过好像并没有使用：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">getWaybackURLs</span><span class="hljs-params">(domain <span class="hljs-type">string</span>)</span></span> ([]<span class="hljs-type">string</span>, <span class="hljs-type">error</span>) &#123;  <br>  <br>    res, err := http.Get(  <br>       fmt.Sprintf(<span class="hljs-string">&quot;http://web.archive.org/cdx/search/cdx?url=%s/*&amp;output=json&amp;collapse=urlkey&quot;</span>, domain),  <br>    )  <br>    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;  <br>       <span class="hljs-keyword">return</span> []<span class="hljs-type">string</span>&#123;&#125;, err  <br>    &#125;  <br>    raw, err := ioutil.ReadAll(res.Body)  <br>    res.Body.Close()  <br>    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;  <br>       <span class="hljs-keyword">return</span> []<span class="hljs-type">string</span>&#123;&#125;, err  <br>    &#125;  <br>    <span class="hljs-keyword">var</span> wrapper [][]<span class="hljs-type">string</span>  <br>    err = json.Unmarshal(raw, &amp;wrapper)  <br>    out := <span class="hljs-built_in">make</span>([]<span class="hljs-type">string</span>, <span class="hljs-number">0</span>, <span class="hljs-built_in">len</span>(wrapper))  <br>    skip := <span class="hljs-literal">true</span>  <br>    <span class="hljs-keyword">for</span> _, urls := <span class="hljs-keyword">range</span> wrapper &#123;  <br>       <span class="hljs-comment">// The first item is always just the string &quot;original&quot;,  </span><br>       <span class="hljs-comment">// so we should skip the first item       if skip &#123;  </span><br>          skip = <span class="hljs-literal">false</span>  <br>          <span class="hljs-keyword">continue</span>  <br>       &#125;  <br>       out = <span class="hljs-built_in">append</span>(out, urls[<span class="hljs-number">2</span>])  <br>    &#125;  <br>    <span class="hljs-keyword">return</span> out, <span class="hljs-literal">nil</span>  <br>&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="解析模块"><a href="#解析模块" class="headerlink" title="解析模块"></a>解析模块</h3><h4 id="html"><a href="#html" class="headerlink" title="html"></a>html</h4><p><code>core/parser/html/parser.go</code><br>结构体定义：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> ResponsePosition <span class="hljs-keyword">struct</span> &#123;  <br>    Type    <span class="hljs-type">int</span>  <br>	TagName <span class="hljs-type">string</span>  <span class="hljs-comment">// 标签名称</span><br>    Content <span class="hljs-type">string</span>  <span class="hljs-comment">// 标签之间的文本</span><br>    Attrs   []html.Attribute  <span class="hljs-comment">// 标签的属性列表 </span><br>&#125;<br></code></pre></td></tr></table></figure>
+<p><code>ParseHtml</code> 解析 HTML 返回  <code>ResponsePosition</code> 列表，主要使用到 <code>html.NewTokenizer</code> 进行解析。<br>文档地址：<a target="_blank" rel="noopener" href="https://pkg.go.dev/golang.org/x/net/html#NewTokenizer">html package - golang.org&#x2F;x&#x2F;net&#x2F;html - Go Packages</a></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">const</span> (<br>    ErrorToken TokenType = <span class="hljs-literal">iota</span> <span class="hljs-comment">// 错误 token</span><br>    TextToken                   <span class="hljs-comment">// 文本内容</span><br>    StartTagToken               <span class="hljs-comment">// 开始标签（如 &lt;div&gt;）</span><br>    EndTagToken                 <span class="hljs-comment">// 结束标签（如 &lt;/div&gt;）</span><br>    SelfClosingTagToken         <span class="hljs-comment">// 自闭合标签（如 &lt;img/&gt;）</span><br>    CommentToken                <span class="hljs-comment">// HTML 注释</span><br>    DoctypeToken                <span class="hljs-comment">// DOCTYPE 声明</span><br>)<br></code></pre></td></tr></table></figure>
+<p><code>ParseHtml</code> 函数用来解析整个 HTML 把 HTML 转换为 ResponsePosition 的格式 ：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">ParseHtml</span><span class="hljs-params">(body io.Reader)</span></span> []ResponsePosition &#123;  <br>    z := html.NewTokenizer(body)  <br>    <span class="hljs-keyword">var</span> positions []ResponsePosition  <br>    <span class="hljs-keyword">var</span> tokenizer []ResponsePosition  <br>labelType:  <br>    <span class="hljs-keyword">for</span> &#123;  <br>       tt := z.Next()  <br>       <span class="hljs-keyword">switch</span> tt &#123;  <br>       <span class="hljs-keyword">case</span> html.ErrorToken:  <br>          <span class="hljs-keyword">break</span> labelType  <br>       <span class="hljs-keyword">case</span> html.SelfClosingTagToken:  <br>          tk := z.Token()  <br>          <span class="hljs-comment">// 原始文本  </span><br>          raw := <span class="hljs-type">string</span>(z.Raw())  <br>          <span class="hljs-comment">// 标签属性  </span><br>          attrs := tk.Attr  <br>          <span class="hljs-keyword">for</span> i, attr := <span class="hljs-keyword">range</span> attrs &#123;  <br>             <span class="hljs-comment">// 属性值不为空  </span><br>             <span class="hljs-keyword">if</span> attr.Val == <span class="hljs-string">&quot;&quot;</span> &#123;  <br>                <span class="hljs-keyword">continue</span>  <br>             &#125;  <br>             <span class="hljs-comment">// 属性名 =&gt; class=&quot;j-lazy&quot;             found := attr.Key + &quot;=&quot;  </span><br>             <span class="hljs-comment">// 寻找位置  </span><br>             kIndex := strings.Index(raw, found)  <br>             <span class="hljs-keyword">if</span> kIndex != <span class="hljs-number">-1</span> &#123;  <br>                vIndex := core.IndexAt(raw, attr.Val, kIndex) - <span class="hljs-number">1</span>  <br>                <span class="hljs-keyword">if</span> vIndex &gt; <span class="hljs-number">-1</span> &amp;&amp; (raw[vIndex] == <span class="hljs-number">34</span> || raw[vIndex] == <span class="hljs-number">39</span>) &#123;  <br>                   attr.Val = raw[vIndex : vIndex+<span class="hljs-number">2</span>+<span class="hljs-built_in">len</span>(attr.Val)]  <br>                &#125;  <br>             &#125;  <br>             attrs[i] = attr  <br>          &#125;  <br>          current := ResponsePosition&#123;  <br>             Type:    NULL,  <br>             TagName: tk.Data,  <br>             Content: <span class="hljs-string">&quot;&quot;</span>,  <br>             Attrs:   attrs,  <br>          &#125;  <br>          positions = <span class="hljs-built_in">append</span>(positions, current)  <br>       <span class="hljs-keyword">case</span> html.StartTagToken:  <br>          tk := z.Token()  <br>          raw := <span class="hljs-type">string</span>(z.Raw())  <br>          attrs := tk.Attr  <br>          <span class="hljs-keyword">for</span> i, attr := <span class="hljs-keyword">range</span> attrs &#123;  <br>             <span class="hljs-keyword">if</span> attr.Val == <span class="hljs-string">&quot;&quot;</span> &#123;  <br>                <span class="hljs-keyword">continue</span>  <br>             &#125;  <br>             found := attr.Key + <span class="hljs-string">&quot;=&quot;</span>  <br>             kIndex := strings.Index(raw, found)  <br>             <span class="hljs-keyword">if</span> kIndex != <span class="hljs-number">-1</span> &#123;  <br>                vIndex := core.IndexAt(raw, attr.Val, kIndex) - <span class="hljs-number">1</span>  <br>                <span class="hljs-keyword">if</span> vIndex &gt; <span class="hljs-number">-1</span> &amp;&amp; (raw[vIndex] == <span class="hljs-number">34</span> || raw[vIndex] == <span class="hljs-number">39</span>) &#123;  <br>                   attr.Val = raw[vIndex : vIndex+<span class="hljs-number">2</span>+<span class="hljs-built_in">len</span>(attr.Val)]  <br>                &#125;  <br>             &#125;  <br>             attrs[i] = attr  <br>          &#125;  <br>          current := ResponsePosition&#123;  <br>             Type:    NULL,  <br>             TagName: tk.Data,  <br>             Content: <span class="hljs-string">&quot;&quot;</span>,  <br>             Attrs:   attrs,  <br>          &#125;  <br>          positions = <span class="hljs-built_in">append</span>(positions, current)  <br>       <span class="hljs-keyword">case</span> html.TextToken:  <br>          <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(positions) &gt; <span class="hljs-number">0</span> &#123;  <br>             positions[<span class="hljs-built_in">len</span>(positions)<span class="hljs-number">-1</span>].Content += <span class="hljs-type">string</span>(z.Raw())  <br>          &#125;  <br>       <span class="hljs-keyword">case</span> html.EndTagToken:  <br>          <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(positions) &gt; <span class="hljs-number">0</span> &#123;  <br>             end := <span class="hljs-built_in">len</span>(positions) - <span class="hljs-number">1</span>  <br>             current := positions[end]  <br>             tokenizer = <span class="hljs-built_in">append</span>(tokenizer, current)  <br>             positions = positions[:end]  <br>          &#125;  <br>       <span class="hljs-keyword">case</span> html.CommentToken:  <br>          tk := z.Token()  <br>          current := ResponsePosition&#123;  <br>             Type:    NULL,  <br>             TagName: <span class="hljs-string">&quot;comment&quot;</span>,  <br>             Content: tk.Data,  <br>             Attrs:   <span class="hljs-literal">nil</span>,  <br>          &#125;  <br>          tokenizer = <span class="hljs-built_in">append</span>(tokenizer, current)  <br>       &#125;  <br>    &#125;  <br>    <span class="hljs-keyword">for</span> <span class="hljs-built_in">len</span>(positions) &gt; <span class="hljs-number">0</span> &#123;  <br>       end := <span class="hljs-built_in">len</span>(positions) - <span class="hljs-number">1</span>  <br>       current := positions[end]  <br>       tokenizer = <span class="hljs-built_in">append</span>(tokenizer, current)  <br>       positions = positions[:end]  <br>    &#125;  <br>    <span class="hljs-keyword">return</span> tokenizer  <br>&#125;<br></code></pre></td></tr></table></figure>
+<p> <img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/Pasted%20image%2020250725112243.png" srcset="/img/loading.gif" lazyload><br> <code>SearchInputInResponse</code> 方法用于获取报告知道输入的 <code>ResponsePosition</code> 列表：<br> <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><code class="hljs go"> <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">SearchInputInResponse</span><span class="hljs-params">(input <span class="hljs-type">string</span>, body io.Reader)</span></span> ([]ResponsePosition, <span class="hljs-type">error</span>) &#123;  <br>    tokenizer := ParseHtml(body)  <br>    <span class="hljs-keyword">var</span> ret []ResponsePosition  <br>    <span class="hljs-keyword">for</span> _, p := <span class="hljs-keyword">range</span> tokenizer &#123;  <br>       <span class="hljs-comment">// check TEXT  </span><br>       <span class="hljs-keyword">if</span> strings.Contains(p.Content, input) &#123;  <br>          <span class="hljs-keyword">if</span> p.TagName == <span class="hljs-string">&quot;comment&quot;</span> &#123;  <br>             ret = <span class="hljs-built_in">append</span>(ret, ResponsePosition&#123;  <br>                Type:    Comment,  <br>                TagName: p.TagName,  <br>                Content: p.Content,  <br>                Attrs:   p.Attrs,  <br>             &#125;)  <br>          &#125; <span class="hljs-keyword">else</span> &#123;  <br>             ret = <span class="hljs-built_in">append</span>(ret, ResponsePosition&#123;  <br>                Type:    Text,  <br>                TagName: p.TagName,  <br>                Content: p.Content,  <br>                Attrs:   p.Attrs,  <br>             &#125;)  <br>          &#125;  <br>       &#125;  <br>       <span class="hljs-comment">// check tagname  </span><br>       <span class="hljs-keyword">if</span> strings.Contains(p.TagName, input) &#123;  <br>          ret = <span class="hljs-built_in">append</span>(ret, ResponsePosition&#123;  <br>             Type:    Tag,  <br>             TagName: p.TagName,  <br>             Content: p.Content,  <br>             Attrs:   p.Attrs,  <br>          &#125;)  <br>       &#125;  <br>       <span class="hljs-comment">// check Style  </span><br>       <span class="hljs-keyword">if</span> strings.ToLower(p.TagName) == <span class="hljs-string">&quot;style&quot;</span> &amp;&amp; strings.Contains(p.Content, input) &#123;  <br>          ret = <span class="hljs-built_in">append</span>(ret, ResponsePosition&#123;  <br>             Type:    Style,  <br>             TagName: p.TagName,  <br>             Content: p.Content,  <br>             Attrs:   p.Attrs,  <br>          &#125;)  <br>       &#125;  <br>       <span class="hljs-comment">// check Attibute  </span><br>       <span class="hljs-keyword">for</span> _, attr := <span class="hljs-keyword">range</span> p.Attrs &#123;  <br>          <span class="hljs-keyword">if</span> strings.Contains(attr.Key, input) &#123;  <br>             ret = <span class="hljs-built_in">append</span>(ret, ResponsePosition&#123;  <br>                Type:    AttibuteKey,  <br>                TagName: p.TagName,  <br>                Content: p.Content,  <br>                Attrs:   p.Attrs,  <br>             &#125;)  <br>          &#125;  <br>  <br>          <span class="hljs-keyword">if</span> strings.Contains(attr.Val, input) &#123;  <br>             ret = <span class="hljs-built_in">append</span>(ret, ResponsePosition&#123;  <br>                Type:    AttibuteValue,  <br>                TagName: p.TagName,  <br>                Content: p.Content,  <br>                Attrs:   p.Attrs,  <br>             &#125;)  <br>          &#125;  <br>       &#125;  <br>    &#125;  <br>    <span class="hljs-keyword">return</span> ret, <span class="hljs-literal">nil</span>  <br>&#125;<br></code></pre></td></tr></table></figure></p>
+<h4 id="JS"><a href="#JS" class="headerlink" title="JS"></a>JS</h4><p><a target="_blank" rel="noopener" href="https://zhaomenghuan.js.org/blog/js-ast-principle-reveals.html">https://zhaomenghuan.js.org/blog/js-ast-principle-reveals.html</a><br>使用 github.com&#x2F;tdewolff&#x2F;parse&#x2F;js 做 AST </p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">ParseJs2AstType</span><span class="hljs-params">(src <span class="hljs-type">string</span>)</span></span> ([]*AstType, <span class="hljs-type">error</span>) &#123;  <br>    input := parse.NewInputString(src)  <br>    l := js.NewLexer(input)  <br>    <span class="hljs-keyword">var</span> ret []*AstType  <br>    <span class="hljs-keyword">for</span> &#123;  <br>       tt, text := l.Next()  <br>  <br>       <span class="hljs-keyword">switch</span> tt &#123;  <br>       <span class="hljs-keyword">case</span> js.ErrorToken:  <br>          <span class="hljs-keyword">if</span> l.Err() != io.EOF &#123;  <br>             err := CreateJsParserError(input, l.Err())  <br>             <span class="hljs-keyword">return</span> ret, err  <br>          &#125;  <br>          <span class="hljs-keyword">return</span> ret, <span class="hljs-literal">nil</span>  <br>       <span class="hljs-keyword">default</span>:  <br>          n := AstType&#123;  <br>             Type:    tt,  <br>             Content: <span class="hljs-type">string</span>(text),  <br>          &#125;  <br>          ret = <span class="hljs-built_in">append</span>(ret, &amp;n)  <br>       &#125;  <br>    &#125;  <br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><code>SearchInputInScript</code> 主要是收集这几种类型：</p>
+<ul>
+<li><code>IdentifierToken</code>：标识符（变量名、函数名、属性名等）</li>
+<li><code>StringToken</code>：字符串，比如 <code>let s = &quot;hello&quot;</code> 中的 <code>&quot;hello&quot;</code></li>
+<li><code>CommentToken</code>：注释内容</li>
+</ul>
+<p>这里用到了 <code>fallthrough</code> ，<code>go</code> 的 <code>switch case</code> 不需要显式的跳出，默认会跳出，<code>fallthrough</code> 的作用就是不跳出，继续向下。不过这里就这 3 个感觉也没必要这么写，可能是方便后续扩充。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">SearchInputInScript</span><span class="hljs-params">(input <span class="hljs-type">string</span>, script <span class="hljs-type">string</span>)</span></span> ([]*AstType, <span class="hljs-type">error</span>) &#123;  <br>    astTokens, err := ParseJs2AstType(script)  <br>    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;  <br>       <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err  <br>    &#125;  <br>    <span class="hljs-keyword">var</span> ret []*AstType  <br>    <span class="hljs-keyword">for</span> _, token := <span class="hljs-keyword">range</span> astTokens &#123;  <br>       <span class="hljs-keyword">if</span> !strings.Contains(token.Content, input) &#123;  <br>          <span class="hljs-keyword">continue</span>  <br>       &#125;  <br>       <span class="hljs-keyword">switch</span> token.Type &#123;  <br>       <span class="hljs-keyword">case</span> js.IdentifierToken:  <br>          <span class="hljs-keyword">fallthrough</span>  <br>       <span class="hljs-keyword">case</span> js.StringToken:  <br>          <span class="hljs-keyword">fallthrough</span>  <br>       <span class="hljs-keyword">case</span> js.CommentToken:  <br>          n := *token  <br>          ret = <span class="hljs-built_in">append</span>(ret, &amp;n)  <br>       <span class="hljs-comment">//case js.TemplateToken:  </span><br>       <span class="hljs-keyword">default</span>:  <br>          err = CreateTokenNotFound(token.Type, token.Content)  <br>          <span class="hljs-keyword">return</span> ret, err  <br>       &#125;  <br>    &#125;  <br>    <span class="hljs-keyword">return</span> ret, <span class="hljs-literal">nil</span>  <br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>变量收集，对应着隐藏参数收集，就是从 HTML 中收集一些静态爬虫没有收集到的：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">var</span> regx = regexp.MustCompile(<span class="hljs-string">`^[\w\d-_]+$`</span>)<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(w *varWalker)</span></span> Enter(n js.INode) js.IVisitor &#123;  <br>    <span class="hljs-keyword">switch</span> n := n.(<span class="hljs-keyword">type</span>) &#123;  <br>    <span class="hljs-comment">// 变量声明  </span><br>    <span class="hljs-keyword">case</span> *js.VarDecl:  <br>       <span class="hljs-keyword">for</span> i := <span class="hljs-keyword">range</span> n.List &#123;  <br>          v, ok := n.List[i].Binding.(*js.Var)  <br>          <span class="hljs-keyword">if</span> !ok &#123;  <br>             <span class="hljs-keyword">continue</span>  <br>          &#125;  <br>          <span class="hljs-comment">// 匹配正则  </span><br>          strV := <span class="hljs-type">string</span>(v.Data)  <br>          <span class="hljs-keyword">if</span> regx.MatchString(strV) &#123;  <br>             w.vars = <span class="hljs-built_in">append</span>(w.vars, strV)  <br>          &#125;  <br>       &#125;  <br>    <span class="hljs-comment">// 对象表达式  </span><br>    <span class="hljs-keyword">case</span> *js.ObjectExpr:  <br>       <span class="hljs-keyword">for</span> _, p := <span class="hljs-keyword">range</span> n.List &#123;  <br>          <span class="hljs-keyword">if</span> p.Name != <span class="hljs-literal">nil</span> &#123;  <br>             v := p.Name.Literal.String()  <br>             <span class="hljs-keyword">if</span> regx.MatchString(v) &#123;  <br>                w.vars = <span class="hljs-built_in">append</span>(w.vars, v)  <br>             &#125;  <br>          &#125;  <br>       &#125;  <br>    &#125;  <br>  <br>    <span class="hljs-keyword">return</span> w  <br>&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="XSS检测模块"><a href="#XSS检测模块" class="headerlink" title="XSS检测模块"></a>XSS检测模块</h3><h4 id="HTML"><a href="#HTML" class="headerlink" title="HTML"></a>HTML</h4><p>每个函数对应不同的 XSS 检测方法：<br><code>checkHtml</code> <strong>html标签未转义，可攻击</strong>：</p>
+<ol>
+<li><code>flag</code> 生成</li>
+<li><code>payload</code> 生成 <code>prefix&lt;flag&gt;</code></li>
+<li>发起请求</li>
+<li>搜索 <code>flag</code> 在 <code>html</code> 中的位置</li>
+<li>如果 <code>flag</code> 在标签名里面则判断存在 &#x3D;&gt; 之前的 payload 的 flag 就是一个标签</li>
+</ol>
+<p><code>checkStyle</code> <strong>ie下可造成xss</strong>：</p>
+<ul>
+<li><code>payload</code>：<code>expression(a(%s))</code> &#x3D;&gt; <code>expression</code> 用于在 IE 中的 CSS 样式中镶嵌 JS 代码</li>
+<li>如果位置是样式，并且内容包含 <code>expression</code> 表达式则判断存在</li>
+</ul>
+<p><code>checkTagValue</code> <strong>引号可被闭合,可使用其他事件造成xss</strong></p>
+<ul>
+<li>这次检索的是标签里面属性中存在的 XSS</li>
+<li><code>payload</code>：<code>fmt.Sprintf(&quot;%s%s&quot;, prefix, flag)</code> &#x3D;&gt; 这里的前缀其实就是引号啥的</li>
+<li>如果属性的 key 中包含 <code>flag</code> 就判断存在 &#x3D;&gt; 之前是的属性值位置，现在通过引号进行闭合，变成了 key 的位置。<code>a=&quot;payload&quot; =&gt; a=&quot;&quot; flag</code></li>
+</ul>
+<p>代码都差不多：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *RefXss)</span></span> checkHtml(target Parameter, position <span class="hljs-type">string</span>, k <span class="hljs-type">string</span>, prefix <span class="hljs-type">string</span>) &#123;  <br>    flag := r.generateFlag()  <br>    payload := fmt.Sprintf(<span class="hljs-string">&quot;%s&lt;%s&gt;&quot;</span>, prefix, flag)  <br>    req, resp, err := r.request(target, position, k, payload)  <br>    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;  <br>       logrus.WithError(err).Debugln(<span class="hljs-string">&quot;请求失败[checkHtml]&quot;</span>)  <br>       <span class="hljs-keyword">return</span>  <br>    &#125;  <br>    positions, err := html.SearchInputInResponse(flag, strings.NewReader(resp.Text))  <br>    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;  <br>       logrus.WithError(err).Debugln(<span class="hljs-string">&quot;html语义解析失败&quot;</span>)  <br>       <span class="hljs-keyword">return</span>  <br>    &#125;  <br>    <span class="hljs-keyword">for</span> _, p := <span class="hljs-keyword">range</span> positions &#123;  <br>       <span class="hljs-keyword">if</span> p.Type == html.Tag &amp;&amp; strings.Contains(p.TagName, flag) &#123;  <br>          lines := htmlInLine(resp.Text, payload)  <br>          item := Item&#123;  <br>             Req:            req,  <br>             Resp:           resp,  <br>             XssType:        <span class="hljs-string">&quot;html&quot;</span>,  <br>             Desc:           <span class="hljs-string">&quot;html标签未转义，可攻击&quot;</span>,  <br>             Position:       position,  <br>             Parameter:      k,  <br>             Payload:        fmt.Sprintf(<span class="hljs-string">&quot;%s=%s&quot;</span>, k, payload),  <br>             SuggestPayload: fmt.Sprintf(<span class="hljs-string">&quot;%s=%s&quot;</span>, k, prefix+<span class="hljs-string">&quot;&lt;svg onload=alert(1)&gt;//&quot;</span>),  <br>             Line:           lines,  <br>          &#125;  <br>          r.result.Items = <span class="hljs-built_in">append</span>(r.result.Items, item)  <br>       &#125;  <br>    &#125;  <br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="JS-1"><a href="#JS-1" class="headerlink" title="JS"></a>JS</h4><p><code>checkJsString</code> <strong>JS 逃逸</strong> 应该是在 script 里面的变量什么的可控的场景</p>
+<ol>
+<li><code>payload := fmt.Sprintf(&quot;%s-%s-%s&quot;, quote, flag, quote)</code></li>
+<li>HTML 解析，获取 <code>script</code> 标签的内容（JS代码）</li>
+<li>解析这些 JS 代码获取语法树</li>
+<li>如果 <code>ast.Type</code> 是 <code>IdentifierToken</code> 并且内容中有 <code>flag</code>  则 <strong>可以使用quote逃逸引号</strong> </li>
+<li>如果没有逃逸成功，进行转义测试 <code>fmt.Sprintf(&quot;\\%s%s&quot;, quote, flag)</code><ol>
+<li>JS AST 解析失败，表明使用转义符破坏原有语义</li>
+<li>解析成功，和 [4] 处类似的检测方式</li>
+</ol>
+</li>
+</ol>
+<p><code>checkJsComment</code> <strong>可以使用%s逃逸注释</strong></p>
+<ul>
+<li>就是测试 <code>/**/</code> 和 <code>//</code> 注释</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *RefXss)</span></span> checkJsComment(target Parameter, position <span class="hljs-type">string</span>, k <span class="hljs-type">string</span>, s <span class="hljs-type">string</span>) &#123;  <br>    flag := r.generateFlag()  <br>    <span class="hljs-keyword">var</span> payload <span class="hljs-type">string</span>  <br>    <span class="hljs-keyword">var</span> truePayload <span class="hljs-type">string</span>  <br>    <span class="hljs-keyword">if</span> s == <span class="hljs-string">&quot;//&quot;</span> &#123;  <br>       payload = fmt.Sprintf(<span class="hljs-string">&quot;\n%s//&quot;</span>, flag)  <br>       truePayload = fmt.Sprintf(<span class="hljs-string">&quot;\n%s//&quot;</span>, <span class="hljs-string">&quot;alert(1)&quot;</span>)  <br>    &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> s == <span class="hljs-string">&quot;/*&quot;</span> &#123;  <br>       payload = fmt.Sprintf(<span class="hljs-string">&quot;*/%s/*&quot;</span>, flag)  <br>       truePayload = fmt.Sprintf(<span class="hljs-string">&quot;\n%s//&quot;</span>, <span class="hljs-string">&quot;alert(1)&quot;</span>)  <br>    &#125;  <br>  <br>    req, resp, err := r.request(target, position, k, payload)  <br>    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;  <br>       logrus.WithError(err).Debugln(<span class="hljs-string">&quot;请求失败 [checkJsComment]&quot;</span>)  <br>       <span class="hljs-keyword">return</span>  <br>    &#125;  <br>    positions, err := html.SearchInputInResponse(flag, strings.NewReader(resp.Text))  <br>    sources := []<span class="hljs-type">string</span>&#123;&#125;  <br>    <span class="hljs-keyword">for</span> _, p := <span class="hljs-keyword">range</span> positions &#123;  <br>       <span class="hljs-keyword">if</span> strings.ToLower(p.TagName) == <span class="hljs-string">&quot;script&quot;</span> &#123;  <br>          sources = <span class="hljs-built_in">append</span>(sources, p.Content)  <br>       &#125;  <br>    &#125;  <br>    content := strings.Join(sources, <span class="hljs-string">&quot;\n&quot;</span>)  <br>    asts, err := js.SearchInputInScript(flag, content)  <br>    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;  <br>       logrus.WithError(err).Debugln(<span class="hljs-string">&quot;ast解析失败&quot;</span>)  <br>       <span class="hljs-keyword">return</span>  <br>    &#125;  <br>    lines := htmlInLine(content, flag)  <br>    <span class="hljs-keyword">for</span> _, ast := <span class="hljs-keyword">range</span> asts &#123;  <br>       <span class="hljs-keyword">if</span> ast.Type == js2.IdentifierToken &amp;&amp; strings.Contains(ast.Content, flag) &#123;  <br>          item := Item&#123;  <br>             Req:            req,  <br>             Resp:           resp,  <br>             XssType:        <span class="hljs-string">&quot;Js CommentToken&quot;</span>,  <br>             Desc:           fmt.Sprintf(<span class="hljs-string">&quot;可以使用%s逃逸注释&quot;</span>, truePayload),  <br>             Position:       position,  <br>             Parameter:      k,  <br>             Payload:        fmt.Sprintf(<span class="hljs-string">&quot;%s=%s&quot;</span>, k, payload),  <br>             SuggestPayload: fmt.Sprintf(<span class="hljs-string">&quot;%s=%s&quot;</span>, k, truePayload),  <br>             Line:           lines,  <br>          &#125;  <br>          r.result.Items = <span class="hljs-built_in">append</span>(r.result.Items, item)  <br>          <span class="hljs-keyword">return</span>  <br>       &#125;  <br>    &#125;  <br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="XSS"><a href="#XSS" class="headerlink" title="XSS"></a>XSS</h4><p>request 模块：针对对应位置设置对应的请求参数，请求用的 projectdiscovery 的库</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *RefXss)</span></span> request(target Parameter, position <span class="hljs-type">string</span>, k <span class="hljs-type">string</span>, v <span class="hljs-type">string</span>) (*retryablehttp.Request, *httpx.Response, <span class="hljs-type">error</span>) &#123;  <br>    req, err := r.hp.NewRequest(target.Method, target.Url, target.POST, target.Headers)  <br>    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;  <br>       <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, <span class="hljs-literal">nil</span>, err  <br>    &#125;  <br>    <span class="hljs-keyword">switch</span> position &#123;  <br>    <span class="hljs-keyword">case</span> InjectGetParameter:  <br>       query := req.URL.Query()  <br>       query.Set(k, v)  <br>       req.URL.RawQuery = query.Encode()  <br>    <span class="hljs-keyword">case</span> InjectPostParameter:  <br>       vs, err := url.ParseQuery(<span class="hljs-type">string</span>(target.POST))  <br>       <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;  <br>          <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, <span class="hljs-literal">nil</span>, err  <br>       &#125;  <br>       vs.Set(k, v)  <br>       req.Body = ioutil.NopCloser(strings.NewReader(vs.Encode()))  <br>       req, err = retryablehttp.FromRequest(req.Request)  <br>       <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;  <br>          <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, <span class="hljs-literal">nil</span>, err  <br>       &#125;  <br>    <span class="hljs-keyword">case</span> InjectCookieParameter:  <br>       cookies := req.Cookies()  <br>       <span class="hljs-keyword">for</span> i, vv := <span class="hljs-keyword">range</span> cookies &#123;  <br>          key := vv.Name  <br>          <span class="hljs-keyword">if</span> key == k &#123;  <br>             cookies[i].Value = v  <br>          &#125;  <br>       &#125;  <br>       req.Header.Set(<span class="hljs-string">&quot;Cookie&quot;</span>, EncodeCookies(cookies))  <br>  <br>    <span class="hljs-keyword">case</span> InjectUriParameter:  <br>       paths := req.URL.Path  <br>       splits := strings.Split(paths, <span class="hljs-string">&quot;/&quot;</span>)  <br>       kValue, _ := strconv.Atoi(k)  <br>       s := splits[kValue]  <br>       last := strings.LastIndex(s, <span class="hljs-string">&quot;.&quot;</span>)  <br>       <span class="hljs-comment">// 对路径中含点的做特殊处理  </span><br>       <span class="hljs-keyword">if</span> last &gt; <span class="hljs-number">-1</span> &#123;  <br>          v = v + s[last:]  <br>       &#125;  <br>       splits[kValue] = v  <br>       req.URL.Path = strings.Join(splits, <span class="hljs-string">&quot;/&quot;</span>)  <br>    <span class="hljs-keyword">case</span> InjectHeaderParameter:  <br>       req.Header.Set(k, v)  <br>    &#125;  <br>    resp, err := r.hp.Do(req)  <br>    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;  <br>       <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, <span class="hljs-literal">nil</span>, err  <br>    &#125;  <br>    <span class="hljs-keyword">return</span> req, resp, <span class="hljs-literal">nil</span>  <br>&#125;<br></code></pre></td></tr></table></figure>
+<p>扫描模块：<br>实际并没有调用，而是使用 ScanWithHiddenParameter。</p>
+<ol>
+<li>隐藏参数收集<ol>
+<li>HTML 获取 input 的 name </li>
+<li>JS AST 获取变量再配合正则进行过滤</li>
+</ol>
+</li>
+<li>添加隐藏参数，调用 <code>handle</code> 进行扫描，只检测 GET</li>
+<li>检测其他位置的 XSS （ POST, COOKIE, HEADER, URI ）</li>
+</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>AST 抽象语法树<br>XSS </p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%8A%80%E6%9C%AF/" class="category-chain-item">技术</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/" class="print-no-link">#源码学习</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>xscan 源码学习</div>
+      <div>https://liancccc.github.io/2025/09/10/技术/源码学习/xscan/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>守心</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年9月10日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2025/10/01/%E6%8A%80%E6%9C%AF/%E5%BC%80%E5%8F%91/Goauto/" title="Goauto">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Goauto</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/07/17/%E6%8A%80%E6%9C%AF/%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/CVE-2025-53833/" title="CVE-2025-53833 LaRecipe 服务端模板注入漏洞">
+                        <span class="hidden-mobile">CVE-2025-53833 LaRecipe 服务端模板注入漏洞</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

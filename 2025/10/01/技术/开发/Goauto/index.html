@@ -1,0 +1,773 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/avatar.png">
+  <link rel="icon" href="/img/avatar.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="守心">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="前言之前工作的时候发现一款很不错的开源工具 osmedeus，这个工具可以通过 yaml 编排各种安全工具的工作流。 比如子域名收集模块，就很好编写，很简单的就实现了 subfinder 和 amass 的集成： 12345678910111213141516171819kind: modulename: subdomain-enumparams:  - name: target    requi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Goauto">
+<meta property="og:url" content="https://liancccc.github.io/2025/10/01/%E6%8A%80%E6%9C%AF/%E5%BC%80%E5%8F%91/Goauto/index.html">
+<meta property="og:site_name" content="liancccc&#39;s blog">
+<meta property="og:description" content="前言之前工作的时候发现一款很不错的开源工具 osmedeus，这个工具可以通过 yaml 编排各种安全工具的工作流。 比如子域名收集模块，就很好编写，很简单的就实现了 subfinder 和 amass 的集成： 12345678910111213141516171819kind: modulename: subdomain-enumparams:  - name: target    requi">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-10-01T13:23:28.000Z">
+<meta property="article:modified_time" content="2026-03-01T17:57:48.904Z">
+<meta property="article:author" content="守心">
+<meta property="article:tag" content="工具">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Goauto - liancccc&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/font.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"liancccc.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":false},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 50vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>琉璃魄</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/lbxx.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Goauto"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-10-01 21:23" pubdate>
+          2025年10月1日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Goauto</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>之前工作的时候发现一款很不错的开源工具 osmedeus，这个工具可以通过 yaml 编排各种安全工具的工作流。</p>
+<p>比如子域名收集模块，就很好编写，很简单的就实现了 subfinder 和 amass 的集成：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">kind:</span> <span class="hljs-string">module</span><br><span class="hljs-attr">name:</span> <span class="hljs-string">subdomain-enum</span><br><br><span class="hljs-attr">params:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">target</span><br>    <span class="hljs-attr">required:</span> <span class="hljs-literal">true</span><br><br><span class="hljs-attr">steps:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">subfinder</span><br>    <span class="hljs-attr">type:</span> <span class="hljs-string">bash</span><br>    <span class="hljs-attr">command:</span> <span class="hljs-string">subfinder</span> <span class="hljs-string">-d</span> &#123;&#123;<span class="hljs-string">target</span>&#125;&#125; <span class="hljs-string">-o</span> &#123;&#123;<span class="hljs-string">Output</span>&#125;&#125;<span class="hljs-string">/subs.txt</span><br><br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">amass</span><br>    <span class="hljs-attr">type:</span> <span class="hljs-string">bash</span><br>    <span class="hljs-attr">command:</span> <span class="hljs-string">amass</span> <span class="hljs-string">enum</span> <span class="hljs-string">-passive</span> <span class="hljs-string">-d</span> &#123;&#123;<span class="hljs-string">target</span>&#125;&#125; <span class="hljs-string">&gt;&gt;</span> &#123;&#123;<span class="hljs-string">Output</span>&#125;&#125;<span class="hljs-string">/subs.txt</span><br><br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">dedupe</span><br>    <span class="hljs-attr">type:</span> <span class="hljs-string">bash</span><br>    <span class="hljs-attr">command:</span> <span class="hljs-string">sort</span> <span class="hljs-string">-u</span> &#123;&#123;<span class="hljs-string">Output</span>&#125;&#125;<span class="hljs-string">/subs.txt</span> <span class="hljs-string">-o</span> &#123;&#123;<span class="hljs-string">Output</span>&#125;&#125;<span class="hljs-string">/subdomains.txt</span><br></code></pre></td></tr></table></figure>
+
+<p>然后模块构成工作流：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">kind:</span> <span class="hljs-string">flow</span><br><span class="hljs-attr">name:</span> <span class="hljs-string">full-recon</span><br><br><span class="hljs-attr">params:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">target</span><br>    <span class="hljs-attr">required:</span> <span class="hljs-literal">true</span><br><br><span class="hljs-attr">modules:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">subdomain-enum</span><br>    <span class="hljs-attr">path:</span> <span class="hljs-string">modules/subdomain-enum.yaml</span><br><br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">http-probe</span><br>    <span class="hljs-attr">path:</span> <span class="hljs-string">modules/http-probe.yaml</span><br>    <span class="hljs-attr">depends_on:</span> [<span class="hljs-string">subdomain-enum</span>]<br><br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">screenshot</span><br>    <span class="hljs-attr">path:</span> <span class="hljs-string">modules/screenshot.yaml</span><br>    <span class="hljs-attr">depends_on:</span> [<span class="hljs-string">http-probe</span>]<br>    <span class="hljs-attr">condition:</span> <span class="hljs-string">&#x27;fileLength(&quot;&#123;&#123;Output&#125;&#125;/live.txt&quot;) &gt; 0&#x27;</span><br></code></pre></td></tr></table></figure>
+
+<p>在 yaml 中还可以使用其本身提供的各种函数和代码比如这里的 <code>&#39;fileLength(&quot;&#123;&#123;Output&#125;&#125;/live.txt&quot;) &gt; 0&#39;</code> ，由 Golang 完成功能，然后在 yaml 中使用 ‘’ 中包含 JavaScript 代码进行调用（ github.com&#x2F;dop251&#x2F;goja ）。</p>
+<p>比如直接把 nmap 端口扫描解析的函数写在 Golang，然后直接在 yaml 通过 JS 运行，这就实现了很好的动态加载。</p>
+<ul>
+<li>简单工具的结果，直接通过 yaml 运行 bash 执行，比如 subfinder&#x2F;amass 这样的，运行后就直接处理好了</li>
+<li>复杂工具的结果，比如 nmap 的 xml，那么就在 Go 中完成解析，提供对应的函数，可以让用户在 yaml 中直接处理</li>
+</ul>
+<p>感觉是 Go 做工作流一个很完善的方案了，工具、工作流都可以直接通过 yaml 实现，复杂的东西就使用 Go 写好 —— 但是大部分不需要</p>
+<p>看源码感觉是大部分的情况都考虑到了，可以一定程度上自由添加新的工具，新的工作流。</p>
+<p>相较于很多平台，osmedeus 要更加轻量，测试过一些平台，同样可以直接后台添加新的工具插件，问题就是太大了，我正常就 2核2G 的 VPS，不想要各种后端的架构 Redis 啊什么的，可能快速扫描完成就关闭了。</p>
+<p>总之还是比较好用的。</p>
+<p>至于为什么要编写 Goauto，是当时微信公众号有个文章说转子女神很厉害，但是它只有 windows 版本的，就感觉 osm 并没有那么的好，后续我又想加上 oneforall，但是 osm 的安装是通过一个 sh 文件的，添加起来感觉很乱，oneforall 的结果是 csv ，虽然通过 linux 命令可以完成提取，但是还是感觉到了 osm 的局限性。</p>
+<p>它只能执行 linux 或者是写好的函数，那么可扩展性好像对我来说，并没有那么有用，因为我正常使用的其实也就那几个工具和流程，添加新的工具其实并不频繁。</p>
+<p>所以就写了 Goauto，完全没有任何的扩展性，想加工具就得写代码重新打包，至少我自己很熟悉要怎么添加和使用。</p>
+<p>因为即使把一个工具源码来来回回阅读，理解清，但是隔一段时间想做修改，还是很麻烦。</p>
+<h2 id="AI"><a href="#AI" class="headerlink" title="AI"></a>AI</h2><p>看到 freefub 发布了一些要钱的 AI 工具，看了下描述，大部分就是写了 MCP 服务里面提供各种工具，然后 AI 能自己调用工具执行把结果分析展示给人。</p>
+<p>那么感觉对于安全从业者，只是把执行工具命令变成了用汉字指挥，况且前段时间在写测绘 MCP Demo 的时候就发现 AI 调用 MCP 的超时和数据大小影响是很大的。有的工具调用时间很长就会导致超时问题，有的工具返回的结果实在是太多了，AI 不会全部读出来，只能多次。</p>
+<p>目前对于 AI 在安全工具的看法还是，AI 更适合做不机械化的事情，机械化的事情完全可以用代码实现，固定的工具执行工作流根本不需要，多此一举，MCP 针对批量目标、多个工具就会乏力了。用代码把每个模块要执行的多个工具执行好，出结果后，再给 AI。</p>
+<p>对于 Goauto 扫描完的结果就完全可以交给 AI 进行分析（ 这是人需要看的东西 ），比如：</p>
+<ul>
+<li>端口扫描结果：AI 分析是否有特殊端口，如 redis、es …</li>
+<li>网站扫描结果：AI 分析标题、子域名、指纹是否是特殊需要重点关注的业务，比如未授权的 ES、各种 OA…</li>
+<li>目录扫描结果：AI 分析是否有特殊目录，如备份文件、swagger ….</li>
+<li>漏洞扫描结果：AI 分析是否有高危漏洞，误报验证、或者是一些没用的什么 HTTPS 不安全什么的 ….</li>
+<li>信息泄露扫描结果：AI 分析提取是否有真正的敏感信息</li>
+<li>爬虫结果：如果把所以流量保持然后 AI 分析，测试是否能寻找更多的需要人工测试的漏洞 ? 这种情况不考虑，个人使用 API 费钱又没有意义</li>
+</ul>
+<p>所以目前 Goauto 不打算接入 AI，先用代码完成机械化的事情吧。</p>
+<h2 id="Goauto"><a href="#Goauto" class="headerlink" title="Goauto"></a>Goauto</h2><p>我的期待是可以很方便的完成各种工具的安装和更新，然后加工具和写工作流的时候也可以有一个规范。</p>
+<p>断断续续一周多完成了，还有的没搞，但是大框架是没啥问题了。</p>
+<h3 id="工具安装"><a href="#工具安装" class="headerlink" title="工具安装"></a>工具安装</h3><p>使用 go install 可以直接安装 goauto，然后使用 goauto install 就可以一键安装各种工具！</p>
+<p>对于文件的去除和排序都直接使用 powershell 和 linux 的工具，效率更高</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>工具</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>子域名</td>
+<td>subfinder</td>
+</tr>
+<tr>
+<td></td>
+<td>oneforall</td>
+</tr>
+<tr>
+<td></td>
+<td>ksubdomain</td>
+</tr>
+<tr>
+<td></td>
+<td>alterx</td>
+</tr>
+<tr>
+<td>cdn 识别</td>
+<td>cdncheck ( 添加国内和并发 )</td>
+</tr>
+<tr>
+<td>域名解析</td>
+<td>dnsx</td>
+</tr>
+<tr>
+<td>端口扫描</td>
+<td>naabu + nmap</td>
+</tr>
+<tr>
+<td>验活去重 | WEB信息 | 截图</td>
+<td>httpx</td>
+</tr>
+<tr>
+<td>测绘资产</td>
+<td>uncover ( 默认工作流的是 quake ，因为我没有其他的会员 )</td>
+</tr>
+<tr>
+<td>目录扫描</td>
+<td>feroxbuster</td>
+</tr>
+<tr>
+<td>爬虫</td>
+<td>gospider</td>
+</tr>
+<tr>
+<td></td>
+<td>katana</td>
+</tr>
+<tr>
+<td></td>
+<td>urlfinder</td>
+</tr>
+<tr>
+<td></td>
+<td>gau</td>
+</tr>
+<tr>
+<td></td>
+<td>crawlergo</td>
+</tr>
+<tr>
+<td>爬虫去重</td>
+<td>uro</td>
+</tr>
+<tr>
+<td>敏感信息</td>
+<td>wih</td>
+</tr>
+<tr>
+<td>漏洞扫描</td>
+<td>xscan</td>
+</tr>
+<tr>
+<td></td>
+<td>xray</td>
+</tr>
+<tr>
+<td></td>
+<td>nuclei</td>
+</tr>
+<tr>
+<td></td>
+<td>afrog</td>
+</tr>
+</tbody></table>
+<h3 id="添加工具"><a href="#添加工具" class="headerlink" title="添加工具"></a>添加工具</h3><p>定义了一个工具接口和工具运行参数接口：</p>
+<figure class="highlight elm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs elm"><span class="hljs-keyword">type</span> <span class="hljs-type">Module</span> interface &#123;<br>	<span class="hljs-type">Name</span>() string<br>	<span class="hljs-type">Install</span>() error<br>	<span class="hljs-type">CheckInstalled</span>() bool<br>	<span class="hljs-type">Run</span>(funcParams any)<br>&#125;<br><br><span class="hljs-keyword">type</span> <span class="hljs-type">BaseParams</span> struct &#123;<br>	<span class="hljs-type">Target</span> string<br>	<span class="hljs-type">Output</span> string<br><br>	<span class="hljs-type">Proxy</span>   string<br>	<span class="hljs-type">Dict</span>    string<br>	<span class="hljs-type">Timeout</span> string<br><br>	<span class="hljs-type">CustomizeParams</span> string<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>还是比较简单的：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><code class="hljs stylus">package oneforall<br><br>import (<br>	<span class="hljs-string">&quot;fmt&quot;</span><br>	<span class="hljs-string">&quot;path/filepath&quot;</span><br>	<span class="hljs-string">&quot;strings&quot;</span><br><br>	<span class="hljs-string">&quot;github.com/liancccc/goauto/pkg/executil&quot;</span><br>	<span class="hljs-string">&quot;github.com/liancccc/goauto/pkg/fileutil&quot;</span><br>	<span class="hljs-string">&quot;github.com/liancccc/goauto/pkg/modules&quot;</span><br>	<span class="hljs-string">&quot;github.com/liancccc/goauto/pkg/paths&quot;</span><br>	<span class="hljs-string">&quot;github.com/liancccc/goauto/pkg/venv/python&quot;</span><br>	<span class="hljs-string">&quot;github.com/projectdiscovery/gologger&quot;</span><br>)<br><br><span class="hljs-selector-tag">var</span> (<br>	pythonBin = python<span class="hljs-selector-class">.New</span>()<span class="hljs-selector-class">.PythonBin</span><br>	pipBin    = python<span class="hljs-selector-class">.New</span>()<span class="hljs-selector-class">.PipBin</span><br><br>	oenforallDir           = filepath<span class="hljs-selector-class">.Join</span>(paths<span class="hljs-selector-class">.ToolsDir</span>, <span class="hljs-string">&quot;OneForAll&quot;</span>)<br>	oneforallBin           = filepath<span class="hljs-selector-class">.Join</span>(oenforallDir, <span class="hljs-string">&quot;oneforall.py&quot;</span>)<br>	oneforallRequirements  = filepath<span class="hljs-selector-class">.Join</span>(oenforallDir, <span class="hljs-string">&quot;requirements.txt&quot;</span>)<br>	oneforallExec          = fmt<span class="hljs-selector-class">.Sprintf</span>(<span class="hljs-string">&quot;%s %s&quot;</span>, pythonBin, oneforallBin)<br>	installRequireCommands = <span class="hljs-selector-attr">[]</span>string&#123;<br>		fmt<span class="hljs-selector-class">.Sprintf</span>(<span class="hljs-string">&quot;%s -m pip install -U pip setuptools wheel&quot;</span>, pythonBin),<br>		fmt<span class="hljs-selector-class">.Sprintf</span>(<span class="hljs-string">&quot;%s install -r %s&quot;</span>, pipBin, oneforallRequirements),<br>		fmt<span class="hljs-selector-class">.Sprintf</span>(<span class="hljs-string">&quot;%s install fire&quot;</span>, pipBin),<br>	&#125;<br>	cloneCommand = fmt<span class="hljs-selector-class">.Sprintf</span>(<span class="hljs-string">&quot;git clone https://github.com/liancccc/OneForAll.git %s&quot;</span>, oenforallDir)<br>)<br><br>func <span class="hljs-built_in">init</span>() &#123;<br>	modules<span class="hljs-selector-class">.RegisterModule</span>(&amp;ModuleStruct&#123;&#125;)<br>&#125;<br><br>type ModuleStruct struct &#123;<br>&#125;<br><br>func (m *ModuleStruct) <span class="hljs-built_in">Name</span>() string &#123;<br>	return <span class="hljs-string">&quot;oneforall&quot;</span><br>&#125;<br><br>func (m *ModuleStruct) <span class="hljs-built_in">Install</span>() error &#123;<br>	fileutil<span class="hljs-selector-class">.MakeDir</span>(filepath<span class="hljs-selector-class">.Dir</span>(oneforallBin))<br>	<span class="hljs-keyword">if</span> !fileutil<span class="hljs-selector-class">.IsFile</span>(oneforallBin) &#123;<br>		executil<span class="hljs-selector-class">.RunCommandSteamOutput</span>(cloneCommand)<br>	&#125;<br>	<span class="hljs-keyword">for</span> _, cmd := range installRequireCommands &#123;<br>		executil<span class="hljs-selector-class">.RunCommandSteamOutput</span>(cmd)<br>	&#125;<br>	return nil<br>&#125;<br><br>func (m *ModuleStruct) <span class="hljs-built_in">CheckInstalled</span>() bool &#123;<br>	commandSteamOutput, _ := executil<span class="hljs-selector-class">.RunCommandSteamOutput</span>(oneforallExec)<br>	return strings<span class="hljs-selector-class">.Contains</span>(commandSteamOutput, <span class="hljs-string">&quot;python3 oneforall.py&quot;</span>)<br>&#125;<br><br>func (m *ModuleStruct) <span class="hljs-built_in">Run</span>(funcParams any) &#123;<br>	params, ok := funcParams.(modules.BaseParams)<br>	<span class="hljs-keyword">if</span> !ok &#123;<br>		gologger<span class="hljs-selector-class">.Error</span>()<span class="hljs-selector-class">.Str</span>(<span class="hljs-string">&quot;module&quot;</span>, m<span class="hljs-selector-class">.Name</span>())<span class="hljs-selector-class">.Msg</span>(<span class="hljs-string">&quot;invalid params&quot;</span>)<br>		return<br>	&#125;<br><br>	_ = params<span class="hljs-selector-class">.MkOutDir</span>()<br>	<span class="hljs-selector-tag">var</span> csvFilePath = filepath<span class="hljs-selector-class">.Join</span>(filepath<span class="hljs-selector-class">.Dir</span>(params.Output), <span class="hljs-string">&quot;oneforall.csv&quot;</span>)<br>	fileutil<span class="hljs-selector-class">.Remove</span>(csvFilePath)<br><br>	<span class="hljs-selector-tag">var</span> command string<br>	<span class="hljs-keyword">if</span> params<span class="hljs-selector-class">.IsFileTarget</span>() &#123;<br>		command = fmt<span class="hljs-selector-class">.Sprintf</span>(<span class="hljs-string">&quot;%s --targets %s --dns False --brute False --req False --path %s run&quot;</span>, oneforallExec, params<span class="hljs-selector-class">.Target</span>, csvFilePath)<br>	&#125; <span class="hljs-keyword">else</span> &#123;<br>		command = fmt<span class="hljs-selector-class">.Sprintf</span>(<span class="hljs-string">&quot;%s --target %s --dns False --brute False --req False --path %s run&quot;</span>, oneforallExec, params<span class="hljs-selector-class">.Target</span>, csvFilePath)<br>	&#125;<br>	_, err := executil<span class="hljs-selector-class">.RunCommandSteamOutput</span>(command, params.Timeout)<br>	<span class="hljs-keyword">if</span> err != nil &#123;<br>		gologger<span class="hljs-selector-class">.Error</span>()<span class="hljs-selector-class">.Str</span>(<span class="hljs-string">&quot;module&quot;</span>, m<span class="hljs-selector-class">.Name</span>())<span class="hljs-selector-class">.Msg</span>(err<span class="hljs-selector-class">.Error</span>())<br>		return<br>	&#125;<br>	<span class="hljs-keyword">if</span> !params<span class="hljs-selector-class">.IsFileTarget</span>() &amp;&amp; fileutil<span class="hljs-selector-class">.IsFile</span>(csvFilePath) &#123;<br>		subdomains := fileutil<span class="hljs-selector-class">.GetCsvColumn</span>(csvFilePath, <span class="hljs-number">6</span>)<br>		fileutil<span class="hljs-selector-class">.WriteSliceToFile</span>(params<span class="hljs-selector-class">.Output</span>, subdomains)<br>		fileutil<span class="hljs-selector-class">.Remove</span>(csvFilePath)<br>	&#125;<br>	<span class="hljs-selector-tag">var</span> msg = fmt<span class="hljs-selector-class">.Sprintf</span>(<span class="hljs-string">&quot;Output: %s, Count: %d&quot;</span>, params<span class="hljs-selector-class">.Output</span>, fileutil<span class="hljs-selector-class">.CountLines</span>(params.Output))<br>	gologger<span class="hljs-selector-class">.Info</span>()<span class="hljs-selector-class">.Str</span>(<span class="hljs-string">&quot;module&quot;</span>, m<span class="hljs-selector-class">.Name</span>())<span class="hljs-selector-class">.Msg</span>(msg)<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="实战测试"><a href="#实战测试" class="headerlink" title="实战测试"></a>实战测试</h2><p>用 Goauto 扫了大半个月，补天扫了个 XSS 50块钱，hackerone nba 扫了一个 XSS 但是不在范围，hackerone wih 扫了什么前端 KEY 泄露，后面就暂停了。感觉好像没啥作用，VPS 也到期了，不想再充钱。</p>
+<h2 id="Todo"><a href="#Todo" class="headerlink" title="Todo"></a>Todo</h2><ul>
+<li><input disabled="" type="checkbox"> 添加 Pocsuite 模块，把之前写的插件利用上</li>
+<li><input disabled="" type="checkbox"> WEB 优化</li>
+<li><input disabled="" type="checkbox"> 接入 AI 分析扫描结果</li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%8A%80%E6%9C%AF/" class="category-chain-item">技术</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%B7%A5%E5%85%B7/" class="print-no-link">#工具</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Goauto</div>
+      <div>https://liancccc.github.io/2025/10/01/技术/开发/Goauto/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>守心</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年10月1日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2026/03/01/%E6%8A%80%E6%9C%AF/%E5%85%B6%E4%BB%96/%E4%BD%BF%E7%94%A8-typst-%E7%BC%96%E5%86%99%E7%AE%80%E5%8E%86/" title="使用 typst 编写简历">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">使用 typst 编写简历</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/09/10/%E6%8A%80%E6%9C%AF/%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/xscan/" title="xscan 源码学习">
+                        <span class="hidden-mobile">xscan 源码学习</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
