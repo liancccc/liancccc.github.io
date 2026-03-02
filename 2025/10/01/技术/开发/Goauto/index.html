@@ -27,7 +27,7 @@
 <meta property="og:description" content="前言之前工作的时候发现一款很不错的开源工具 osmedeus，这个工具可以通过 yaml 编排各种安全工具的工作流。 比如子域名收集模块，就很好编写，很简单的就实现了 subfinder 和 amass 的集成： 12345678910111213141516171819kind: modulename: subdomain-enumparams:  - name: target    requi">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2025-10-01T13:23:28.000Z">
-<meta property="article:modified_time" content="2026-03-01T18:06:04.694Z">
+<meta property="article:modified_time" content="2026-03-02T05:03:13.019Z">
 <meta property="article:author" content="守心">
 <meta property="article:tag" content="工具">
 <meta name="twitter:card" content="summary_large_image">
@@ -285,19 +285,6 @@
 <p>它只能执行 linux 或者是写好的函数，那么可扩展性好像对我来说，并没有那么有用，因为我正常使用的其实也就那几个工具和流程，添加新的工具其实并不频繁。</p>
 <p>所以就写了 Goauto，完全没有任何的扩展性，想加工具就得写代码重新打包，至少我自己很熟悉要怎么添加和使用。</p>
 <p>因为即使把一个工具源码来来回回阅读，理解清，但是隔一段时间想做修改，还是很麻烦。</p>
-<h2 id="AI"><a href="#AI" class="headerlink" title="AI"></a>AI</h2><p>看到 freefub 发布了一些要钱的 AI 工具，看了下描述，大部分就是写了 MCP 服务里面提供各种工具，然后 AI 能自己调用工具执行把结果分析展示给人。</p>
-<p>那么感觉对于安全从业者，只是把执行工具命令变成了用汉字指挥，况且前段时间在写测绘 MCP Demo 的时候就发现 AI 调用 MCP 的超时和数据大小影响是很大的。有的工具调用时间很长就会导致超时问题，有的工具返回的结果实在是太多了，AI 不会全部读出来，只能多次。</p>
-<p>目前对于 AI 在安全工具的看法还是，AI 更适合做不机械化的事情，机械化的事情完全可以用代码实现，固定的工具执行工作流根本不需要，多此一举，MCP 针对批量目标、多个工具就会乏力了。用代码把每个模块要执行的多个工具执行好，出结果后，再给 AI。</p>
-<p>对于 Goauto 扫描完的结果就完全可以交给 AI 进行分析（ 这是人需要看的东西 ），比如：</p>
-<ul>
-<li>端口扫描结果：AI 分析是否有特殊端口，如 redis、es …</li>
-<li>网站扫描结果：AI 分析标题、子域名、指纹是否是特殊需要重点关注的业务，比如未授权的 ES、各种 OA…</li>
-<li>目录扫描结果：AI 分析是否有特殊目录，如备份文件、swagger ….</li>
-<li>漏洞扫描结果：AI 分析是否有高危漏洞，误报验证、或者是一些没用的什么 HTTPS 不安全什么的 ….</li>
-<li>信息泄露扫描结果：AI 分析提取是否有真正的敏感信息</li>
-<li>爬虫结果：如果把所以流量保持然后 AI 分析，测试是否能寻找更多的需要人工测试的漏洞 ? 这种情况不考虑，个人使用 API 费钱又没有意义</li>
-</ul>
-<p>所以目前 Goauto 不打算接入 AI，先用代码完成机械化的事情吧。</p>
 <h2 id="Goauto"><a href="#Goauto" class="headerlink" title="Goauto"></a>Goauto</h2><p>我的期待是可以很方便的完成各种工具的安装和更新，然后加工具和写工作流的时候也可以有一个规范。</p>
 <p>断断续续的完成了，还有的没搞，但是大框架是没啥问题了。</p>
 <p>放 Github 上面了 <a target="_blank" rel="noopener" href="https://github.com/liancccc/goauto">https://github.com/liancccc/goauto</a></p>
