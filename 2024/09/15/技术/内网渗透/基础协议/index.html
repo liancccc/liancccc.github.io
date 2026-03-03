@@ -1,0 +1,707 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/avatar.png">
+  <link rel="icon" href="/img/avatar.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="守心">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="NTLM 协议NTLM 协议是微软用于 windows 身份验证的主要协议之一。其即可用于工作组中的机器身份验证，又可用于域环境身份验证，还可为 SMB、HTTP、LDAP、SMTP 等上层微软应用提供身份验证。 在 NTLM 之前，windows 使用的是 LM 协议进行身份认证，使用的加密算法是 LM Hash，其本质是 DES 加密，容易被破解。所以微软又引入了 NTLM 加密，使用的是 N">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基础协议">
+<meta property="og:url" content="https://liancccc.github.io/2024/09/15/%E6%8A%80%E6%9C%AF/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/%E5%9F%BA%E7%A1%80%E5%8D%8F%E8%AE%AE/index.html">
+<meta property="og:site_name" content="liancccc&#39;s blog">
+<meta property="og:description" content="NTLM 协议NTLM 协议是微软用于 windows 身份验证的主要协议之一。其即可用于工作组中的机器身份验证，又可用于域环境身份验证，还可为 SMB、HTTP、LDAP、SMTP 等上层微软应用提供身份验证。 在 NTLM 之前，windows 使用的是 LM 协议进行身份认证，使用的加密算法是 LM Hash，其本质是 DES 加密，容易被破解。所以微软又引入了 NTLM 加密，使用的是 N">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/kerberos6-20241204151421-irtl9ku.png">
+<meta property="article:published_time" content="2024-09-15T13:23:28.000Z">
+<meta property="article:modified_time" content="2026-03-03T05:58:14.041Z">
+<meta property="article:author" content="守心">
+<meta property="article:tag" content="内网渗透">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/kerberos6-20241204151421-irtl9ku.png">
+  
+  
+  
+  <title>基础协议 - liancccc&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/font.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"liancccc.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":false},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 50vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>liulipo&#39;s blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/lbxx.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="基础协议"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-09-15 21:23" pubdate>
+          2024年9月15日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">基础协议</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h4 id="NTLM-协议"><a href="#NTLM-协议" class="headerlink" title="NTLM 协议"></a>NTLM 协议</h4><p>NTLM 协议是微软用于 windows 身份验证的主要协议之一。其即可用于工作组中的机器身份验证，又可用于域环境身份验证，还可为 SMB、HTTP、LDAP、SMTP 等上层微软应用提供身份验证。</p>
+<p>在 NTLM 之前，windows 使用的是 LM 协议进行身份认证，使用的加密算法是 LM Hash，其本质是 DES 加密，容易被破解。所以微软又引入了 NTLM 加密，使用的是 NTLM Hash 进行加密，加密流程：</p>
+<figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs abnf">密码 <span class="hljs-operator">=</span>&gt; 转为十六进制 <span class="hljs-operator">=</span>&gt; Unicode 编码 <span class="hljs-operator">=</span>&gt; MD4 单向 Hash 加密<br></code></pre></td></tr></table></figure>
+
+<p>用户的密码经过 NTLM Hash 加密后会存储在 <code>C:\Windows\System32\config\SAM</code>​ 文件中，在进行本地认证时，也就是我们在登录操作系统的时候，会由 winlogon.exe 显示登录界面并接收用户输入的账号密码，然后将密码交给 lsass.exe 进程，它会把明文密码加密为 NTLM Hash，然后将这个 Hash 与 SAM 数据库中的 Hash 进行比较，从而实现本地认证。</p>
+<p>本地认证使用的是 NTLM Hash 对比实现，网络认证（ 与其他机器 ）使用的是 NTLM 认证了，NTLM 协议是一种基于 Challenge&#x2F;Response （ 质询&#x2F;响应 ）的验证机制，由三种类型消息组成：</p>
+<ul>
+<li>Negotiate 协商</li>
+<li>Challenge 质询</li>
+<li>Authentication 认证</li>
+</ul>
+<p>工作组下的 NTLM 认证流程：</p>
+<ol>
+<li>客户端输入服务端账号密码后在本地缓存该凭证的 NTLM Hash 值，然后向服务端发送协商消息</li>
+<li>服务端收到协商消息后响应一个质询消息，其中包括服务端生成的一个 16 位的随机值（ Challenge ）</li>
+<li>客户端收到协商消息后，取出 Challenge 值，然后用缓存的服务器 NTLM Hash 对其进行加密得到 Net-NTLM Hash 值，最后放入认证消息发送给服务端</li>
+<li>服务端收到认证消息后，用自己的 NTLM Hash 计算出 Net-NTLM Hash 值，然后与认证消息中的值进行比较</li>
+</ol>
+<p>域环境下的 NTLM 认证流程，之前的协商和执行都是相同的，不同的是服务端收到认证消息后要先发送给域控：</p>
+<ol>
+<li>服务端收到认证消息后，通过 Netlogo 协议和域控建立一个安全通道，将认证消息发送给域控</li>
+<li>域控收到认证消息后，从数据库中找出该用户的 NTLM Hash 计算出 Net-NTLM Hash 值，用计算的值和认证消息的进行比较</li>
+<li>然后把验证结果发给服务端，服务端根据结果对客户端进行回复</li>
+</ol>
+<h4 id="Kerberos-协议"><a href="#Kerberos-协议" class="headerlink" title="Kerberos 协议"></a>Kerberos 协议</h4><p>Kerberos 是西方神话中守卫低于之门的三头犬的名字，这是因为它需要三方共同参与才能完成一次认证。它是一种基于票据（ Ticket ）的认证方式。</p>
+<p>Kerberos 在 TCP&#x2F;UDP 88 端口进行认证，646 端口进行密码重设。</p>
+<p>认证中的三个角色：</p>
+<ol>
+<li>访问服务的客户端</li>
+<li>提供服务的服务端</li>
+<li>提供认证服务的 KDC ( Key Distribution Center，密钥分发中心，通常运行在域控 ）</li>
+</ol>
+<p>客户端想要访问服务端的某个服务，首先需要 KDC 发放一张 TGT（ Ticket Granting Ticket，票据授予票据，可以看作是购买权限 ），有了 TGT 就可以去 KDC 那里申请 ST（ Service Ticket, 服务票据 ），获取 ST 后就可以访问服务了。</p>
+<p>认证流程：</p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/kerberos6-20241204151421-irtl9ku.png" srcset="/img/loading.gif" lazyload alt="kerberos6">​</p>
+<p>Kerberos 协议的认证模块（ 前 2 是自带，后 2 是微软的 ）：</p>
+<ul>
+<li>AS_REQ &amp; AS_REP</li>
+<li>TGS_REQ &amp; TGS_REP</li>
+<li>S4U</li>
+<li>PAC</li>
+</ul>
+<p>PAC（ Privilege Attribute Certificate，权限属性证书 ）中包含各种授权信息，它是微软自己加的一个东西。由于在域中不同权限的用户能访问的资源是不同的，所以微软设计 PAC 来辨别用户身份和权限。</p>
+<p>在一个正常的 Kerberos 认证流程中，KDC 返回的 TGT 和 ST 都是带有 PAC 的，这样做的好处是，在之后的认证中，服务端接收客户端请求的时候可以直接去验证 PAC 中的信息，而不需要再请求 KDC 做一个完成的授权流程。</p>
+<p>PAC 签名：</p>
+<ul>
+<li>PAC_SERVER_CHECKSUM：使用服务秘钥进行签名</li>
+<li>PAC_PRIVSVR_CHECKSUM：使用 KDC 秘钥进行签名</li>
+</ul>
+<p>默认情况下，PAC 用于数据访问的时候，只检查 SERVER_CHECKSUM 去验证客户端是否指定服务的秘钥，而不会验证 PRIVSVR_CHECKSUM。</p>
+<p>PAC 的优缺点：</p>
+<ol>
+<li>客户端访问服务端资源的时候，服务端不需要在向 KDC 查询授权信息，而是直接在本地进行 PAC 信息和 ACL 的比较，节约网络资源</li>
+<li>PAC 在用户认证阶段引入会导致认证耗时过长</li>
+<li>PAC 是微软特有的一个特性，所以启用 PAC 的域中不支持装有其他操作系统的服务器，灵活性降低</li>
+</ol>
+<p>Kerberos 的安全问题：</p>
+<ul>
+<li>AS-REQ 阶段，使用的是密码 hash 或者 AES Key，只获取密码 hash 可以造成 PTH 攻击，只获取 AES key 可以造成 PTK 攻击</li>
+<li>AS-REQ 的 cname 字段的值代表用户名，可以用进行域内用户枚举攻击</li>
+<li>AS-REP 阶段，由于返回的 TGT 是由 krbtgt 用户的密码 Hash 加密的，所以当我们获取到 krbtgt 的密码 hash 就可以自己制作 TGT ，这个票据也被称为黄金票据。</li>
+<li>如果我们有服务的 hash 就可以签发任意用户的 ST，这个票据也被称为白银票据。</li>
+<li>如果设置了 “Do not require Kerberos preauthentication” （ 不需要预认证 ）选项，攻击者就可以向 88 端口发送 AS-REQ，域控就不会做任何验证就将 Hash 加密的 Logon Session key 返回，攻击者可以对其进行破解，这叫做 AS-REP Roasting 攻击。</li>
+<li>由于 ST 是用服务 hash 加密的，因此，如果我们能获取到 ST 就可以对 ST 进行破解获取服务的 Hash 造成 Kerberoasting 攻击。</li>
+</ul>
+<h4 id="SMB-协议"><a href="#SMB-协议" class="headerlink" title="SMB 协议"></a>SMB 协议</h4><p>SMB（ ServerMessage  Block ）通信协议是微软（ Microsoft ）和英特尔 ( Intel ) 在1987年制定的协议，主要是作为Microsoft网络的通讯协议。SMB 是在会话层（session layer）和表示层（presentation layer）以及小部分应用层（application  layer）的协议。SMB使用了NetBIOS的应用程序接口 （ApplicationProgram  Interface，简称API），一般端口使用为 139，445。</p>
+<p>工作原理：</p>
+<ol>
+<li>首先客户端发送一个SMB negport 请求数据报，，并列出它所支持的所有SMB的协议版本。服务器收到请求消息后响应请求，并列出希望 使用的SMB协议版本。如果没有可以使用的协议版本则返回0XFFFFH，结束通信。</li>
+<li>协议确定后，客户端进程向服务器发起一个用户或共享的认证，这个过程是通过发送SessetupX请求数据包实现的。客户端发送一对用户 名和密码或一个简单密码到服务器，然后通过服务器发送一个SessetupX应答数据包来允许或拒绝本次连接。</li>
+<li>当客户端和服务器完成了磋商和认证之后，它会发送一个Tcon或TconX SMB数据报并列出它想访问的网络资源的名称，之后会发送一个 TconX应答数据报以表示此次连接是否接收或拒绝。</li>
+<li>连接到相应资源后，SMB客户端就能够通过open SMB打开一个文件，通过read SMB读取文件，通过write SMB写入文件，通过 close SMB关闭文件。</li>
+</ol>
+<h4 id="LDAP-协议"><a href="#LDAP-协议" class="headerlink" title="LDAP 协议"></a>LDAP 协议</h4><p>LDAP（ Lightweight Directory Access Protocol ），轻量目录访问协议。顾名思义，LDAP是设计用来访问目录数据库的一个协议。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%8A%80%E6%9C%AF/" class="category-chain-item">技术</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/" class="print-no-link">#内网渗透</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>基础协议</div>
+      <div>https://liancccc.github.io/2024/09/15/技术/内网渗透/基础协议/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>守心</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年9月15日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/09/15/%E6%8A%80%E6%9C%AF/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/DumpHash/" title="DumpHash">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">DumpHash</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/09/15/%E6%8A%80%E6%9C%AF/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/%E5%86%85%E7%BD%91%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/" title="内网信息收集">
+                        <span class="hidden-mobile">内网信息收集</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

