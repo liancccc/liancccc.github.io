@@ -231,15 +231,76 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2024/03/15/%E6%8A%80%E6%9C%AF/TOP10/SSRF%20%E6%9C%8D%E5%8A%A1%E7%AB%AF%E8%AF%B7%E6%B1%82%E4%BC%AA%E9%80%A0/" target="_blank">
-          SSRF 服务端请求伪造
+        <a href="/2024/03/15/%E6%8A%80%E6%9C%AF/TOP10/XXE%20%E6%BC%8F%E6%B4%9E/" target="_blank">
+          XXE
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2024/03/15/%E6%8A%80%E6%9C%AF/TOP10/SSRF%20%E6%9C%8D%E5%8A%A1%E7%AB%AF%E8%AF%B7%E6%B1%82%E4%BC%AA%E9%80%A0/" target="_blank">
+      <a class="index-excerpt index-excerpt__noimg" href="/2024/03/15/%E6%8A%80%E6%9C%AF/TOP10/XXE%20%E6%BC%8F%E6%B4%9E/" target="_blank">
         <div>
-          漏洞原理这个漏洞就是它名字所说的 “服务端请求伪造”，该漏洞的攻击方式就是借助服务端去请求其内网的其他服务器造成攻击。 漏洞原理：服务端实现了可以访问其他服务器资源的功能且没有对目标地址进行过滤控制，导致攻击者可以借助该功能去访问内网服务器。 漏洞危害 前端网、服务器所在内网、服务器本地进行端口查找，获取一些服务的 banner 信息等。 攻击运行重新访问或服务器本地的其他应用程序，如 dis、m
+          基础知识XML 指可扩展标记语言（eXtensible Markup Language）。  XML 被设计用来传输和存储数据。 HTML 被设计用来显示数据。 HTML 旨在显示信息，而 XML 旨在传输信息。  XML 特性：  XML 没有预定义的标签，它允许创作者定义自己的标签和自己的文档结构。  XML文档结构包括：  XML声明 DTD 文档类型定义（可选） 文档元素  XML-DTD
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2024-03-15 21:23" pubdate>
+              2024-03-15
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%8A%80%E6%9C%AF/" class="category-chain-item">技术</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/TOP10/">#TOP10</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2024/03/15/%E6%8A%80%E6%9C%AF/TOP10/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/" target="_blank">
+          文件上传
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2024/03/15/%E6%8A%80%E6%9C%AF/TOP10/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/" target="_blank">
+        <div>
+          漏洞原理服务端对文件上传的类型未做限制或者不严谨导致攻击者可以上传其他类型的文件。 通常是尝试上传服务端可解析的脚本文件，也就是 webShell，来拿到网站权限。 不过也可以根据情况来有一些其他的利用：  上传处可目录穿越，覆盖或创建特殊文件 上传 svg、html 等造成 XSS 跨站 上传一个超大的文件，造成拒绝服务漏洞 ….  该漏洞需要考虑的是如何去绕过上传限制，从而上传 webshel
         </div>
       </a>
 
@@ -737,67 +798,6 @@
             <i class="iconfont icon-date"></i>
             <time datetime="2023-12-15 12:47" pubdate>
               2023-12-15
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/%E6%8A%80%E6%9C%AF/" class="category-chain-item">技术</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/">#漏洞分析</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/11/15/%E6%8A%80%E6%9C%AF/%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/CVE-2018-19422/" target="_blank">
-          CVE-2018-19422 Subrion CMS v4.2.1 RCE
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/11/15/%E6%8A%80%E6%9C%AF/%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/CVE-2018-19422/" target="_blank">
-        <div>
-          漏洞信息漏洞名称：Subrion 后台文件上传导致 RCE 漏洞编号：CVE-2018-19422 影响版本：subrion &lt; 4.2.1 ( 尚未修复 ) 漏洞介绍：后台对上传的文件类型不做限制，而是去使用 .htaccess 来让服务器不去解析上传文件夹下的可执行脚本，但是 .htaccess 过滤不完全导致其可以使用 phar 文件来执行脚本。 环境搭建官网：https://subr
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-11-15 12:47" pubdate>
-              2023-11-15
             </time>
           </div>
         
