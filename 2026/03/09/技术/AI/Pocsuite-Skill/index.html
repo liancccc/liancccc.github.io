@@ -19,24 +19,36 @@
   <meta name="author" content="守心">
   <meta name="keywords" content="">
   
-    <meta name="description" content="NTLM 协议NTLM 协议是微软用于 windows 身份验证的主要协议之一。其即可用于工作组中的机器身份验证，又可用于域环境身份验证，还可为 SMB、HTTP、LDAP、SMTP 等上层微软应用提供身份验证。 在 NTLM 之前，windows 使用的是 LM 协议进行身份认证，使用的加密算法是 LM Hash，其本质是 DES 加密，容易被破解。所以微软又引入了 NTLM 加密，使用的是 N">
+    <meta name="description" content="前言前些天看了 Skill 这个东西，发现使用它去做 pocsuite3 自动化编写会更好。 不过就需要使用支持 skill 的客户端来写了，不能直接把之前的数据丢给 API。 如果直接通过 API 去做，最好的方法还是之前那样，减小 token。毕竟 skill 的本质也是 AI 调用工具去阅读 Skill 元数据，然后 AI 选择在深入的读取某个 SKILL 文档，注入到 user promp">
 <meta property="og:type" content="article">
-<meta property="og:title" content="基础协议">
-<meta property="og:url" content="https://liancccc.github.io/2024/09/15/%E6%8A%80%E6%9C%AF/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/%E5%9F%BA%E7%A1%80%E5%8D%8F%E8%AE%AE/index.html">
+<meta property="og:title" content="Pocsuite Skill 的一次测试">
+<meta property="og:url" content="https://liancccc.github.io/2026/03/09/%E6%8A%80%E6%9C%AF/AI/Pocsuite-Skill/index.html">
 <meta property="og:site_name" content="liancccc&#39;s blog">
-<meta property="og:description" content="NTLM 协议NTLM 协议是微软用于 windows 身份验证的主要协议之一。其即可用于工作组中的机器身份验证，又可用于域环境身份验证，还可为 SMB、HTTP、LDAP、SMTP 等上层微软应用提供身份验证。 在 NTLM 之前，windows 使用的是 LM 协议进行身份认证，使用的加密算法是 LM Hash，其本质是 DES 加密，容易被破解。所以微软又引入了 NTLM 加密，使用的是 N">
+<meta property="og:description" content="前言前些天看了 Skill 这个东西，发现使用它去做 pocsuite3 自动化编写会更好。 不过就需要使用支持 skill 的客户端来写了，不能直接把之前的数据丢给 API。 如果直接通过 API 去做，最好的方法还是之前那样，减小 token。毕竟 skill 的本质也是 AI 调用工具去阅读 Skill 元数据，然后 AI 选择在深入的读取某个 SKILL 文档，注入到 user promp">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/kerberos6-20241204151421-irtl9ku.png">
-<meta property="article:published_time" content="2024-09-15T13:23:28.000Z">
-<meta property="article:modified_time" content="2026-03-03T05:58:14.041Z">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20260309193410450.png">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20260309193214306.png">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20260309202709512.png">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20260309202817013.png">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20260309203055158.png">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20260309203218369.png">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20260309232559283.png">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20260309232638724.png">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20260309232739497.png">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20260309233151479.png">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20260309233232597.png">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20260309233316133.png">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20260309233426521.png">
+<meta property="article:published_time" content="2026-03-09T14:21:40.000Z">
+<meta property="article:modified_time" content="2026-03-09T15:44:58.455Z">
 <meta property="article:author" content="守心">
-<meta property="article:tag" content="内网渗透">
+<meta property="article:tag" content="AI">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/kerberos6-20241204151421-irtl9ku.png">
+<meta name="twitter:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20260309193410450.png">
   
   
   
-  <title>基础协议 - liancccc&#39;s blog</title>
+  <title>Pocsuite Skill 的一次测试 - liancccc&#39;s blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -206,7 +218,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="基础协议"></span>
+            <span id="subtitle" data-typed-text="Pocsuite Skill 的一次测试"></span>
           
         </div>
 
@@ -217,8 +229,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-09-15 21:23" pubdate>
-          2024年9月15日 晚上
+        <time datetime="2026-03-09 22:21" pubdate>
+          2026年3月9日 晚上
         </time>
       </span>
     
@@ -261,85 +273,46 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">基础协议</h1>
+            <h1 id="seo-header">Pocsuite Skill 的一次测试</h1>
             
             
               <div class="markdown-body">
                 
-                <h4 id="NTLM-协议"><a href="#NTLM-协议" class="headerlink" title="NTLM 协议"></a>NTLM 协议</h4><p>NTLM 协议是微软用于 windows 身份验证的主要协议之一。其即可用于工作组中的机器身份验证，又可用于域环境身份验证，还可为 SMB、HTTP、LDAP、SMTP 等上层微软应用提供身份验证。</p>
-<p>在 NTLM 之前，windows 使用的是 LM 协议进行身份认证，使用的加密算法是 LM Hash，其本质是 DES 加密，容易被破解。所以微软又引入了 NTLM 加密，使用的是 NTLM Hash 进行加密，加密流程：</p>
-<figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs abnf">密码 <span class="hljs-operator">=</span>&gt; 转为十六进制 <span class="hljs-operator">=</span>&gt; Unicode 编码 <span class="hljs-operator">=</span>&gt; MD4 单向 Hash 加密<br></code></pre></td></tr></table></figure>
-
-<p>用户的密码经过 NTLM Hash 加密后会存储在 <code>C:\Windows\System32\config\SAM</code>​ 文件中，在进行本地认证时，也就是我们在登录操作系统的时候，会由 winlogon.exe 显示登录界面并接收用户输入的账号密码，然后将密码交给 lsass.exe 进程，它会把明文密码加密为 NTLM Hash，然后将这个 Hash 与 SAM 数据库中的 Hash 进行比较，从而实现本地认证。</p>
-<p>本地认证使用的是 NTLM Hash 对比实现，网络认证（ 与其他机器 ）使用的是 NTLM 认证了，NTLM 协议是一种基于 Challenge&#x2F;Response （ 质询&#x2F;响应 ）的验证机制，由三种类型消息组成：</p>
-<ul>
-<li>Negotiate 协商</li>
-<li>Challenge 质询</li>
-<li>Authentication 认证</li>
-</ul>
-<p>工作组下的 NTLM 认证流程：</p>
-<ol>
-<li>客户端输入服务端账号密码后在本地缓存该凭证的 NTLM Hash 值，然后向服务端发送协商消息</li>
-<li>服务端收到协商消息后响应一个质询消息，其中包括服务端生成的一个 16 位的随机值（ Challenge ）</li>
-<li>客户端收到协商消息后，取出 Challenge 值，然后用缓存的服务器 NTLM Hash 对其进行加密得到 Net-NTLM Hash 值，最后放入认证消息发送给服务端</li>
-<li>服务端收到认证消息后，用自己的 NTLM Hash 计算出 Net-NTLM Hash 值，然后与认证消息中的值进行比较</li>
-</ol>
-<p>域环境下的 NTLM 认证流程，之前的协商和执行都是相同的，不同的是服务端收到认证消息后要先发送给域控：</p>
-<ol>
-<li>服务端收到认证消息后，通过 Netlogo 协议和域控建立一个安全通道，将认证消息发送给域控</li>
-<li>域控收到认证消息后，从数据库中找出该用户的 NTLM Hash 计算出 Net-NTLM Hash 值，用计算的值和认证消息的进行比较</li>
-<li>然后把验证结果发给服务端，服务端根据结果对客户端进行回复</li>
-</ol>
-<h4 id="Kerberos-协议"><a href="#Kerberos-协议" class="headerlink" title="Kerberos 协议"></a>Kerberos 协议</h4><p>Kerberos 是西方神话中守卫低于之门的三头犬的名字，这是因为它需要三方共同参与才能完成一次认证。它是一种基于票据（ Ticket ）的认证方式。</p>
-<p>Kerberos 在 TCP&#x2F;UDP 88 端口进行认证，646 端口进行密码重设。</p>
-<p>认证中的三个角色：</p>
-<ol>
-<li>访问服务的客户端</li>
-<li>提供服务的服务端</li>
-<li>提供认证服务的 KDC ( Key Distribution Center，密钥分发中心，通常运行在域控 ）</li>
-</ol>
-<p>客户端想要访问服务端的某个服务，首先需要 KDC 发放一张 TGT（ Ticket Granting Ticket，票据授予票据，可以看作是购买权限 ），有了 TGT 就可以去 KDC 那里申请 ST（ Service Ticket, 服务票据 ），获取 ST 后就可以访问服务了。</p>
-<p>认证流程：</p>
-<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/kerberos6-20241204151421-irtl9ku.png" srcset="/img/loading.gif" lazyload alt="kerberos6">​</p>
-<p>Kerberos 协议的认证模块（ 前 2 是自带，后 2 是微软的 ）：</p>
-<ul>
-<li>AS_REQ &amp; AS_REP</li>
-<li>TGS_REQ &amp; TGS_REP</li>
-<li>S4U</li>
-<li>PAC</li>
-</ul>
-<p>PAC（ Privilege Attribute Certificate，权限属性证书 ）中包含各种授权信息，它是微软自己加的一个东西。由于在域中不同权限的用户能访问的资源是不同的，所以微软设计 PAC 来辨别用户身份和权限。</p>
-<p>在一个正常的 Kerberos 认证流程中，KDC 返回的 TGT 和 ST 都是带有 PAC 的，这样做的好处是，在之后的认证中，服务端接收客户端请求的时候可以直接去验证 PAC 中的信息，而不需要再请求 KDC 做一个完成的授权流程。</p>
-<p>PAC 签名：</p>
-<ul>
-<li>PAC_SERVER_CHECKSUM：使用服务秘钥进行签名</li>
-<li>PAC_PRIVSVR_CHECKSUM：使用 KDC 秘钥进行签名</li>
-</ul>
-<p>默认情况下，PAC 用于数据访问的时候，只检查 SERVER_CHECKSUM 去验证客户端是否指定服务的秘钥，而不会验证 PRIVSVR_CHECKSUM。</p>
-<p>PAC 的优缺点：</p>
-<ol>
-<li>客户端访问服务端资源的时候，服务端不需要在向 KDC 查询授权信息，而是直接在本地进行 PAC 信息和 ACL 的比较，节约网络资源</li>
-<li>PAC 在用户认证阶段引入会导致认证耗时过长</li>
-<li>PAC 是微软特有的一个特性，所以启用 PAC 的域中不支持装有其他操作系统的服务器，灵活性降低</li>
-</ol>
-<p>Kerberos 的安全问题：</p>
-<ul>
-<li>AS-REQ 阶段，使用的是密码 hash 或者 AES Key，只获取密码 hash 可以造成 PTH 攻击，只获取 AES key 可以造成 PTK 攻击</li>
-<li>AS-REQ 的 cname 字段的值代表用户名，可以用进行域内用户枚举攻击</li>
-<li>AS-REP 阶段，由于返回的 TGT 是由 krbtgt 用户的密码 Hash 加密的，所以当我们获取到 krbtgt 的密码 hash 就可以自己制作 TGT ，这个票据也被称为黄金票据。</li>
-<li>如果我们有服务的 hash 就可以签发任意用户的 ST，这个票据也被称为白银票据。</li>
-<li>如果设置了 “Do not require Kerberos preauthentication” （ 不需要预认证 ）选项，攻击者就可以向 88 端口发送 AS-REQ，域控就不会做任何验证就将 Hash 加密的 Logon Session key 返回，攻击者可以对其进行破解，这叫做 AS-REP Roasting 攻击。</li>
-<li>由于 ST 是用服务 hash 加密的，因此，如果我们能获取到 ST 就可以对 ST 进行破解获取服务的 Hash 造成 Kerberoasting 攻击。</li>
-</ul>
-<h4 id="SMB-协议"><a href="#SMB-协议" class="headerlink" title="SMB 协议"></a>SMB 协议</h4><p>SMB（ ServerMessage  Block ）通信协议是微软（ Microsoft ）和英特尔 ( Intel ) 在1987年制定的协议，主要是作为Microsoft网络的通讯协议。SMB 是在会话层（session layer）和表示层（presentation layer）以及小部分应用层（application  layer）的协议。SMB使用了NetBIOS的应用程序接口 （ApplicationProgram  Interface，简称API），一般端口使用为 139，445。</p>
-<p>工作原理：</p>
-<ol>
-<li>首先客户端发送一个SMB negport 请求数据报，，并列出它所支持的所有SMB的协议版本。服务器收到请求消息后响应请求，并列出希望 使用的SMB协议版本。如果没有可以使用的协议版本则返回0XFFFFH，结束通信。</li>
-<li>协议确定后，客户端进程向服务器发起一个用户或共享的认证，这个过程是通过发送SessetupX请求数据包实现的。客户端发送一对用户 名和密码或一个简单密码到服务器，然后通过服务器发送一个SessetupX应答数据包来允许或拒绝本次连接。</li>
-<li>当客户端和服务器完成了磋商和认证之后，它会发送一个Tcon或TconX SMB数据报并列出它想访问的网络资源的名称，之后会发送一个 TconX应答数据报以表示此次连接是否接收或拒绝。</li>
-<li>连接到相应资源后，SMB客户端就能够通过open SMB打开一个文件，通过read SMB读取文件，通过write SMB写入文件，通过 close SMB关闭文件。</li>
-</ol>
-<h4 id="LDAP-协议"><a href="#LDAP-协议" class="headerlink" title="LDAP 协议"></a>LDAP 协议</h4><p>LDAP（ Lightweight Directory Access Protocol ），轻量目录访问协议。顾名思义，LDAP是设计用来访问目录数据库的一个协议。</p>
+                <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>前些天看了 Skill 这个东西，发现使用它去做 pocsuite3 自动化编写会更好。</p>
+<p>不过就需要使用支持 skill 的客户端来写了，不能直接把之前的数据丢给 API。</p>
+<p>如果直接通过 API 去做，最好的方法还是之前那样，减小 token。毕竟 skill 的本质也是 AI 调用工具去阅读 Skill 元数据，然后 AI 选择在深入的读取某个 SKILL 文档，注入到 user prompt 中，完成所谓的学习技能。</p>
+<p>更新：后面依旧还是类 API 的方案更优</p>
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>Skill 比较简单，就是告诉 AI 一些漏洞基本信息的格式还有不同类型的漏洞的存放位置之类的。</p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20260309193410450.png" srcset="/img/loading.gif" lazyload alt="image-20260309193410450"></p>
+<p>找了找新一点的漏洞，今天刚好就有：</p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20260309193214306.png" srcset="/img/loading.gif" lazyload alt="image-20260309193214306"></p>
+<p>来看一看 AI 编写的过程</p>
+<p>vscode 的 fetch 工具感觉应该挺好的，能够读取微信</p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20260309202709512.png" srcset="/img/loading.gif" lazyload alt="image-20260309202709512"></p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20260309202817013.png" srcset="/img/loading.gif" lazyload alt="image-20260309202817013"></p>
+<p>运行的结果没有问题：</p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20260309203055158.png" srcset="/img/loading.gif" lazyload alt="image-20260309203055158"></p>
+<p>但是实际呢，我的模板后面一些不允许动的地方给我去掉了，同时又自己加了乱七八糟的东西。</p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20260309203218369.png" srcset="/img/loading.gif" lazyload alt="image-20260309203218369"></p>
+<h2 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h2><p>除了模型本身的问题之外，一个比较重要的问题就是一个 pocsuite 模板基本就是 390 行左右，大部分的 AI 会只完成有用的，后续的就默认省略。对于漏洞属性的 vulID，AI 还是会去自己填上，明明我们不需要。</p>
+<h2 id="另一种模式"><a href="#另一种模式" class="headerlink" title="另一种模式"></a>另一种模式</h2><p>测试一下之前使用 API 来自动化转换的模式。</p>
+<p>这样的好处让 AI 根据模板创建，AI 可能会省略或者修改，但是让 AI 去修改已经生成的，它之后去修改有问题的，而不会删除其他的。</p>
+<p>另外的就是省 token，毕竟 AI  不需要读取和输出整个 pocsuite 脚本。</p>
+<p>这里写了一个简单的 Demo</p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20260309232559283.png" srcset="/img/loading.gif" lazyload alt="image-20260309232559283"></p>
+<p>写好每种类型对应的必备函数和 flag</p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20260309232638724.png" srcset="/img/loading.gif" lazyload alt="image-20260309232638724"></p>
+<p>然后对应 flag 的模板和替换脚本</p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20260309232739497.png" srcset="/img/loading.gif" lazyload alt="image-20260309232739497"></p>
+<p>再次运行</p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20260309233151479.png" srcset="/img/loading.gif" lazyload alt="image-20260309233151479"></p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20260309233232597.png" srcset="/img/loading.gif" lazyload alt="image-20260309233232597"></p>
+<p>现在生成的 poc 就完美</p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20260309233316133.png" srcset="/img/loading.gif" lazyload alt="image-20260309233316133"></p>
+<p>不会扰乱格式和漏洞的检测方式，至少目前来说，这种方式依旧是 pocsuite 脚本最好用的模式。</p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20260309233426521.png" srcset="/img/loading.gif" lazyload alt="image-20260309233426521"></p>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>Skill 的本质依旧是 user prompt，所以不要把它想想的过于强大。</p>
+<p>依旧是依靠 AI + 提示词 + 工具</p>
 
                 
               </div>
@@ -373,7 +346,7 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/" class="print-no-link">#内网渗透</a>
+        <a href="/tags/AI/" class="print-no-link">#AI</a>
       
     </div>
   
@@ -385,8 +358,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>基础协议</div>
-      <div>https://liancccc.github.io/2024/09/15/技术/内网渗透/基础协议/</div>
+      <div>Pocsuite Skill 的一次测试</div>
+      <div>https://liancccc.github.io/2026/03/09/技术/AI/Pocsuite-Skill/</div>
     </div>
     <div class="license-meta">
       
@@ -398,7 +371,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2024年9月15日</div>
+          <div>2026年3月9日</div>
         </div>
       
       
@@ -430,18 +403,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2024/09/15/%E6%8A%80%E6%9C%AF/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93/" title="数据传输">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">数据传输</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2024/09/15/%E6%8A%80%E6%9C%AF/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/%E9%9A%A7%E9%81%93%E4%BB%A3%E7%90%86/" title="隧道代理">
-                        <span class="hidden-mobile">隧道代理</span>
+                      <a href="/2026/03/08/%E6%8A%80%E6%9C%AF/AI/Skills/" title="Skills">
+                        <span class="hidden-mobile">Skills</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
