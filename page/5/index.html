@@ -231,15 +231,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2024/03/15/%E6%8A%80%E6%9C%AF/TOP10/SQL%20%E6%B3%A8%E5%85%A5/" target="_blank">
-          SQL 注入
+        <a href="/2024/03/15/%E6%8A%80%E6%9C%AF/TOP10/XXE%20%E6%BC%8F%E6%B4%9E/" target="_blank">
+          XXE
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2024/03/15/%E6%8A%80%E6%9C%AF/TOP10/SQL%20%E6%B3%A8%E5%85%A5/" target="_blank">
+      <a class="index-excerpt index-excerpt__noimg" href="/2024/03/15/%E6%8A%80%E6%9C%AF/TOP10/XXE%20%E6%BC%8F%E6%B4%9E/" target="_blank">
         <div>
-          产生原理用户输入的参数打破了SQL语句的原有逻辑，导致 SQL 语句可控。 本质上就是使用 “闭合符号” 闭合掉原来的 SQL 语句，然后执行另外的 SQL 语句。( 打破原本传递数据区域的边界，插入逻辑代码。) 比如，后端的 SQL 语句如下： 1SELECT * FORM USER WHERE ID = &#x27;1&#x27;  ID 为可控参数，使用闭合符号闭合以执行另外的 SQL 语
+          基础知识XML 指可扩展标记语言（eXtensible Markup Language）。  XML 被设计用来传输和存储数据。 HTML 被设计用来显示数据。 HTML 旨在显示信息，而 XML 旨在传输信息。  XML 特性：  XML 没有预定义的标签，它允许创作者定义自己的标签和自己的文档结构。  XML文档结构包括：  XML声明 DTD 文档类型定义（可选） 文档元素  XML-DTD
         </div>
       </a>
 
@@ -292,15 +292,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2024/03/15/%E6%8A%80%E6%9C%AF/TOP10/XXE%20%E6%BC%8F%E6%B4%9E/" target="_blank">
-          XXE
+        <a href="/2024/03/15/%E6%8A%80%E6%9C%AF/TOP10/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/" target="_blank">
+          文件上传
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2024/03/15/%E6%8A%80%E6%9C%AF/TOP10/XXE%20%E6%BC%8F%E6%B4%9E/" target="_blank">
+      <a class="index-excerpt index-excerpt__noimg" href="/2024/03/15/%E6%8A%80%E6%9C%AF/TOP10/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/" target="_blank">
         <div>
-          基础知识XML 指可扩展标记语言（eXtensible Markup Language）。  XML 被设计用来传输和存储数据。 HTML 被设计用来显示数据。 HTML 旨在显示信息，而 XML 旨在传输信息。  XML 特性：  XML 没有预定义的标签，它允许创作者定义自己的标签和自己的文档结构。  XML文档结构包括：  XML声明 DTD 文档类型定义（可选） 文档元素  XML-DTD
+          漏洞原理服务端对文件上传的类型未做限制或者不严谨导致攻击者可以上传其他类型的文件。 通常是尝试上传服务端可解析的脚本文件，也就是 webShell，来拿到网站权限。 不过也可以根据情况来有一些其他的利用：  上传处可目录穿越，覆盖或创建特殊文件 上传 svg、html 等造成 XSS 跨站 上传一个超大的文件，造成拒绝服务漏洞 ….  该漏洞需要考虑的是如何去绕过上传限制，从而上传 webshel
         </div>
       </a>
 
@@ -414,15 +414,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2024/03/15/%E6%8A%80%E6%9C%AF/TOP10/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/" target="_blank">
-          文件上传
+        <a href="/2024/03/15/%E6%8A%80%E6%9C%AF/TOP10/XSS/" target="_blank">
+          XSS
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2024/03/15/%E6%8A%80%E6%9C%AF/TOP10/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/" target="_blank">
+      <a class="index-excerpt index-excerpt__noimg" href="/2024/03/15/%E6%8A%80%E6%9C%AF/TOP10/XSS/" target="_blank">
         <div>
-          漏洞原理服务端对文件上传的类型未做限制或者不严谨导致攻击者可以上传其他类型的文件。 通常是尝试上传服务端可解析的脚本文件，也就是 webShell，来拿到网站权限。 不过也可以根据情况来有一些其他的利用：  上传处可目录穿越，覆盖或创建特殊文件 上传 svg、html 等造成 XSS 跨站 上传一个超大的文件，造成拒绝服务漏洞 ….  该漏洞需要考虑的是如何去绕过上传限制，从而上传 webshel
+          漏洞原理：用户输入的参数被回显到页面且可以闭合 HTML 标签，执行前端代码。 其的本质就是闭合前端代码，从而构筑恶意代码攻击。 Payload：https://portswigger.net/web-security/cross-site-scripting/cheat-sheet 基本类型 反射型：代码被插入本 HTML 页面，刷新后就会消失 存储型：代码被存储到数据库，一直存在 DOM型：纯
         </div>
       </a>
 
