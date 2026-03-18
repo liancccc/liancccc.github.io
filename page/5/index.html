@@ -353,15 +353,76 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2024/03/15/%E6%8A%80%E6%9C%AF/TOP10/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/" target="_blank">
-          PHP 文件包含
+        <a href="/2024/03/15/%E6%8A%80%E6%9C%AF/TOP10/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/" target="_blank">
+          文件上传
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2024/03/15/%E6%8A%80%E6%9C%AF/TOP10/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/" target="_blank">
+      <a class="index-excerpt index-excerpt__noimg" href="/2024/03/15/%E6%8A%80%E6%9C%AF/TOP10/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/" target="_blank">
         <div>
-          漏洞原理文件包含是 PHP 中的一个功能，能够执行被包含文件中的 PHP 代码。 当目标文件中没有 PHP 代码时，会直接显示文件内容。 漏洞原理：文件包含参数可控，导致包含攻击者恶意的文件，造成 PHP 代码执行或敏感文件读取。 相关函数 include()：执行到 include 时才包含文件，找不到被包含文件时只会产生警告，脚本将继续执行 require()：只要程序一运行就包含文件，找不到
+          漏洞原理服务端对文件上传的类型未做限制或者不严谨导致攻击者可以上传其他类型的文件。 通常是尝试上传服务端可解析的脚本文件，也就是 webShell，来拿到网站权限。 不过也可以根据情况来有一些其他的利用：  上传处可目录穿越，覆盖或创建特殊文件 上传 svg、html 等造成 XSS 跨站 上传一个超大的文件，造成拒绝服务漏洞 ….  该漏洞需要考虑的是如何去绕过上传限制，从而上传 webshel
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2024-03-15 21:23" pubdate>
+              2024-03-15
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%8A%80%E6%9C%AF/" class="category-chain-item">技术</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/TOP10/">#TOP10</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2024/03/15/%E6%8A%80%E6%9C%AF/TOP10/XSS/" target="_blank">
+          XSS
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2024/03/15/%E6%8A%80%E6%9C%AF/TOP10/XSS/" target="_blank">
+        <div>
+          漏洞原理：用户输入的参数被回显到页面且可以闭合 HTML 标签，执行前端代码。 其的本质就是闭合前端代码，从而构筑恶意代码攻击。 Payload：https://portswigger.net/web-security/cross-site-scripting/cheat-sheet 基本类型 反射型：代码被插入本 HTML 页面，刷新后就会消失 存储型：代码被存储到数据库，一直存在 DOM型：纯
         </div>
       </a>
 
@@ -475,15 +536,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2024/03/15/%E6%8A%80%E6%9C%AF/TOP10/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/" target="_blank">
-          文件上传
+        <a href="/2024/03/15/%E6%8A%80%E6%9C%AF/TOP10/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/" target="_blank">
+          PHP 文件包含
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2024/03/15/%E6%8A%80%E6%9C%AF/TOP10/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/" target="_blank">
+      <a class="index-excerpt index-excerpt__noimg" href="/2024/03/15/%E6%8A%80%E6%9C%AF/TOP10/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/" target="_blank">
         <div>
-          漏洞原理服务端对文件上传的类型未做限制或者不严谨导致攻击者可以上传其他类型的文件。 通常是尝试上传服务端可解析的脚本文件，也就是 webShell，来拿到网站权限。 不过也可以根据情况来有一些其他的利用：  上传处可目录穿越，覆盖或创建特殊文件 上传 svg、html 等造成 XSS 跨站 上传一个超大的文件，造成拒绝服务漏洞 ….  该漏洞需要考虑的是如何去绕过上传限制，从而上传 webshel
+          漏洞原理文件包含是 PHP 中的一个功能，能够执行被包含文件中的 PHP 代码。 当目标文件中没有 PHP 代码时，会直接显示文件内容。 漏洞原理：文件包含参数可控，导致包含攻击者恶意的文件，造成 PHP 代码执行或敏感文件读取。 相关函数 include()：执行到 include 时才包含文件，找不到被包含文件时只会产生警告，脚本将继续执行 require()：只要程序一运行就包含文件，找不到
         </div>
       </a>
 
@@ -523,67 +584,6 @@
             <i class="iconfont icon-tags"></i>
             
               <a href="/tags/TOP10/">#TOP10</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2024/03/12/%E6%8A%80%E6%9C%AF/%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/crawlergo/" target="_blank">
-          crawlergo 源码学习
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2024/03/12/%E6%8A%80%E6%9C%AF/%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/crawlergo/" target="_blank">
-        <div>
-          项目介绍项目地址：https://github.com/Qianlitp/crawlergo crawlergo是一个使用chrome headless模式进行URL收集的浏览器爬虫。它对整个网页的关键位置与DOM渲染阶段进行HOOK，自动进行表单填充并提交，配合智能的JS事件触发，尽可能的收集网站暴露出的入口。内置URL去重模块，过滤掉了大量伪静态URL，对于大型网站仍保持较快的解析与抓取速度，
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2024-03-12 21:24" pubdate>
-              2024-03-12
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/%E6%8A%80%E6%9C%AF/" class="category-chain-item">技术</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/">#源码学习</a>
             
           </div>
         
@@ -658,15 +658,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2024/03/10/%E6%8A%80%E6%9C%AF/%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/subfinder/" target="_blank">
-          subfinder 源码学习
+        <a href="/2024/03/12/%E6%8A%80%E6%9C%AF/%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/crawlergo/" target="_blank">
+          crawlergo 源码学习
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2024/03/10/%E6%8A%80%E6%9C%AF/%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/subfinder/" target="_blank">
+      <a class="index-excerpt index-excerpt__noimg" href="/2024/03/12/%E6%8A%80%E6%9C%AF/%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/crawlergo/" target="_blank">
         <div>
-          项目介绍项目地址：https://github.com/projectdiscovery/subfinder subfinder是一种子域发现工具，它使用被动在线资源返回网站的有效子域。它具有简单的模块化架构，并针对速度进行了优化。 专为只做一件事-被动子域枚举，它做得很好。 项目结构1234567891011121314151617181920212223├── passive							│
+          项目介绍项目地址：https://github.com/Qianlitp/crawlergo crawlergo是一个使用chrome headless模式进行URL收集的浏览器爬虫。它对整个网页的关键位置与DOM渲染阶段进行HOOK，自动进行表单填充并提交，配合智能的JS事件触发，尽可能的收集网站暴露出的入口。内置URL去重模块，过滤掉了大量伪静态URL，对于大型网站仍保持较快的解析与抓取速度，
         </div>
       </a>
 
@@ -674,8 +674,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2024-03-10 12:08" pubdate>
-              2024-03-10
+            <time datetime="2024-03-12 21:24" pubdate>
+              2024-03-12
             </time>
           </div>
         
@@ -719,15 +719,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2024/02/20/%E6%8A%80%E6%9C%AF/%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/go-Portscan/" target="_blank">
-          go-Portscan 源码学习
+        <a href="/2024/03/10/%E6%8A%80%E6%9C%AF/%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/subfinder/" target="_blank">
+          subfinder 源码学习
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2024/02/20/%E6%8A%80%E6%9C%AF/%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/go-Portscan/" target="_blank">
+      <a class="index-excerpt index-excerpt__noimg" href="/2024/03/10/%E6%8A%80%E6%9C%AF/%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/subfinder/" target="_blank">
         <div>
-          项目介绍项目地址：https://github.com/XinRoom/go-portScan 一款端口扫描方面很全面的工具：  主机验活 端口扫描 端口指纹识别 WEB指纹识别  项目结构12345678910├─cmd├─core│  ├─host	# 主机验活│  └─port│      ├─fingerprint	# 指纹识别│      │  └─webfinger	# web指纹识别
+          项目介绍项目地址：https://github.com/projectdiscovery/subfinder subfinder是一种子域发现工具，它使用被动在线资源返回网站的有效子域。它具有简单的模块化架构，并针对速度进行了优化。 专为只做一件事-被动子域枚举，它做得很好。 项目结构1234567891011121314151617181920212223├── passive							│
         </div>
       </a>
 
@@ -735,8 +735,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2024-02-20 12:08" pubdate>
-              2024-02-20
+            <time datetime="2024-03-10 12:08" pubdate>
+              2024-03-10
             </time>
           </div>
         
