@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTTP Request 转 Python</title>
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<div class="tool-shell tool-shell-http">
+  <header class="tool-header">
+    <h1>HTTP Request 转 Python</h1>
+    <p>将原始 HTTP 请求转换成可直接调试的 Python `requests` 或 `session` 代码。</p>
+  </header>
+
+  <section class="tool-panel">
+    <div class="tool-toolbar">
+      <label class="tool-field">
+        <span>模式</span>
+        <select id="clientTypeSelect">
+          <option value="requests">requests</option>
+          <option value="session">session</option>
+        </select>
+      </label>
+
+      <label class="tool-field">
+        <span>变量前缀</span>
+        <input id="prefixInput" type="text" placeholder="例如：login">
+      </label>
+
+      <label class="tool-toggle">
+        <input id="splitParamsCheckbox" type="checkbox">
+        <span>单独处理 Query Params</span>
+      </label>
+
+      <div class="tool-actions">
+        <button id="convertBtn" type="button">转换</button>
+        <button id="copyBtn" type="button" class="ghost">复制</button>
+        <button id="sampleBtn" type="button" class="ghost">示例</button>
+        <button id="clearBtn" type="button" class="ghost">清空</button>
+      </div>
+    </div>
+
+    <label class="tool-editor">
+      <span>原始 HTTP 请求</span>
+      <textarea
+        id="rawRequestInput"
+        spellcheck="false"
+        placeholder="POST /api/login HTTP/1.1&#10;Host: example.com&#10;Content-Type: application/json&#10;&#10;{&quot;username&quot;:&quot;admin&quot;,&quot;password&quot;:&quot;123456&quot;}"
+      ></textarea>
+    </label>
+
+    <label class="tool-editor">
+      <span>生成的 Python 代码</span>
+      <textarea id="codeOutput" spellcheck="false" readonly># 转换结果会显示在这里</textarea>
+    </label>
+  </section>
+</div>
+
+<script>
+  const sampleRequest = `POST /api/v1/upload?folder=demo HTTP/1.1
+Host: example.com
+User-Agent: Mozilla/5.0
+Accept: application/json
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="note.txt"
+Content-Type: text/plain
+
+hello from file body
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="meta"
+Content-Type: application/json
+
+{"name":"demo"}
+------WebKitFormBoundary7MA4YWxkTrZu0gW--`;
+
+  const elements = {
+    clientTypeSelect: document.getElementById("clientTypeSelect"),
+    prefixInput: document.getElementById("prefixInput"),
+    splitParamsCheckbox: document.getElementById("splitParamsCheckbox"),
+    rawRequestInput: document.getElementById("rawRequestInput"),
+    convertBtn: document.getElementById("convertBtn"),
+    sampleBtn: document.getElementById("sampleBtn"),
+    clearBtn: document.getElementById("clearBtn"),
+    copyBtn: document.getElementById("copyBtn"),
+    codeOutput: document.getElementById("codeOutput")
+  };
+
+  function normalizeLineEndings(value) {
+    return value.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+  }
+
+  function pyQuote(value) {
+    return `'${String(value)
+      .replace(/\\/g, "\\\\")
+      .replace(/'/g, "\\'")
+      .replace(/\n/g, "\\n")
+      .replace(/\r/g, "\\r")
+      .replace(/\t/g, "\\t")}'`;
+  }
+
+  function formatPython(value, indent = 0) {
+    const space = " ".repeat(indent);
+    const nextSpace = " ".repeat(indent + 4);
+
+    if (value === null) return "None";
+    if (typeof value === "string") return pyQuote(value);
+    if (typeof value === "number") return Number.isFinite(value) ? String(value) : "None";
+    if (typeof value === "boolean") return value ? "True" : "False";
+
+    if (Array.isArray(value)) {
+      if (!value.length) return "[]";
+      const items = value.map((item) => `${nextSpace}${formatPython(item, indent + 4)}`);
+      return `[\n${items.join(",\n")}\n${space}]`;
+    }
+
+    if (typeof value === "object") {
+      if (value && value.__pythonTuple) {
+        const tupleItems = value.__pythonTuple;
+        if (!tupleItems.length) return "()";
+        const items = tupleItems.map((item) => `${nextSpace}${formatPython(item, indent + 4)}`);
+        const suffix = tupleItems.length === 1 ? "," : "";
+        return `(\n${items.join(",\n")}${suffix}\n${space})`;
+      }
+
+      const entries = Object.entries(value);
+      if (!entries.length) return "{}";
+      const lines = entries.map(([key, item]) => `${nextSpace}${pyQuote(key)}: ${formatPython(item, indent + 4)}`);
+      return `{\n${lines.join(",\n")}\n${space}}`;
+    }
+
+    return pyQuote(String(value));
+  }
+
+  function extractHeaderMap(headerLines) {
+    const headers = {};
+
+    for (const line of headerLines) {
+      const separatorIndex = line.indexOf(":");
+      if (separatorIndex <= 0) continue;
+      const key = line.slice(0, separatorIndex).trim();
+      const value = line.slice(separatorIndex + 1).trim();
+      headers[key] = value;
+    }
+
+    return headers;
+  }
+
+  function parseStartLine(startLine) {
+    const parts = startLine.trim().split(/\s+/);
+    if (parts.length < 2) {
+      throw new Error("请求首行格式不正确，至少需要 METHOD 和 PATH。");
+    }
+
+    return {
+      method: parts[0].toUpperCase(),
+      target: parts[1],
+      version: parts[2] || ""
+    };
+  }
+
+  function splitRequest(rawRequest) {
+    const normalized = normalizeLineEndings(rawRequest);
+    if (!normalized.trim()) {
+      throw new Error("原始 HTTP 请求不能为空。");
+    }
+
+    const cleaned = normalized.replace(/^\s+/, "");
+    const separator = cleaned.indexOf("\n\n");
+    if (separator === -1) {
+      return { head: cleaned.trim(), body: "" };
+    }
+
+    return {
+      head: cleaned.slice(0, separator).trim(),
+      body: cleaned.slice(separator + 2)
+    };
+  }
+
+  function parseContentDisposition(value) {
+    const result = {};
+
+    value.split(";").forEach((part, index) => {
+      const piece = part.trim();
+      if (!piece) return;
+      if (index === 0) {
+        result.type = piece;
+        return;
+      }
+
+      const equalIndex = piece.indexOf("=");
+      if (equalIndex === -1) return;
+
+      const key = piece.slice(0, equalIndex).trim();
+      let itemValue = piece.slice(equalIndex + 1).trim();
+      itemValue = itemValue.replace(/^"|"$/g, "");
+      result[key] = itemValue;
+    });
+
+    return result;
+  }
+
+  function safeJsonParse(value) {
+    try {
+      return JSON.parse(value);
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function parseFormEncoded(body) {
+    const params = new URLSearchParams(body);
+    const formData = [];
+
+    for (const [key, value] of params.entries()) {
+      formData.push({
+        __pythonTuple: [key, value]
+      });
+    }
+
+    return formData;
+  }
+
+  function parseCookies(cookieHeader) {
+    const cookies = {};
+    if (!cookieHeader) return cookies;
+
+    for (const segment of cookieHeader.split(";")) {
+      const part = segment.trim();
+      if (!part) continue;
+      const equalIndex = part.indexOf("=");
+      if (equalIndex === -1) continue;
+      const key = part.slice(0, equalIndex).trim();
+      const value = part.slice(equalIndex + 1).trim();
+      if (!key) continue;
+      cookies[key] = value;
+    }
+
+    return cookies;
+  }
+
+  function parseMultipart(body, boundary) {
+    const boundaryText = `--${boundary}`;
+    const normalizedBody = normalizeLineEndings(body);
+    const parts = normalizedBody.split(boundaryText);
+    const files = [];
+    const data = [];
+
+    for (const rawPart of parts) {
+      const trimmedPart = rawPart.replace(/^\n+|\n+$/g, "");
+      if (!trimmedPart || trimmedPart === "--") continue;
+
+      const part = trimmedPart.endsWith("--")
+        ? trimmedPart.slice(0, -2).replace(/\n+$/g, "")
+        : trimmedPart;
+
+      const separatorIndex = part.indexOf("\n\n");
+      if (separatorIndex === -1) continue;
+
+      const headerBlock = part.slice(0, separatorIndex);
+      const content = part.slice(separatorIndex + 2);
+      const partHeaders = extractHeaderMap(headerBlock.split("\n"));
+      const disposition = parseContentDisposition(partHeaders["Content-Disposition"] || "");
+      const fieldName = disposition.name || `part_${files.length + data.length + 1}`;
+      const mimeType = partHeaders["Content-Type"] || "text/plain";
+
+      if (disposition.filename) {
+        files.push({
+          __pythonTuple: [
+            fieldName,
+            {
+              __pythonTuple: [disposition.filename, content, mimeType]
+            }
+          ]
+        });
+        continue;
+      }
+
+      if (mimeType.toLowerCase().includes("application/json")) {
+        const parsedJson = safeJsonParse(content);
+        const jsonText = parsedJson !== null ? JSON.stringify(parsedJson) : content;
+        data.push({
+          __pythonTuple: [fieldName, jsonText]
+        });
+        continue;
+      }
+
+      data.push({
+        __pythonTuple: [fieldName, content]
+      });
+    }
+
+    return { files, data };
+  }
+
+  function parseQueryParams(target) {
+    const params = {};
+    const questionIndex = target.indexOf("?");
+    if (questionIndex === -1) {
+      return {
+        path: target,
+        params
+      };
+    }
+
+    const path = target.slice(0, questionIndex) || "/";
+    const queryText = target.slice(questionIndex + 1);
+    const searchParams = new URLSearchParams(queryText);
+
+    for (const [key, value] of searchParams.entries()) {
+      if (Object.prototype.hasOwnProperty.call(params, key)) {
+        if (!Array.isArray(params[key])) {
+          params[key] = [params[key]];
+        }
+        params[key].push(value);
+      } else {
+        params[key] = value;
+      }
+    }
+
+    return { path, params };
+  }
+
+  function resolvePathTarget(target, headers, splitParams) {
+    const hostHeader = headers.Host || headers.host || "";
+    const fallbackBase = hostHeader ? `http://${hostHeader}` : "http://example.com";
+
+    if (/^https?:\/\//i.test(target)) {
+      const url = new URL(target);
+      const parsed = splitParams
+        ? parseQueryParams(`${url.pathname}${url.search || ""}`)
+        : { path: `${url.pathname}${url.search || ""}`, params: {} };
+
+      return {
+        baseUrl: url.origin,
+        path: parsed.path,
+        params: parsed.params
+      };
+    }
+
+    const parsed = splitParams ? parseQueryParams(target) : { path: target, params: {} };
+    return {
+      baseUrl: fallbackBase,
+      path: parsed.path.startsWith("/") ? parsed.path : `/${parsed.path}`,
+      params: parsed.params
+    };
+  }
+
+  function detectPayload(headers, body) {
+    const contentType = (headers["Content-Type"] || headers["content-type"] || "").toLowerCase();
+    const trimmedBody = body.trim();
+
+    if (!trimmedBody) return { kind: "none", data: null };
+
+    const multipartMatch = contentType.match(/boundary=([^;]+)/i);
+    if (contentType.includes("multipart/form-data") && multipartMatch) {
+      const multipart = parseMultipart(body, multipartMatch[1].replace(/^"|"$/g, ""));
+      return {
+        kind: "multipart",
+        data: multipart.data,
+        files: multipart.files
+      };
+    }
+
+    const parsedJson = safeJsonParse(trimmedBody);
+    if (contentType.includes("application/json") || parsedJson !== null) {
+      return {
+        kind: "json",
+        data: parsedJson !== null ? parsedJson : trimmedBody
+      };
+    }
+
+    if (contentType.includes("application/x-www-form-urlencoded")) {
+      return {
+        kind: "form",
+        data: parseFormEncoded(trimmedBody)
+      };
+    }
+
+    return { kind: "raw", data: body };
+  }
+
+  function buildHeaders(rawHeaders, payloadKind, dropAutoHeaders) {
+    const headers = {};
+    const removable = new Set(["host", "content-length", "cookie"]);
+
+    if (dropAutoHeaders && (payloadKind === "json" || payloadKind === "multipart")) {
+      removable.add("content-type");
+    }
+
+    for (const [key, value] of Object.entries(rawHeaders)) {
+      if (dropAutoHeaders && removable.has(key.toLowerCase())) continue;
+      headers[key] = value;
+    }
+
+    return headers;
+  }
+
+  function buildRequestArguments(payload) {
+    if (payload.kind === "none") return [];
+    if (payload.kind === "json") return ["json=data"];
+    if (payload.kind === "multipart") {
+      const args = [];
+      if (payload.data && payload.data.length) args.push("data=data");
+      if (payload.files && payload.files.length) args.push("files=files");
+      return args;
+    }
+    return ["data=data"];
+  }
+
+  function buildClientBlock(clientType, methodName, requestArgs) {
+    const { urlVar, headersVar, cookiesVar, paramsVar, respVar } = requestArgs.vars;
+    const payloadArgs = requestArgs.args;
+    const leadingArgs = [urlVar, `headers=${headersVar}`];
+
+    if (cookiesVar) leadingArgs.push(`cookies=${cookiesVar}`);
+    if (paramsVar) leadingArgs.push(`params=${paramsVar}`);
+
+    if (clientType === "session") {
+      return `    ${respVar} = session.${methodName}(${[...leadingArgs, ...payloadArgs].join(", ")})`;
+    }
+
+    return `    ${respVar} = requests.${methodName}(${[...leadingArgs, ...payloadArgs, "verify=False"].join(", ")})`;
+  }
+
+  function buildPythonCode(parsed, options) {
+    const { clientType, prefix, splitParams } = options;
+    const resolvedTarget = resolvePathTarget(parsed.target, parsed.headers, splitParams);
+    const payload = detectPayload(parsed.headers, parsed.body);
+    const headers = buildHeaders(parsed.headers, payload.kind, true);
+    const cookies = parseCookies(parsed.headers.Cookie || parsed.headers.cookie || "");
+    const requestArgs = buildRequestArguments(payload);
+    const methodName = parsed.method.toLowerCase();
+    const safePrefix = prefix.trim().replace(/[^\w]/g, "_").replace(/^_+|_+$/g, "");
+    const variableName = (name) => (safePrefix ? `${safePrefix}_${name}` : name);
+    const urlVar = variableName("url");
+    const headersVar = variableName("headers");
+    const cookiesVar = Object.keys(cookies).length ? variableName("cookies") : "";
+    const paramsVar = Object.keys(resolvedTarget.params).length ? variableName("params") : "";
+    const dataVar = variableName("data");
+    const filesVar = variableName("files");
+    const respVar = variableName("res");
+    const lines = ["try:"];
+
+    if (clientType === "session") {
+      lines.push("    session = requests.Session()");
+      lines.push("    session.verify = False");
+    }
+
+    lines.push(`    ${urlVar} = ${pyQuote(resolvedTarget.baseUrl)}.rstrip('/') + ${pyQuote(resolvedTarget.path)}`);
+    lines.push(`    ${headersVar} = ${formatPython(headers, 4)}`);
+
+    if (cookiesVar) {
+      lines.push(`    ${cookiesVar} = ${formatPython(cookies, 4)}`);
+    }
+
+    if (paramsVar) {
+      lines.push(`    ${paramsVar} = ${formatPython(resolvedTarget.params, 4)}`);
+    }
+
+    if (payload.kind === "json" || payload.kind === "form" || payload.kind === "raw") {
+      lines.push(`    ${dataVar} = ${formatPython(payload.data, 4)}`);
+    }
+
+    if (payload.kind === "multipart" && payload.data && payload.data.length) {
+      lines.push(`    ${dataVar} = ${formatPython(payload.data, 4)}`);
+    }
+
+    if (payload.kind === "multipart" && payload.files && payload.files.length) {
+      lines.push(`    ${filesVar} = ${formatPython(payload.files, 4)}`);
+    }
+
+    const resolvedArgs = requestArgs.map((item) => {
+      if (item === "json=data") return `json=${dataVar}`;
+      if (item === "data=data") return `data=${dataVar}`;
+      if (item === "files=files") return `files=${filesVar}`;
+      return item;
+    });
+
+    lines.push(buildClientBlock(clientType, methodName, {
+      args: resolvedArgs,
+      vars: { urlVar, headersVar, cookiesVar, paramsVar, respVar }
+    }));
+    lines.push(`    print('[+] Response Status: {}'.format(${respVar}.status_code))`);
+    lines.push(`    print('[+] Response Text: {}'.format(${respVar}.text))`);
+    lines.push("except Exception as e:");
+    lines.push("    print('[-] {}'.format(e))");
+
+    return { code: lines.join("\n") };
+  }
+
+  function renderCode(code) {
+    elements.codeOutput.value = code;
+  }
+
+  function convertRequest() {
+    try {
+      const requestParts = splitRequest(elements.rawRequestInput.value);
+      const headLines = requestParts.head.split("\n");
+      const startLine = parseStartLine(headLines[0]);
+      const headers = extractHeaderMap(headLines.slice(1));
+      const result = buildPythonCode(
+        { ...startLine, headers, body: requestParts.body },
+        {
+          clientType: elements.clientTypeSelect.value,
+          prefix: elements.prefixInput.value,
+          splitParams: elements.splitParamsCheckbox.checked
+        }
+      );
+      renderCode(result.code);
+    } catch (error) {
+      renderCode(`# 转换失败\n# ${error.message}`);
+    }
+  }
+
+  async function copyResult() {
+    const content = elements.codeOutput.value;
+    if (!content || content.startsWith("# 转换结果会显示在这里")) return;
+
+    try {
+      await navigator.clipboard.writeText(content);
+    } catch (error) {
+      renderCode(`${content}\n\n# 复制失败: ${error.message}`);
+    }
+  }
+
+  function clearAll() {
+    elements.prefixInput.value = "";
+    elements.splitParamsCheckbox.checked = false;
+    elements.rawRequestInput.value = "";
+    renderCode("# 转换结果会显示在这里");
+  }
+
+  function loadSample() {
+    elements.prefixInput.value = "login";
+    elements.splitParamsCheckbox.checked = true;
+    elements.rawRequestInput.value = sampleRequest;
+    convertRequest();
+  }
+
+  elements.convertBtn.addEventListener("click", convertRequest);
+  elements.copyBtn.addEventListener("click", copyResult);
+  elements.clearBtn.addEventListener("click", clearAll);
+  elements.sampleBtn.addEventListener("click", loadSample);
+  elements.rawRequestInput.addEventListener("keydown", (event) => {
+    if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
+      convertRequest();
+    }
+  });
+</script>
+</body>
+</html>

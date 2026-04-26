@@ -1,0 +1,182 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: #f7fcfb;
+}
+
+.tool-shell {
+  --tool-text: #143b3a;
+  --tool-muted: #4f7b78;
+  --tool-line: #b9e3de;
+  --tool-accent: #16a394;
+  --tool-accent-deep: #108276;
+  --tool-accent-soft: rgba(22, 163, 148, 0.16);
+  font-family: "JetBrains Mono", "HYZhengYuan", serif;
+  color: var(--tool-text);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 28px 24px 32px;
+}
+
+.tool-shell-http {
+  display: grid;
+  gap: 18px;
+}
+
+.tool-header {
+  display: grid;
+  gap: 8px;
+}
+
+.tool-header h1 {
+  margin: 0;
+  font-size: 2rem;
+  line-height: 1.2;
+  color: var(--tool-accent-deep);
+}
+
+.tool-header p {
+  margin: 0;
+  max-width: 56rem;
+  color: var(--tool-muted);
+  line-height: 1.7;
+}
+
+.tool-panel {
+  display: grid;
+  gap: 14px;
+}
+
+.tool-toolbar {
+  display: grid;
+  grid-template-columns: 180px 240px max-content 1fr;
+  gap: 14px;
+  align-items: end;
+}
+
+.tool-field,
+.tool-editor {
+  display: grid;
+  gap: 8px;
+}
+
+.tool-editor span,
+.tool-field span,
+.tool-toggle span {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.tool-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.tool-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+}
+
+.tool-toggle input {
+  width: auto;
+  margin: 0;
+}
+
+.tool-shell input,
+.tool-shell select,
+.tool-shell textarea,
+.tool-shell button {
+  font: inherit;
+}
+
+.tool-shell input[type="text"],
+.tool-shell select,
+.tool-shell textarea {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid var(--tool-line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--tool-text);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.tool-shell input[type="text"]:focus,
+.tool-shell select:focus,
+.tool-shell textarea:focus {
+  outline: none;
+  border-color: var(--tool-accent);
+  box-shadow: 0 0 0 4px var(--tool-accent-soft);
+}
+
+.tool-shell textarea {
+  min-height: 18rem;
+  resize: vertical;
+  line-height: 1.65;
+}
+
+.tool-editor textarea {
+  font-family: "JetBrains Mono", "Cascadia Code", Consolas, monospace;
+}
+
+.tool-shell button {
+  padding: 10px 14px;
+  border: 1px solid var(--tool-accent);
+  border-radius: 8px;
+  background: var(--tool-accent);
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.tool-shell button.ghost {
+  background: #fff;
+  color: var(--tool-accent-deep);
+}
+
+@media (max-width: 992px) {
+  .tool-toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .tool-actions {
+    justify-content: flex-start;
+  }
+
+  .tool-shell {
+    padding: 18px 16px 24px;
+  }
+
+  .tool-shell textarea {
+    min-height: 16rem;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  html,
+  body {
+    background: #0f1616;
+  }
+
+  .tool-shell {
+    --tool-text: #d5ece9;
+    --tool-muted: #8db7b2;
+    --tool-line: #285552;
+    --tool-accent: #27c5b4;
+    --tool-accent-deep: #72e0d4;
+    --tool-accent-soft: rgba(39, 197, 180, 0.2);
+  }
+
+  .tool-shell input[type="text"],
+  .tool-shell select,
+  .tool-shell textarea,
+  .tool-shell button.ghost {
+    background: #152120;
+    color: var(--tool-text);
+  }
+}

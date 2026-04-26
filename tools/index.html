@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tools</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #f7fcfb; }
+
+  /* ── tab shell ── */
+  .ts-shell {
+    font-family: "JetBrains Mono", "HYZhengYuan", serif;
+    color: #143b3a;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 28px 24px 32px;
+  }
+  .ts-shell .ts-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid #b9e3de;
+    margin-bottom: 20px;
+  }
+  .ts-shell .ts-tab {
+    padding: 10px 22px;
+    border: none;
+    background: transparent;
+    font: inherit;
+    font-size: 0.95rem;
+    color: #4f7b78;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .ts-shell .ts-tab:hover { color: #108276; }
+  .ts-shell .ts-tab.active {
+    color: #108276;
+    border-bottom-color: #16a394;
+    font-weight: 700;
+  }
+  .ts-shell .ts-panel { display: none; }
+  .ts-shell .ts-panel.active { display: block; }
+
+  /* ── Banner Gallery styles (scoped under .banner-tool) ── */
+  .banner-tool {
+    --banner-text: #143b3a;
+    --banner-muted: #4f7b78;
+    --banner-line: #b9e3de;
+    --banner-accent: #16a394;
+    --banner-accent-deep: #108276;
+    --banner-accent-soft: rgba(22, 163, 148, 0.16);
+    font-family: "JetBrains Mono", "HYZhengYuan", serif;
+    color: var(--banner-text);
+  }
+  .banner-tool-wrap { display: grid; gap: 16px; }
+  .banner-header { display: grid; gap: 8px; }
+  .banner-header h1 { margin: 0; font-size: 2rem; line-height: 1.2; color: var(--banner-accent-deep); }
+  .banner-header p { margin: 0; max-width: 56rem; color: var(--banner-muted); line-height: 1.7; }
+  .banner-controls {
+    display: grid;
+    grid-template-columns: minmax(260px, 1.3fr) minmax(220px, 0.9fr) 160px auto auto;
+    gap: 12px; align-items: center;
+  }
+  .banner-toolbar-note {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+    color: var(--banner-muted); font-size: 0.92rem;
+  }
+  .banner-summary { font-weight: 600; color: var(--banner-accent-deep); }
+  .banner-status { min-height: 1.4em; }
+  .banner-tool input, .banner-tool select, .banner-tool button { font: inherit; }
+  .banner-tool input, .banner-tool select {
+    width: 100%; padding: 11px 12px; border: 1px solid var(--banner-line); border-radius: 8px;
+    background: #fff; color: var(--banner-text);
+  }
+  .banner-tool input:focus, .banner-tool select:focus {
+    outline: none; border-color: var(--banner-accent); box-shadow: 0 0 0 4px var(--banner-accent-soft);
+  }
+  .banner-tool button {
+    padding: 10px 14px; border: 1px solid var(--banner-accent); border-radius: 8px;
+    background: var(--banner-accent); color: #fff; cursor: pointer;
+  }
+  .banner-grid { display: grid; gap: 12px; }
+  .banner-card { border-top: 1px solid var(--banner-line); padding-top: 12px; }
+  .banner-card-head { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px; }
+  .banner-font-name { font-weight: 700; font-size: 0.98rem; }
+  .banner-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .banner-actions button { background: #fff; color: var(--banner-accent-deep); }
+  .banner-preview {
+    margin: 0; padding: 12px 0 0; overflow: auto; min-height: 140px;
+    background: transparent; font: 12px/1.08 "JetBrains Mono","Cascadia Code",Consolas,monospace;
+    color: #111; white-space: pre;
+  }
+
+  /* ── HTTP Request to Python styles (scoped under .tool-shell-http) ── */
+  .tool-shell-http {
+    --tool-text: #143b3a;
+    --tool-muted: #4f7b78;
+    --tool-line: #b9e3de;
+    --tool-accent: #16a394;
+    --tool-accent-deep: #108276;
+    --tool-accent-soft: rgba(22, 163, 148, 0.16);
+    font-family: "JetBrains Mono", "HYZhengYuan", serif;
+    color: var(--tool-text);
+  }
+  .tool-shell-http { display: grid; gap: 18px; }
+  .tool-header { display: grid; gap: 8px; }
+  .tool-header h1 { margin: 0; font-size: 2rem; line-height: 1.2; color: var(--tool-accent-deep); }
+  .tool-header p { margin: 0; max-width: 56rem; color: var(--tool-muted); line-height: 1.7; }
+  .tool-panel { display: grid; gap: 14px; }
+  .tool-toolbar {
+    display: grid; grid-template-columns: 180px 240px max-content 1fr;
+    gap: 14px; align-items: end;
+  }
+  .tool-field, .tool-editor { display: grid; gap: 8px; }
+  .tool-editor span, .tool-field span, .tool-toggle span { font-size: 0.95rem; font-weight: 600; }
+  .tool-actions { display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap; }
+  .tool-toggle { display: flex; align-items: center; gap: 8px; min-height: 42px; }
+  .tool-toggle input { width: auto; margin: 0; }
+  .tool-shell-http input, .tool-shell-http select, .tool-shell-http textarea, .tool-shell-http button { font: inherit; }
+  .tool-shell-http input[type="text"], .tool-shell-http select, .tool-shell-http textarea {
+    width: 100%; padding: 11px 12px; border: 1px solid var(--tool-line); border-radius: 8px;
+    background: #fff; color: var(--tool-text);
+  }
+  .tool-shell-http input[type="text"]:focus, .tool-shell-http select:focus, .tool-shell-http textarea:focus {
+    outline: none; border-color: var(--tool-accent); box-shadow: 0 0 0 4px var(--tool-accent-soft);
+  }
+  .tool-shell-http textarea { min-height: 18rem; resize: vertical; line-height: 1.65; }
+  .tool-editor textarea { font-family: "JetBrains Mono","Cascadia Code",Consolas,monospace; }
+  .tool-shell-http button {
+    padding: 10px 14px; border: 1px solid var(--tool-accent); border-radius: 8px;
+    background: var(--tool-accent); color: #fff; cursor: pointer;
+  }
+  .tool-shell-http button.ghost { background: #fff; color: var(--tool-accent-deep); }
+  .tool-shell-http .tool-editor textarea[readonly] { background: #f5faf9; cursor: default; }
+
+  @media (max-width: 992px) {
+    .banner-controls, .banner-card-head { grid-template-columns: 1fr; }
+    .tool-toolbar { grid-template-columns: 1fr; }
+    .tool-actions { justify-content: flex-start; }
+    .tool-shell-http textarea { min-height: 16rem; }
+    .ts-shell { padding: 18px 16px 24px; }
+  }
+  @media (max-width: 660px) {
+    .ts-shell .ts-tab { flex: 1; text-align: center; padding: 10px 8px; font-size: 0.85rem; }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    html, body { background: #0f1616; }
+    .ts-shell { color: #d5ece9; }
+    .ts-shell .ts-tabs { border-bottom-color: #285552; }
+    .ts-shell .ts-tab { color: #8db7b2; }
+    .ts-shell .ts-tab:hover { color: #72e0d4; }
+    .ts-shell .ts-tab.active { color: #72e0d4; border-bottom-color: #27c5b4; }
+
+    .banner-tool {
+      --banner-text: #d5ece9; --banner-muted: #8db7b2; --banner-line: #285552;
+      --banner-accent: #27c5b4; --banner-accent-deep: #72e0d4;
+      --banner-accent-soft: rgba(39,197,180,0.2);
+    }
+    .banner-tool input, .banner-tool select, .banner-actions button, .banner-preview { background: #152120; color: var(--banner-text); }
+    .banner-tool button { color: #062120; }
+
+    .tool-shell-http {
+      --tool-text: #d5ece9; --tool-muted: #8db7b2; --tool-line: #285552;
+      --tool-accent: #27c5b4; --tool-accent-deep: #72e0d4;
+      --tool-accent-soft: rgba(39,197,180,0.2);
+    }
+    .tool-shell-http input[type="text"], .tool-shell-http select, .tool-shell-http textarea, .tool-shell-http button.ghost { background: #152120; color: var(--tool-text); }
+    .tool-shell-http .tool-editor textarea[readonly] { background: #1b2d2b; }
+  }
+</style>
+</head>
+<body>
+<div class="ts-shell">
+  <nav class="ts-tabs">
+    <button class="ts-tab active" data-tab="banner">Banner Gallery</button>
+    <button class="ts-tab" data-tab="http">HTTP Request 转 Python</button>
+  </nav>
+
+  <!-- ════ Banner Gallery ════ -->
+  <div class="ts-panel active" id="panel-banner">
+    <div class="banner-tool">
+      <div class="banner-tool-wrap">
+        <header class="banner-header">
+          <h1>Banner Gallery</h1>
+          <p>批量预览 FIGlet 字体效果，按字体名过滤，默认展示常用字体，也可以切换到全部字体。</p>
+        </header>
+        <div class="banner-controls">
+          <input id="textInput" value="liulipo-blog" aria-label="Banner 文本">
+          <input id="filterInput" placeholder="按字体名过滤" aria-label="按字体名过滤">
+          <select id="scopeSelect" aria-label="显示范围">
+            <option value="common">常用</option>
+            <option value="all">全部</option>
+          </select>
+          <button id="renderBtn" type="button">渲染</button>
+          <button id="topCopyBtn" type="button">复制字体名</button>
+        </div>
+        <div class="banner-toolbar-note">
+          <span id="summaryText" class="banner-summary">字体数：-</span>
+          <span id="status" class="banner-status"></span>
+        </div>
+        <section id="gallery" class="banner-grid"></section>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ HTTP Request 转 Python ════ -->
+  <div class="ts-panel" id="panel-http">
+    <div class="tool-shell-http">
+      <header class="tool-header">
+        <h1>HTTP Request 转 Python</h1>
+        <p>将原始 HTTP 请求转换成可直接调试的 Python <code>requests</code> 或 <code>session</code> 代码。</p>
+      </header>
+      <section class="tool-panel">
+        <div class="tool-toolbar">
+          <label class="tool-field">
+            <span>模式</span>
+            <select id="clientTypeSelect">
+              <option value="requests">requests</option>
+              <option value="session">session</option>
+            </select>
+          </label>
+          <label class="tool-field">
+            <span>变量前缀</span>
+            <input id="prefixInput" type="text" placeholder="例如：login">
+          </label>
+          <label class="tool-toggle">
+            <input id="splitParamsCheckbox" type="checkbox">
+            <span>单独处理 Query Params</span>
+          </label>
+          <div class="tool-actions">
+            <button id="convertBtn" type="button">转换</button>
+            <button id="copyBtn" type="button" class="ghost">复制</button>
+            <button id="sampleBtn" type="button" class="ghost">示例</button>
+            <button id="clearBtn" type="button" class="ghost">清空</button>
+          </div>
+        </div>
+        <label class="tool-editor">
+          <span>原始 HTTP 请求</span>
+          <textarea id="rawRequestInput" spellcheck="false" placeholder="POST /api/login HTTP/1.1&#10;Host: example.com&#10;Content-Type: application/json&#10;&#10;{&quot;username&quot;:&quot;admin&quot;,&quot;password&quot;:&quot;123456&quot;}"></textarea>
+        </label>
+        <label class="tool-editor">
+          <span>生成的 Python 代码</span>
+          <textarea id="codeOutput" spellcheck="false" readonly># 转换结果会显示在这里</textarea>
+        </label>
+      </section>
+    </div>
+  </div>
+</div>
+
+<!-- ════ Scripts ════ -->
+
+<!-- Tab切换 -->
+<script>
+  (function() {
+    var tabs = document.querySelectorAll('.ts-tab');
+    var panels = {
+      banner: document.getElementById('panel-banner'),
+      http: document.getElementById('panel-http')
+    };
+    tabs.forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        tabs.forEach(function(t) { t.classList.remove('active'); });
+        this.classList.add('active');
+        Object.keys(panels).forEach(function(key) {
+          panels[key].classList.toggle('active', key === this.dataset.tab);
+        }, this);
+      });
+    });
+  })();
+</script>
+
+<!-- Banner Gallery: figlet engine + font data -->
+<script src="./banner-gallery/figlet.js"></script>
+<script src="./banner-gallery/fonts-data.js"></script>
+<script>
+  (function() {
+    var textInput = document.getElementById("textInput");
+    var filterInput = document.getElementById("filterInput");
+    var scopeSelect = document.getElementById("scopeSelect");
+    var renderBtn = document.getElementById("renderBtn");
+    var topCopyBtn = document.getElementById("topCopyBtn");
+    var gallery = document.getElementById("gallery");
+    var summaryText = document.getElementById("summaryText");
+    var status = document.getElementById("status");
+
+    var fonts = [];
+    var loadedFonts = [];
+    var commonFonts = [
+      "ansi_regular","ansi_shadow","bloody","cursive","delta_corps_priest_1",
+      "dos_rebel","double_blocky","elite","pagga","the_edge"
+    ];
+
+    function escapeHtml(text) {
+      return text.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
+    }
+    async function copyText(text) { await navigator.clipboard.writeText(text); }
+
+    function loadManifest() {
+      fonts = Array.isArray(window.BANNER_FONTS) ? window.BANNER_FONTS : [];
+      if (!fonts.length) throw new Error("fonts-data.js 中没有可用字体。");
+      var priority = new Map(commonFonts.map(function(n,i){ return [n,i]; }));
+      fonts.sort(function(a,b){
+        var ai = priority.has(a.name) ? priority.get(a.name) : Number.MAX_SAFE_INTEGER;
+        var bi = priority.has(b.name) ? priority.get(b.name) : Number.MAX_SAFE_INTEGER;
+        return ai !== bi ? ai - bi : a.name.localeCompare(b.name);
+      });
+      summaryText.textContent = "字体数：" + fonts.length;
+    }
+
+    function loadFonts() {
+      if (typeof figlet === "undefined") throw new Error("figlet.js 加载失败。");
+      var failures = [];
+      for (var i = 0; i < fonts.length; i++) {
+        try { figlet.parseFont(fonts[i].name, fonts[i].data); loadedFonts.push(fonts[i]); }
+        catch (e) { failures.push(fonts[i].name + ": " + e.message); }
+      }
+      if (!loadedFonts.length) throw new Error(failures[0] || "没有任何字体解析成功。");
+      if (failures.length) status.textContent = "跳过 " + failures.length + " 个字体";
+    }
+
+    function renderAll() {
+      var value = textInput.value || "liulipo-blog";
+      var filter = (filterInput.value || "").trim().toLowerCase();
+      var scope = scopeSelect.value;
+      var baseItems = scope === "common"
+        ? loadedFonts.filter(function(f){ return commonFonts.includes(f.name); })
+        : loadedFonts;
+      var items = baseItems.filter(function(f){ return f.name.toLowerCase().includes(filter); });
+      summaryText.textContent = "显示：" + items.length + " / " + baseItems.length;
+      gallery.innerHTML = items.map(function(font){
+        var banner = "";
+        try { banner = figlet.textSync(value, { font: font.name, width: 240, whitespaceBreak: true }); }
+        catch (e) { banner = "[render failed]\n" + e.message; }
+        return '<article class="banner-card" data-font="' + escapeHtml(font.name) + '">' +
+          '<div class="banner-card-head">' +
+          '<div class="banner-font-name">' + escapeHtml(font.name) + '</div>' +
+          '<div class="banner-actions">' +
+          '<button type="button" data-copy-font="' + escapeHtml(font.name) + '">复制字体名</button>' +
+          '<button type="button" data-copy-banner="' + escapeHtml(font.name) + '">复制 Banner</button>' +
+          '</div></div>' +
+          '<pre class="banner-preview">' + escapeHtml(banner) + '</pre></article>';
+      }).join("");
+      status.textContent = items.length ? "" : "没有匹配的字体";
+    }
+
+    gallery.addEventListener("click", async function(event) {
+      var copyFont = event.target.closest("[data-copy-font]");
+      if (copyFont) {
+        var name = copyFont.getAttribute("data-copy-font");
+        await copyText(name);
+        status.textContent = "已复制字体名：" + name;
+        return;
+      }
+      var copyBanner = event.target.closest("[data-copy-banner]");
+      if (copyBanner) {
+        var card = copyBanner.closest(".banner-card");
+        var preview = card.querySelector(".banner-preview");
+        await copyText(preview.textContent);
+        status.textContent = "已复制 Banner：" + copyBanner.getAttribute("data-copy-banner");
+      }
+    });
+
+    renderBtn.addEventListener("click", renderAll);
+    filterInput.addEventListener("input", renderAll);
+    scopeSelect.addEventListener("change", renderAll);
+    textInput.addEventListener("keydown", function(event){ if (event.key === "Enter") renderAll(); });
+    topCopyBtn.addEventListener("click", async function(){
+      var scope = scopeSelect.value;
+      var baseItems = scope === "common"
+        ? loadedFonts.filter(function(f){ return commonFonts.includes(f.name); })
+        : loadedFonts;
+      await copyText(baseItems.map(function(f){ return f.name; }).join("\n"));
+      status.textContent = "已复制" + (scope === "common" ? "常用" : "全部") + "字体名";
+    });
+
+    try { loadManifest(); loadFonts(); renderAll(); }
+    catch (e) { status.textContent = "加载失败：" + e.message; summaryText.textContent = "字体数：0"; }
+  })();
+</script>
+
+<!-- HTTP Request 转 Python -->
+<script>
+  (function() {
+    var sampleRequest = "POST /api/v1/upload?folder=demo HTTP/1.1\nHost: example.com\nUser-Agent: Mozilla/5.0\nAccept: application/json\nContent-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW\n\n------WebKitFormBoundary7MA4YWxkTrZu0gW\nContent-Disposition: form-data; name=\"file\"; filename=\"note.txt\"\nContent-Type: text/plain\n\nhello from file body\n------WebKitFormBoundary7MA4YWxkTrZu0gW\nContent-Disposition: form-data; name=\"meta\"\nContent-Type: application/json\n\n{\"name\":\"demo\"}\n------WebKitFormBoundary7MA4YWxkTrZu0gW--";
+
+    var els = {
+      clientTypeSelect: document.getElementById("clientTypeSelect"),
+      prefixInput: document.getElementById("prefixInput"),
+      splitParamsCheckbox: document.getElementById("splitParamsCheckbox"),
+      rawRequestInput: document.getElementById("rawRequestInput"),
+      convertBtn: document.getElementById("convertBtn"),
+      sampleBtn: document.getElementById("sampleBtn"),
+      clearBtn: document.getElementById("clearBtn"),
+      copyBtn: document.getElementById("copyBtn"),
+      codeOutput: document.getElementById("codeOutput")
+    };
+
+    function nl(v) { return v.replace(/\r\n/g,"\n").replace(/\r/g,"\n"); }
+    function pyQuote(v) {
+      return "'" + String(v).replace(/\\/g,"\\\\").replace(/'/g,"\\'").replace(/\n/g,"\\n").replace(/\r/g,"\\r").replace(/\t/g,"\\t") + "'";
+    }
+    function fmtPy(v, indent) {
+      indent = indent || 0; var sp = " ".repeat(indent), nsp = " ".repeat(indent+4);
+      if (v === null) return "None";
+      if (typeof v === "string") return pyQuote(v);
+      if (typeof v === "number") return isFinite(v) ? String(v) : "None";
+      if (typeof v === "boolean") return v ? "True" : "False";
+      if (Array.isArray(v)) {
+        if (!v.length) return "[]";
+        return "[\n" + v.map(function(i){ return nsp + fmtPy(i, indent+4); }).join(",\n") + "\n" + sp + "]";
+      }
+      if (typeof v === "object") {
+        if (v && v.__pythonTuple) {
+          if (!v.__pythonTuple.length) return "()";
+          var items = v.__pythonTuple.map(function(i){ return nsp + fmtPy(i, indent+4); });
+          return "(\n" + items.join(",\n") + (v.__pythonTuple.length===1 ? "," : "") + "\n" + sp + ")";
+        }
+        var entries = Object.entries(v);
+        if (!entries.length) return "{}";
+        return "{\n" + entries.map(function(e){ return nsp + pyQuote(e[0]) + ": " + fmtPy(e[1], indent+4); }).join(",\n") + "\n" + sp + "}";
+      }
+      return pyQuote(String(v));
+    }
+    function extractHeaders(lines) {
+      var h = {};
+      for (var i = 0; i < lines.length; i++) {
+        var idx = lines[i].indexOf(":");
+        if (idx <= 0) continue;
+        h[lines[i].slice(0,idx).trim()] = lines[i].slice(idx+1).trim();
+      }
+      return h;
+    }
+    function parseStartLine(line) {
+      var parts = line.trim().split(/\s+/);
+      if (parts.length < 2) throw new Error("请求首行格式不正确");
+      return { method: parts[0].toUpperCase(), target: parts[1], version: parts[2] || "" };
+    }
+    function splitReq(raw) {
+      var s = nl(raw);
+      if (!s.trim()) throw new Error("原始 HTTP 请求不能为空。");
+      var c = s.replace(/^\s+/,"");
+      var sep = c.indexOf("\n\n");
+      return sep === -1 ? { head: c.trim(), body: "" } : { head: c.slice(0,sep).trim(), body: c.slice(sep+2) };
+    }
+    function parseCD(v) {
+      var r = {};
+      v.split(";").forEach(function(p,i){
+        var piece = p.trim(); if (!piece) return;
+        if (i === 0) { r.type = piece; return; }
+        var ei = piece.indexOf("="); if (ei === -1) return;
+        r[piece.slice(0,ei).trim()] = piece.slice(ei+1).trim().replace(/^"|"$/g,"");
+      });
+      return r;
+    }
+    function sjp(v) { try { return JSON.parse(v); } catch(e) { return null; } }
+    function parseFormEnc(b) {
+      var p = new URLSearchParams(b), d = [];
+      for (var kv of p.entries()) d.push({ __pythonTuple: [kv[0], kv[1]] });
+      return d;
+    }
+    function parseCookies(v) {
+      var c = {}; if (!v) return c;
+      v.split(";").forEach(function(s){
+        var p = s.trim(); if (!p) return;
+        var ei = p.indexOf("="); if (ei === -1) return;
+        c[p.slice(0,ei).trim()] = p.slice(ei+1).trim();
+      });
+      return c;
+    }
+    function parseMultipart(body, boundary) {
+      var parts = nl(body).split("--" + boundary), files = [], data = [];
+      parts.forEach(function(rp){
+        var tp = rp.replace(/^\n+|\n+$/g,""); if (!tp || tp === "--") return;
+        var p = tp.endsWith("--") ? tp.slice(0,-2).replace(/\n+$/g,"") : tp;
+        var si = p.indexOf("\n\n"); if (si === -1) return;
+        var hb = p.slice(0,si), ct = p.slice(si+2);
+        var ph = extractHeaders(hb.split("\n")), cd = parseCD(ph["Content-Disposition"]||"");
+        var fn = cd.name || "part_" + (files.length+data.length+1);
+        var mt = ph["Content-Type"] || "text/plain";
+        if (cd.filename) { files.push({ __pythonTuple: [fn, { __pythonTuple: [cd.filename, ct, mt] }] }); return; }
+        if (mt.toLowerCase().includes("application/json")) { var pj=sjp(ct); data.push({ __pythonTuple: [fn, pj!==null?JSON.stringify(pj):ct] }); return; }
+        data.push({ __pythonTuple: [fn, ct] });
+      });
+      return { files: files, data: data };
+    }
+    function parseQuery(target) {
+      var qi = target.indexOf("?");
+      if (qi === -1) return { path: target, params: {} };
+      var path = target.slice(0,qi) || "/", qt = target.slice(qi+1), sp = new URLSearchParams(qt), p = {};
+      for (var kv of sp.entries()) {
+        if (Object.prototype.hasOwnProperty.call(p, kv[0])) {
+          if (!Array.isArray(p[kv[0]])) p[kv[0]] = [p[kv[0]]];
+          p[kv[0]].push(kv[1]);
+        } else { p[kv[0]] = kv[1]; }
+      }
+      return { path: path, params: p };
+    }
+    function resolveTarget(target, headers, splitParams) {
+      var host = headers.Host || headers.host || "", fb = host ? "http://"+host : "http://example.com";
+      if (/^https?:\/\//i.test(target)) {
+        var url = new URL(target);
+        var p = splitParams ? parseQuery(url.pathname + (url.search||"")) : { path: url.pathname + (url.search||""), params: {} };
+        return { baseUrl: url.origin, path: p.path, params: p.params };
+      }
+      var p = splitParams ? parseQuery(target) : { path: target, params: {} };
+      return { baseUrl: fb, path: p.path.startsWith("/") ? p.path : "/"+p.path, params: p.params };
+    }
+    function detectPayload(headers, body) {
+      var ct = (headers["Content-Type"]||headers["content-type"]||"").toLowerCase(), tb = body.trim();
+      if (!tb) return { kind: "none", data: null };
+      var mm = ct.match(/boundary=([^;]+)/i);
+      if (ct.includes("multipart/form-data") && mm) {
+        var mp = parseMultipart(body, mm[1].replace(/^"|"$/g,""));
+        return { kind: "multipart", data: mp.data, files: mp.files };
+      }
+      var pj = sjp(tb);
+      if (ct.includes("application/json") || pj !== null) return { kind: "json", data: pj !== null ? pj : tb };
+      if (ct.includes("application/x-www-form-urlencoded")) return { kind: "form", data: parseFormEnc(tb) };
+      return { kind: "raw", data: body };
+    }
+    function buildHeaders(raw, kind) {
+      var h = {}, drop = new Set(["host","content-length","cookie"]);
+      if (kind === "json" || kind === "multipart") drop.add("content-type");
+      for (var k in raw) { if (raw.hasOwnProperty(k) && !drop.has(k.toLowerCase())) h[k] = raw[k]; }
+      return h;
+    }
+
+    function convert() {
+      try {
+        var parts = splitReq(els.rawRequestInput.value);
+        var headLines = parts.head.split("\n");
+        var start = parseStartLine(headLines[0]);
+        var headers = extractHeaders(headLines.slice(1));
+        var target = resolveTarget(start.target, headers, els.splitParamsCheckbox.checked);
+        var payload = detectPayload(headers, parts.body);
+        var cleanHeaders = buildHeaders(headers, payload.kind);
+        var cookies = parseCookies(headers.Cookie || headers.cookie || "");
+        var method = start.method.toLowerCase();
+        var prefix = els.prefixInput.value.trim().replace(/[^\w]/g,"_").replace(/^_+|_+$/g,"");
+        var vn = function(n){ return prefix ? prefix+"_"+n : n; };
+        var urlVar=vn("url"), hdrsVar=vn("headers"), cookVar=Object.keys(cookies).length?vn("cookies"):"";
+        var paramsVar=Object.keys(target.params).length?vn("params"):"", dataVar=vn("data"), filesVar=vn("files"), respVar=vn("res");
+        var lines = ["try:"];
+        if (els.clientTypeSelect.value === "session") { lines.push("    session = requests.Session()"); lines.push("    session.verify = False"); }
+        lines.push("    " + urlVar + " = " + pyQuote(target.baseUrl) + ".rstrip('/') + " + pyQuote(target.path));
+        lines.push("    " + hdrsVar + " = " + fmtPy(cleanHeaders, 4));
+        if (cookVar) lines.push("    " + cookVar + " = " + fmtPy(cookies, 4));
+        if (paramsVar) lines.push("    " + paramsVar + " = " + fmtPy(target.params, 4));
+        if (payload.kind==="json"||payload.kind==="form"||payload.kind==="raw") lines.push("    " + dataVar + " = " + fmtPy(payload.data, 4));
+        if (payload.kind==="multipart" && payload.data && payload.data.length) lines.push("    " + dataVar + " = " + fmtPy(payload.data, 4));
+        if (payload.kind==="multipart" && payload.files && payload.files.length) lines.push("    " + filesVar + " = " + fmtPy(payload.files, 4));
+        var args = [urlVar, "headers="+hdrsVar];
+        if (cookVar) args.push("cookies="+cookVar);
+        if (paramsVar) args.push("params="+paramsVar);
+        var pArgs = [];
+        if (payload.kind==="json") pArgs.push("json="+dataVar);
+        else if (payload.kind==="multipart") { if (payload.data&&payload.data.length) pArgs.push("data="+dataVar); if (payload.files&&payload.files.length) pArgs.push("files="+filesVar); }
+        else if (payload.kind!=="none") pArgs.push("data="+dataVar);
+        if (els.clientTypeSelect.value === "session") {
+          lines.push("    " + respVar + " = session." + method + "(" + args.concat(pArgs).join(", ") + ")");
+        } else {
+          args.push("verify=False");
+          lines.push("    " + respVar + " = requests." + method + "(" + args.concat(pArgs).join(", ") + ")");
+        }
+        lines.push("    print('[+] Response Status: {}'.format("+respVar+".status_code))");
+        lines.push("    print('[+] Response Text: {}'.format("+respVar+".text))");
+        lines.push("except Exception as e:");
+        lines.push("    print('[-] {}'.format(e))");
+        els.codeOutput.value = lines.join("\n");
+      } catch(e) { els.codeOutput.value = "# 转换失败\n# " + e.message; }
+    }
+
+    els.convertBtn.addEventListener("click", convert);
+    els.sampleBtn.addEventListener("click", function(){
+      els.prefixInput.value = "login";
+      els.splitParamsCheckbox.checked = true;
+      els.rawRequestInput.value = sampleRequest;
+      convert();
+    });
+    els.clearBtn.addEventListener("click", function(){
+      els.prefixInput.value = ""; els.splitParamsCheckbox.checked = false;
+      els.rawRequestInput.value = ""; els.codeOutput.value = "# 转换结果会显示在这里";
+    });
+    els.copyBtn.addEventListener("click", async function(){
+      var c = els.codeOutput.value;
+      if (!c || c.startsWith("# 转换结果会显示在这里")) return;
+      try { await navigator.clipboard.writeText(c); } catch(e) { els.codeOutput.value = c + "\n\n# 复制失败: " + e.message; }
+    });
+    els.rawRequestInput.addEventListener("keydown", function(e){
+      if ((e.ctrlKey||e.metaKey) && e.key === "Enter") convert();
+    });
+  })();
+</script>
+</body>
+</html>

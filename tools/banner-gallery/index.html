@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Banner Gallery</title>
+<style>
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    background: #f7fcfb;
+  }
+
+  .banner-tool {
+    --banner-text: #143b3a;
+    --banner-muted: #4f7b78;
+    --banner-line: #b9e3de;
+    --banner-accent: #16a394;
+    --banner-accent-deep: #108276;
+    --banner-accent-soft: rgba(22, 163, 148, 0.16);
+    font-family: "JetBrains Mono", "HYZhengYuan", serif;
+    color: var(--banner-text);
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 28px 24px 32px;
+  }
+
+  .banner-tool-wrap {
+    display: grid;
+    gap: 16px;
+  }
+
+  .banner-header {
+    display: grid;
+    gap: 8px;
+  }
+
+  .banner-header h1 {
+    margin: 0;
+    font-size: 2rem;
+    line-height: 1.2;
+    color: var(--banner-accent-deep);
+  }
+
+  .banner-header p {
+    margin: 0;
+    max-width: 56rem;
+    color: var(--banner-muted);
+    line-height: 1.7;
+  }
+
+  .banner-controls {
+    display: grid;
+    grid-template-columns: minmax(260px, 1.3fr) minmax(220px, 0.9fr) 160px auto auto;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .banner-toolbar-note {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    color: var(--banner-muted);
+    font-size: 0.92rem;
+  }
+
+  .banner-summary {
+    font-weight: 600;
+    color: var(--banner-accent-deep);
+  }
+
+  .banner-status {
+    min-height: 1.4em;
+  }
+
+  .banner-tool input,
+  .banner-tool select,
+  .banner-tool button {
+    font: inherit;
+  }
+
+  .banner-tool input,
+  .banner-tool select {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid var(--banner-line);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--banner-text);
+  }
+
+  .banner-tool input:focus,
+  .banner-tool select:focus {
+    outline: none;
+    border-color: var(--banner-accent);
+    box-shadow: 0 0 0 4px var(--banner-accent-soft);
+  }
+
+  .banner-tool button {
+    padding: 10px 14px;
+    border: 1px solid var(--banner-accent);
+    border-radius: 8px;
+    background: var(--banner-accent);
+    color: #fff;
+    cursor: pointer;
+  }
+
+  .banner-grid {
+    display: grid;
+    gap: 12px;
+  }
+
+  .banner-card {
+    border-top: 1px solid var(--banner-line);
+    padding-top: 12px;
+  }
+
+  .banner-card-head {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .banner-font-name {
+    font-weight: 700;
+    font-size: 0.98rem;
+  }
+
+  .banner-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .banner-actions button {
+    background: #fff;
+    color: var(--banner-accent-deep);
+  }
+
+  .banner-preview {
+    margin: 0;
+    padding: 12px 0 0;
+    overflow: auto;
+    min-height: 140px;
+    background: transparent;
+    font: 12px/1.08 "JetBrains Mono", "Cascadia Code", Consolas, monospace;
+    color: #111;
+    white-space: pre;
+  }
+
+  @media (max-width: 980px) {
+    .banner-tool {
+      padding: 18px 16px 24px;
+    }
+
+    .banner-controls,
+    .banner-card-head {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    html,
+    body {
+      background: #0f1616;
+    }
+
+    .banner-tool {
+      --banner-text: #d5ece9;
+      --banner-muted: #8db7b2;
+      --banner-line: #285552;
+      --banner-accent: #27c5b4;
+      --banner-accent-deep: #72e0d4;
+      --banner-accent-soft: rgba(39, 197, 180, 0.2);
+    }
+
+    .banner-tool input,
+    .banner-tool select,
+    .banner-actions button,
+    .banner-preview {
+      background: #152120;
+      color: var(--banner-text);
+    }
+
+    .banner-tool button {
+      color: #062120;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="banner-tool">
+  <div class="banner-tool-wrap">
+    <header class="banner-header">
+      <h1>Banner Gallery</h1>
+      <p>批量预览 FIGlet 字体效果，按字体名过滤，默认展示常用字体，也可以切换到全部字体。</p>
+    </header>
+
+    <div class="banner-controls">
+      <input id="textInput" value="liulipo-blog" aria-label="Banner 文本">
+      <input id="filterInput" placeholder="按字体名过滤" aria-label="按字体名过滤">
+      <select id="scopeSelect" aria-label="显示范围">
+        <option value="common">常用</option>
+        <option value="all">全部</option>
+      </select>
+      <button id="renderBtn" type="button">渲染</button>
+      <button id="topCopyBtn" type="button">复制字体名</button>
+    </div>
+
+    <div class="banner-toolbar-note">
+      <span id="summaryText" class="banner-summary">字体数：-</span>
+      <span id="status" class="banner-status"></span>
+    </div>
+
+    <section id="gallery" class="banner-grid"></section>
+  </div>
+</div>
+
+<script src="./figlet.js"></script>
+<script src="./fonts-data.js"></script>
+<script>
+  const textInput = document.getElementById("textInput");
+  const filterInput = document.getElementById("filterInput");
+  const scopeSelect = document.getElementById("scopeSelect");
+  const renderBtn = document.getElementById("renderBtn");
+  const topCopyBtn = document.getElementById("topCopyBtn");
+  const gallery = document.getElementById("gallery");
+  const summaryText = document.getElementById("summaryText");
+  const status = document.getElementById("status");
+
+  let fonts = [];
+  let loadedFonts = [];
+  const commonFonts = [
+    "ansi_regular",
+    "ansi_shadow",
+    "bloody",
+    "cursive",
+    "delta_corps_priest_1",
+    "dos_rebel",
+    "double_blocky",
+    "elite",
+    "pagga",
+    "the_edge"
+  ];
+
+  function escapeHtml(text) {
+    return text
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;");
+  }
+
+  async function copyText(text) {
+    await navigator.clipboard.writeText(text);
+  }
+
+  function loadManifest() {
+    fonts = Array.isArray(window.BANNER_FONTS) ? window.BANNER_FONTS : [];
+    if (!fonts.length) {
+      throw new Error("fonts-data.js 中没有可用字体。");
+    }
+
+    const priority = new Map(commonFonts.map((name, index) => [name, index]));
+    fonts.sort((a, b) => {
+      const ai = priority.has(a.name) ? priority.get(a.name) : Number.MAX_SAFE_INTEGER;
+      const bi = priority.has(b.name) ? priority.get(b.name) : Number.MAX_SAFE_INTEGER;
+      if (ai !== bi) return ai - bi;
+      return a.name.localeCompare(b.name);
+    });
+
+    summaryText.textContent = `字体数：${fonts.length}`;
+  }
+
+  function loadFonts() {
+    if (typeof figlet === "undefined") {
+      throw new Error("figlet.js 加载失败。");
+    }
+
+    const failures = [];
+
+    for (const font of fonts) {
+      try {
+        figlet.parseFont(font.name, font.data);
+        loadedFonts.push(font);
+      } catch (error) {
+        failures.push(`${font.name}: ${error.message}`);
+      }
+    }
+
+    if (!loadedFonts.length) {
+      throw new Error(failures[0] || "没有任何字体解析成功。");
+    }
+
+    if (failures.length) {
+      status.textContent = `跳过 ${failures.length} 个字体`;
+    }
+  }
+
+  function renderAll() {
+    const value = textInput.value || "liulipo-blog";
+    const filter = (filterInput.value || "").trim().toLowerCase();
+    const scope = scopeSelect.value;
+    const baseItems = scope === "common"
+      ? loadedFonts.filter((font) => commonFonts.includes(font.name))
+      : loadedFonts;
+    const items = baseItems.filter((font) => font.name.toLowerCase().includes(filter));
+
+    summaryText.textContent = `显示：${items.length} / ${baseItems.length}`;
+
+    gallery.innerHTML = items.map((font) => {
+      let banner = "";
+      try {
+        banner = figlet.textSync(value, { font: font.name, width: 240, whitespaceBreak: true });
+      } catch (error) {
+        banner = `[render failed]\n${error.message}`;
+      }
+
+      return `
+        <article class="banner-card" data-font="${escapeHtml(font.name)}">
+          <div class="banner-card-head">
+            <div class="banner-font-name">${escapeHtml(font.name)}</div>
+            <div class="banner-actions">
+              <button type="button" data-copy-font="${escapeHtml(font.name)}">复制字体名</button>
+              <button type="button" data-copy-banner="${escapeHtml(font.name)}">复制 Banner</button>
+            </div>
+          </div>
+          <pre class="banner-preview">${escapeHtml(banner)}</pre>
+        </article>
+      `;
+    }).join("");
+
+    status.textContent = items.length ? "" : "没有匹配的字体";
+  }
+
+  gallery.addEventListener("click", async (event) => {
+    const copyFont = event.target.closest("[data-copy-font]");
+    if (copyFont) {
+      const name = copyFont.getAttribute("data-copy-font");
+      await copyText(name);
+      status.textContent = `已复制字体名：${name}`;
+      return;
+    }
+
+    const copyBanner = event.target.closest("[data-copy-banner]");
+    if (copyBanner) {
+      const card = copyBanner.closest(".banner-card");
+      const preview = card.querySelector(".banner-preview");
+      await copyText(preview.textContent);
+      status.textContent = `已复制 Banner：${copyBanner.getAttribute("data-copy-banner")}`;
+    }
+  });
+
+  renderBtn.addEventListener("click", renderAll);
+  filterInput.addEventListener("input", renderAll);
+  scopeSelect.addEventListener("change", renderAll);
+  textInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") renderAll();
+  });
+  topCopyBtn.addEventListener("click", async () => {
+    const scope = scopeSelect.value;
+    const baseItems = scope === "common"
+      ? loadedFonts.filter((font) => commonFonts.includes(font.name))
+      : loadedFonts;
+    await copyText(baseItems.map((font) => font.name).join("\n"));
+    status.textContent = `已复制${scope === "common" ? "常用" : "全部"}字体名`;
+  });
+
+  (function init() {
+    try {
+      loadManifest();
+      loadFonts();
+      renderAll();
+    } catch (error) {
+      status.textContent = `加载失败：${error.message}`;
+      summaryText.textContent = "字体数：0";
+    }
+  })();
+</script>
+</body>
+</html>

