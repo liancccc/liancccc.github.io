@@ -792,15 +792,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2024/03/15/%E6%8A%80%E6%9C%AF/TOP10/RCE/" target="_blank">
-          RCE
+        <a href="/2024/03/15/%E6%8A%80%E6%9C%AF/TOP10/SQL%20%E6%B3%A8%E5%85%A5/" target="_blank">
+          SQL 注入
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2024/03/15/%E6%8A%80%E6%9C%AF/TOP10/RCE/" target="_blank">
+      <a class="index-excerpt index-excerpt__noimg" href="/2024/03/15/%E6%8A%80%E6%9C%AF/TOP10/SQL%20%E6%B3%A8%E5%85%A5/" target="_blank">
         <div>
-          漏洞原理代码、命令执行漏洞又叫 RCE 漏洞，其是指攻击者可直接在服务器上执行代码或系统命令。 该漏洞的形式有很多，比如文件包含漏洞可导致远程代码执行，反序列化漏洞导致远程命令执行，这最终都可以算作 RCE 漏洞。 不过这里只单单讲一下，因为后端提供执行代码、命令的服务而导致的 RCE，其实就是后端使用了代码执行、命令执行的函数，函数参数用户可控且过滤的不严谨，导致可执行任意代码或命令。 漏洞分类
+          产生原理用户输入的参数打破了SQL语句的原有逻辑，导致 SQL 语句可控。 本质上就是使用 “闭合符号” 闭合掉原来的 SQL 语句，然后执行另外的 SQL 语句。( 打破原本传递数据区域的边界，插入逻辑代码。) 比如，后端的 SQL 语句如下： 1SELECT * FORM USER WHERE ID = &#x27;1&#x27;  ID 为可控参数，使用闭合符号闭合以执行另外的 SQL 语
         </div>
       </a>
 
