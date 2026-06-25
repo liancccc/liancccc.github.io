@@ -1,0 +1,1509 @@
+<!DOCTYPE html><html lang="en" class="no-js"><head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../cc-1/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Java Agent 内存马 - Lian's Blog</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  <link href="../../../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../../../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+            .gscrollbar-fixer { padding-right: 15px; }
+            .gdesc-inner { font-size: 0.75rem; }
+            body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color); }
+            body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
+            body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
+        </style></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Lian's Blog" class="md-header__button md-logo" aria-label="Lian's Blog" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Lian's Blog
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Java Agent 内存马
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="" type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="" for="__palette_1" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"></path></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="" type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="" for="__palette_0" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"></path></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required="">
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix="">
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+
+
+
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  HOME
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../ai/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Ai
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../coding/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Coding
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Cybersecurity
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../life/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Life
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../projects/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Projects
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../tech/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Tech
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Lian's Blog" class="md-nav__button md-logo" aria-label="Lian's Blog" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+
+    </a>
+    Lian's Blog
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix="">
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc" checked="">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Java Agent 内存马
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Java Agent 内存马
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        介绍
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        环境搭建
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="环境搭建">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        agent程序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        测试程序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jvm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        jvm 启动前加载
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#attach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        attach 启动后加载
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#agent-jvm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        agent 修改 JVM 指定方法
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="agent 修改 JVM 指定方法">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#instrumentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Instrumentation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#javassist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        javassist 动态修改字节码
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        修改实现
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考链接
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        源码
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+  <h1>Java Agent 内存马</h1>
+
+
+  <dl class="doc-meta">
+    <div class="doc-meta__item">
+      <dt>date</dt>
+      <dd>2023-09-10 12:08:13</dd>
+    </div>
+  </dl>
+
+<h2 id="_1">介绍</h2>
+<p>Java是一种静态强类型语言，在运行之前必须将其编译成<code>.class</code>​字节码，然后再交给JVM处理运行。</p>
+<p>Java Agent 就是一种能在不影响正常编译的前提下，修改 Java 字节码，进而动态地修改已加载或未加载的类、属性和方法的技术。</p>
+<p>agent 主要分为两种：</p>
+<ol>
+<li>jvm 参数启动：实现 <strong>premain</strong> 方法，在 JVM 启动前加载</li>
+<li>attach 附加启动：实现 <strong>agentmain</strong> 方法，在 JVM 启动后加载</li>
+</ol>
+<p>premain 和 agentmain 函数声明如下，拥有 Instrumentation inst 参数的方法优先级更高：</p>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-0-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-0-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-0-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-0-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-0-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-0-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-0-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-0-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-0-10">10</a></span>
+<span class="normal"><a href="#__codelineno-0-11">11</a></span>
+<span class="normal"><a href="#__codelineno-0-12">12</a></span>
+<span class="normal"><a href="#__codelineno-0-13">13</a></span>
+<span class="normal"><a href="#__codelineno-0-14">14</a></span>
+<span class="normal"><a href="#__codelineno-0-15">15</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">agentmain</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">agentArgs</span><span class="p">,</span><span class="w"> </span><span class="n">Instrumentation</span><span class="w"> </span><span class="n">inst</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="w">    </span><span class="p">...</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="p">}</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4"></a>
+<a id="__codelineno-0-5" name="__codelineno-0-5"></a><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">agentmain</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">agentArgs</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6"></a><span class="w">    </span><span class="p">...</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7"></a><span class="p">}</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8"></a>
+<a id="__codelineno-0-9" name="__codelineno-0-9"></a><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">premain</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">agentArgs</span><span class="p">,</span><span class="w"> </span><span class="n">Instrumentation</span><span class="w"> </span><span class="n">inst</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10"></a><span class="w">    </span><span class="p">...</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11"></a><span class="p">}</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12"></a>
+<a id="__codelineno-0-13" name="__codelineno-0-13"></a><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">premain</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">agentArgs</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14"></a><span class="w">    </span><span class="p">...</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15"></a><span class="p">}</span>
+</code></pre></div></td></tr></tbody></table></div>
+<p>而 agent 内存马就是使用 <strong>attach</strong> 的方式，实现在程序运行中去注入内存马。</p>
+<p>与其他内存马不同的是，它不仅仅可以在反序列化、JNDI 等代码执行的漏洞环境下去注入内存马，还能够在命令注入等情况下实现。​​</p>
+<h2 id="_2">环境搭建</h2>
+<p>jdk 版本：1.8</p>
+<h3 id="agent">agent程序</h3>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-1-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-1-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-1-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-1-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-1-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-1-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-1-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-1-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-1-10">10</a></span>
+<span class="normal"><a href="#__codelineno-1-11">11</a></span>
+<span class="normal"><a href="#__codelineno-1-12">12</a></span>
+<span class="normal"><a href="#__codelineno-1-13">13</a></span>
+<span class="normal"><a href="#__codelineno-1-14">14</a></span>
+<span class="normal"><a href="#__codelineno-1-15">15</a></span>
+<span class="normal"><a href="#__codelineno-1-16">16</a></span>
+<span class="normal"><a href="#__codelineno-1-17">17</a></span>
+<span class="normal"><a href="#__codelineno-1-18">18</a></span>
+<span class="normal"><a href="#__codelineno-1-19">19</a></span>
+<span class="normal"><a href="#__codelineno-1-20">20</a></span>
+<span class="normal"><a href="#__codelineno-1-21">21</a></span>
+<span class="normal"><a href="#__codelineno-1-22">22</a></span>
+<span class="normal"><a href="#__codelineno-1-23">23</a></span>
+<span class="normal"><a href="#__codelineno-1-24">24</a></span>
+<span class="normal"><a href="#__codelineno-1-25">25</a></span>
+<span class="normal"><a href="#__codelineno-1-26">26</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="kn">package</span><span class="w"> </span><span class="nn">org.agent</span><span class="p">;</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2"></a>
+<a id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="kn">import</span><span class="w"> </span><span class="nn">java.lang.instrument.Instrumentation</span><span class="p">;</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4"></a>
+<a id="__codelineno-1-5" name="__codelineno-1-5"></a><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">SimpleAgent</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6"></a>
+<a id="__codelineno-1-7" name="__codelineno-1-7"></a><span class="w">    </span><span class="cm">/**</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8"></a><span class="cm">     * jvm 参数形式启动，运行此方法</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9"></a><span class="cm">     *</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10"></a><span class="cm">     * @param agentArgs</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11"></a><span class="cm">     * @param inst</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12"></a><span class="cm">     */</span>
+<a id="__codelineno-1-13" name="__codelineno-1-13"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">premain</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">agentArgs</span><span class="p">,</span><span class="w"> </span><span class="n">Instrumentation</span><span class="w"> </span><span class="n">inst</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-14" name="__codelineno-1-14"></a><span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"premain"</span><span class="p">);</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-1-16" name="__codelineno-1-16"></a>
+<a id="__codelineno-1-17" name="__codelineno-1-17"></a><span class="w">    </span><span class="cm">/**</span>
+<a id="__codelineno-1-18" name="__codelineno-1-18"></a><span class="cm">     * 动态 attach 方式启动，运行此方法</span>
+<a id="__codelineno-1-19" name="__codelineno-1-19"></a><span class="cm">     *</span>
+<a id="__codelineno-1-20" name="__codelineno-1-20"></a><span class="cm">     * @param agentArgs</span>
+<a id="__codelineno-1-21" name="__codelineno-1-21"></a><span class="cm">     * @param inst</span>
+<a id="__codelineno-1-22" name="__codelineno-1-22"></a><span class="cm">     */</span>
+<a id="__codelineno-1-23" name="__codelineno-1-23"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">agentmain</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">agentArgs</span><span class="p">,</span><span class="w"> </span><span class="n">Instrumentation</span><span class="w"> </span><span class="n">inst</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-24" name="__codelineno-1-24"></a><span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"agentmain"</span><span class="p">);</span>
+<a id="__codelineno-1-25" name="__codelineno-1-25"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-1-26" name="__codelineno-1-26"></a><span class="p">}</span>
+</code></pre></div></td></tr></tbody></table></div>
+<p>premain 和 agentmain</p>
+<p>编译为 jar 包，这里使用插件。在 pom.xml 中添加：</p>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-2-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-2-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-2-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-2-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-2-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-2-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-2-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-2-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-2-10">10</a></span>
+<span class="normal"><a href="#__codelineno-2-11">11</a></span>
+<span class="normal"><a href="#__codelineno-2-12">12</a></span>
+<span class="normal"><a href="#__codelineno-2-13">13</a></span>
+<span class="normal"><a href="#__codelineno-2-14">14</a></span>
+<span class="normal"><a href="#__codelineno-2-15">15</a></span>
+<span class="normal"><a href="#__codelineno-2-16">16</a></span>
+<span class="normal"><a href="#__codelineno-2-17">17</a></span>
+<span class="normal"><a href="#__codelineno-2-18">18</a></span>
+<span class="normal"><a href="#__codelineno-2-19">19</a></span>
+<span class="normal"><a href="#__codelineno-2-20">20</a></span>
+<span class="normal"><a href="#__codelineno-2-21">21</a></span>
+<span class="normal"><a href="#__codelineno-2-22">22</a></span>
+<span class="normal"><a href="#__codelineno-2-23">23</a></span>
+<span class="normal"><a href="#__codelineno-2-24">24</a></span>
+<span class="normal"><a href="#__codelineno-2-25">25</a></span>
+<span class="normal"><a href="#__codelineno-2-26">26</a></span>
+<span class="normal"><a href="#__codelineno-2-27">27</a></span>
+<span class="normal"><a href="#__codelineno-2-28">28</a></span>
+<span class="normal"><a href="#__codelineno-2-29">29</a></span>
+<span class="normal"><a href="#__codelineno-2-30">30</a></span>
+<span class="normal"><a href="#__codelineno-2-31">31</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="nt">&lt;build&gt;</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2"></a><span class="w">    </span><span class="nt">&lt;plugins&gt;</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3"></a><span class="w">        </span><span class="nt">&lt;plugin&gt;</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4"></a><span class="w">            </span><span class="nt">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="nt">&lt;/groupId&gt;</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5"></a><span class="w">            </span><span class="nt">&lt;artifactId&gt;</span>maven-assembly-plugin<span class="nt">&lt;/artifactId&gt;</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6"></a><span class="w">            </span><span class="nt">&lt;configuration&gt;</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7"></a><span class="w">                </span><span class="nt">&lt;descriptorRefs&gt;</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8"></a><span class="w">                    </span><span class="nt">&lt;descriptorRef&gt;</span>jar-with-dependencies<span class="nt">&lt;/descriptorRef&gt;</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9"></a><span class="w">                </span><span class="nt">&lt;/descriptorRefs&gt;</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10"></a><span class="w">                </span><span class="nt">&lt;archive&gt;</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11"></a><span class="w">                        </span><span class="nt">&lt;manifestEntries&gt;</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12"></a><span class="w">                            </span><span class="cm">&lt;!-- 这里写 agent 类 --&gt;</span>
+<a id="__codelineno-2-13" name="__codelineno-2-13"></a><span class="w">                            </span><span class="nt">&lt;Premain-Class&gt;</span>org.agent.SimpleAgent<span class="nt">&lt;/Premain-Class&gt;</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14"></a><span class="w">                            </span><span class="nt">&lt;Agent-Class&gt;</span>org.agent.SimpleAgent<span class="nt">&lt;/Agent-Class&gt;</span>
+<a id="__codelineno-2-15" name="__codelineno-2-15"></a><span class="w">                            </span><span class="nt">&lt;Can-Redefine-Classes&gt;</span>true<span class="nt">&lt;/Can-Redefine-Classes&gt;</span>
+<a id="__codelineno-2-16" name="__codelineno-2-16"></a><span class="w">                            </span><span class="nt">&lt;Can-Retransform-Classes&gt;</span>true<span class="nt">&lt;/Can-Retransform-Classes&gt;</span>
+<a id="__codelineno-2-17" name="__codelineno-2-17"></a><span class="w">                        </span><span class="nt">&lt;/manifestEntries&gt;</span>
+<a id="__codelineno-2-18" name="__codelineno-2-18"></a><span class="w">                </span><span class="nt">&lt;/archive&gt;</span>
+<a id="__codelineno-2-19" name="__codelineno-2-19"></a><span class="w">            </span><span class="nt">&lt;/configuration&gt;</span>
+<a id="__codelineno-2-20" name="__codelineno-2-20"></a><span class="w">            </span><span class="cm">&lt;!-- 好像是插件的目标, 如果报错删掉即可 --&gt;</span>
+<a id="__codelineno-2-21" name="__codelineno-2-21"></a><span class="w">            </span><span class="nt">&lt;executions&gt;</span>
+<a id="__codelineno-2-22" name="__codelineno-2-22"></a><span class="w">                </span><span class="nt">&lt;execution&gt;</span>
+<a id="__codelineno-2-23" name="__codelineno-2-23"></a><span class="w">                    </span><span class="nt">&lt;goals&gt;</span>
+<a id="__codelineno-2-24" name="__codelineno-2-24"></a><span class="w">                        </span><span class="nt">&lt;goal&gt;</span>attached<span class="nt">&lt;/goal&gt;</span>
+<a id="__codelineno-2-25" name="__codelineno-2-25"></a><span class="w">                    </span><span class="nt">&lt;/goals&gt;</span>
+<a id="__codelineno-2-26" name="__codelineno-2-26"></a><span class="w">                    </span><span class="nt">&lt;phase&gt;</span>package<span class="nt">&lt;/phase&gt;</span>
+<a id="__codelineno-2-27" name="__codelineno-2-27"></a><span class="w">                </span><span class="nt">&lt;/execution&gt;</span>
+<a id="__codelineno-2-28" name="__codelineno-2-28"></a><span class="w">            </span><span class="nt">&lt;/executions&gt;</span>
+<a id="__codelineno-2-29" name="__codelineno-2-29"></a><span class="w">        </span><span class="nt">&lt;/plugin&gt;</span>
+<a id="__codelineno-2-30" name="__codelineno-2-30"></a><span class="w">    </span><span class="nt">&lt;/plugins&gt;</span>
+<a id="__codelineno-2-31" name="__codelineno-2-31"></a><span class="nt">&lt;/build&gt;</span>
+</code></pre></div></td></tr></tbody></table></div>
+<p>然后使用 maven 直接构建：</p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../assets/image-20241207131906-f2ote4s.png" data-desc-position="bottom"><img alt="image" src="../assets/image-20241207131906-f2ote4s.png"></a>​</p>
+<h3 id="_3">测试程序</h3>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-3-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-3-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-3-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-3-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-3-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-3-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-3-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-3-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-3-10">10</a></span>
+<span class="normal"><a href="#__codelineno-3-11">11</a></span>
+<span class="normal"><a href="#__codelineno-3-12">12</a></span>
+<span class="normal"><a href="#__codelineno-3-13">13</a></span>
+<span class="normal"><a href="#__codelineno-3-14">14</a></span>
+<span class="normal"><a href="#__codelineno-3-15">15</a></span>
+<span class="normal"><a href="#__codelineno-3-16">16</a></span>
+<span class="normal"><a href="#__codelineno-3-17">17</a></span>
+<span class="normal"><a href="#__codelineno-3-18">18</a></span>
+<span class="normal"><a href="#__codelineno-3-19">19</a></span>
+<span class="normal"><a href="#__codelineno-3-20">20</a></span>
+<span class="normal"><a href="#__codelineno-3-21">21</a></span>
+<span class="normal"><a href="#__codelineno-3-22">22</a></span>
+<span class="normal"><a href="#__codelineno-3-23">23</a></span>
+<span class="normal"><a href="#__codelineno-3-24">24</a></span>
+<span class="normal"><a href="#__codelineno-3-25">25</a></span>
+<span class="normal"><a href="#__codelineno-3-26">26</a></span>
+<span class="normal"><a href="#__codelineno-3-27">27</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1"></a><span class="kn">package</span><span class="w"> </span><span class="nn">org.agent</span><span class="p">;</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2"></a>
+<a id="__codelineno-3-3" name="__codelineno-3-3"></a><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">BaseMain</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4"></a>
+<a id="__codelineno-3-5" name="__codelineno-3-5"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">print</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6"></a><span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"i: "</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="p">);</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9"></a>
+<a id="__codelineno-3-10" name="__codelineno-3-10"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">run</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11"></a><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12"></a><span class="w">        </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="kc">true</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-13" name="__codelineno-3-13"></a><span class="w">            </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">print</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+<a id="__codelineno-3-14" name="__codelineno-3-14"></a><span class="w">            </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-15" name="__codelineno-3-15"></a><span class="w">                </span><span class="n">Thread</span><span class="p">.</span><span class="na">sleep</span><span class="p">(</span><span class="mi">1000</span><span class="p">);</span>
+<a id="__codelineno-3-16" name="__codelineno-3-16"></a><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">InterruptedException</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-17" name="__codelineno-3-17"></a><span class="w">                </span><span class="n">e</span><span class="p">.</span><span class="na">printStackTrace</span><span class="p">();</span>
+<a id="__codelineno-3-18" name="__codelineno-3-18"></a><span class="w">            </span><span class="p">}</span>
+<a id="__codelineno-3-19" name="__codelineno-3-19"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-3-20" name="__codelineno-3-20"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-3-21" name="__codelineno-3-21"></a>
+<a id="__codelineno-3-22" name="__codelineno-3-22"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">InterruptedException</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-23" name="__codelineno-3-23"></a><span class="w">        </span><span class="n">BaseMain</span><span class="w"> </span><span class="n">main</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">BaseMain</span><span class="p">();</span>
+<a id="__codelineno-3-24" name="__codelineno-3-24"></a><span class="w">        </span><span class="n">main</span><span class="p">.</span><span class="na">run</span><span class="p">();</span>
+<a id="__codelineno-3-25" name="__codelineno-3-25"></a><span class="w">        </span><span class="n">Thread</span><span class="p">.</span><span class="na">sleep</span><span class="p">(</span><span class="mi">1000</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">60</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">60</span><span class="p">);</span>
+<a id="__codelineno-3-26" name="__codelineno-3-26"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-3-27" name="__codelineno-3-27"></a><span class="p">}</span>
+</code></pre></div></td></tr></tbody></table></div>
+<h3 id="jvm">jvm 启动前加载</h3>
+<p>启动程序的时候指定 javaagent 的 jar 路径，然后在主程序启动前就会运行 premain 方法：</p>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1"></a><span class="o">-</span><span class="n">javaagent</span><span class="p">:</span><span class="n">D</span><span class="p">:</span><span class="o">/</span><span class="n">Projects</span><span class="o">/</span><span class="n">java</span><span class="o">/</span><span class="n">AgentStudy</span><span class="o">/</span><span class="n">target</span><span class="o">/</span><span class="n">AgentStudy</span><span class="o">-</span><span class="mf">1.0</span><span class="o">-</span><span class="n">SNAPSHOT</span><span class="o">-</span><span class="n">jar</span><span class="o">-</span><span class="kd">with</span><span class="o">-</span><span class="n">dependencies</span><span class="p">.</span><span class="na">jar</span>
+</code></pre></div></td></tr></tbody></table></div>
+<p>IDEA 操作：</p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../assets/image-20241207132245-qmchbu7.png" data-desc-position="bottom"><img alt="image" src="../assets/image-20241207132245-qmchbu7.png"></a>​</p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../assets/image-20241207132313-vx6gu7a.png" data-desc-position="bottom"><img alt="image" src="../assets/image-20241207132313-vx6gu7a.png"></a>​</p>
+<p>启动程序，可以看到在主程序运行前先运行了 premain：</p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../assets/image-20241207132335-nxmjiqu.png" data-desc-position="bottom"><img alt="image" src="../assets/image-20241207132335-nxmjiqu.png"></a>​</p>
+<h3 id="attach">attach 启动后加载</h3>
+<p>官方为了实现启动后加载，提供了<code>Attach API</code>​。Attach API 很简单，只有 2 个主要的类，都在 <code>com.sun.tools.attach</code>​ 包里面。这里需要先导入一下这个 tools 包：</p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../assets/image-20241207132931-2rl5fnp.png" data-desc-position="bottom"><img alt="image" src="../assets/image-20241207132931-2rl5fnp.png"></a>​</p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../assets/image-20241207132951-mua17m4.png" data-desc-position="bottom"><img alt="image" src="../assets/image-20241207132951-mua17m4.png"></a>​</p>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-5-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-5-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-5-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-5-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-5-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-5-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-5-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-5-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-5-10">10</a></span>
+<span class="normal"><a href="#__codelineno-5-11">11</a></span>
+<span class="normal"><a href="#__codelineno-5-12">12</a></span>
+<span class="normal"><a href="#__codelineno-5-13">13</a></span>
+<span class="normal"><a href="#__codelineno-5-14">14</a></span>
+<span class="normal"><a href="#__codelineno-5-15">15</a></span>
+<span class="normal"><a href="#__codelineno-5-16">16</a></span>
+<span class="normal"><a href="#__codelineno-5-17">17</a></span>
+<span class="normal"><a href="#__codelineno-5-18">18</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1"></a><span class="kn">package</span><span class="w"> </span><span class="nn">org.agent</span><span class="p">;</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2"></a>
+<a id="__codelineno-5-3" name="__codelineno-5-3"></a><span class="kn">import</span><span class="w"> </span><span class="nn">com.sun.tools.attach.AgentInitializationException</span><span class="p">;</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4"></a><span class="kn">import</span><span class="w"> </span><span class="nn">com.sun.tools.attach.AgentLoadException</span><span class="p">;</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5"></a><span class="kn">import</span><span class="w"> </span><span class="nn">com.sun.tools.attach.AttachNotSupportedException</span><span class="p">;</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6"></a><span class="kn">import</span><span class="w"> </span><span class="nn">com.sun.tools.attach.VirtualMachine</span><span class="p">;</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7"></a>
+<a id="__codelineno-5-8" name="__codelineno-5-8"></a><span class="kn">import</span><span class="w"> </span><span class="nn">java.io.IOException</span><span class="p">;</span>
+<a id="__codelineno-5-9" name="__codelineno-5-9"></a>
+<a id="__codelineno-5-10" name="__codelineno-5-10"></a><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">AttachMain</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-5-11" name="__codelineno-5-11"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span>
+<a id="__codelineno-5-12" name="__codelineno-5-12"></a><span class="w">            </span><span class="kd">throws</span><span class="w"> </span><span class="n">IOException</span><span class="p">,</span><span class="w"> </span><span class="n">AgentLoadException</span><span class="p">,</span><span class="w"> </span><span class="n">AgentInitializationException</span><span class="p">,</span><span class="w"> </span><span class="n">AttachNotSupportedException</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-5-13" name="__codelineno-5-13"></a><span class="w">        </span><span class="c1">// 根据 PID 连接到主程序的 JVM </span>
+<a id="__codelineno-5-14" name="__codelineno-5-14"></a><span class="w">        </span><span class="n">VirtualMachine</span><span class="w"> </span><span class="n">vm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VirtualMachine</span><span class="p">.</span><span class="na">attach</span><span class="p">(</span><span class="s">"40424"</span><span class="p">);</span>
+<a id="__codelineno-5-15" name="__codelineno-5-15"></a><span class="w">        </span><span class="c1">// 加载 agent</span>
+<a id="__codelineno-5-16" name="__codelineno-5-16"></a><span class="w">        </span><span class="n">vm</span><span class="p">.</span><span class="na">loadAgent</span><span class="p">(</span><span class="s">"D:/Projects/java/AgentStudy/target/AgentStudy-1.0-SNAPSHOT-jar-with-dependencies.jar"</span><span class="p">);</span>
+<a id="__codelineno-5-17" name="__codelineno-5-17"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-5-18" name="__codelineno-5-18"></a><span class="p">}</span>
+</code></pre></div></td></tr></tbody></table></div>
+<p>查看 PID 号：</p>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1"></a><span class="n">jps</span><span class="w"> </span><span class="o">-</span><span class="n">l</span>
+</code></pre></div></td></tr></tbody></table></div>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../assets/image-20241207133138-rce1khv.png" data-desc-position="bottom"><img alt="image" src="../assets/image-20241207133138-rce1khv.png"></a>​</p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../assets/image-20241207133257-pouwlsc.png" data-desc-position="bottom"><img alt="image" src="../assets/image-20241207133257-pouwlsc.png"></a>​</p>
+<p>VirtualMachine 还有其他方法：</p>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-7-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-7-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-7-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-7-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-7-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-7-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-7-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-7-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-7-10">10</a></span>
+<span class="normal"><a href="#__codelineno-7-11">11</a></span>
+<span class="normal"><a href="#__codelineno-7-12">12</a></span>
+<span class="normal"><a href="#__codelineno-7-13">13</a></span>
+<span class="normal"><a href="#__codelineno-7-14">14</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">abstract</span><span class="w"> </span><span class="kd">class</span> <span class="nc">VirtualMachine</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2"></a><span class="w">    </span><span class="c1">// 获得当前所有的JVM列表</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">VirtualMachineDescriptor</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">list</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4"></a>
+<a id="__codelineno-7-5" name="__codelineno-7-5"></a><span class="w">    </span><span class="c1">// 根据pid连接到JVM</span>
+<a id="__codelineno-7-6" name="__codelineno-7-6"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">VirtualMachine</span><span class="w"> </span><span class="nf">attach</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span>
+<a id="__codelineno-7-7" name="__codelineno-7-7"></a>
+<a id="__codelineno-7-8" name="__codelineno-7-8"></a><span class="w">    </span><span class="c1">// 断开连接</span>
+<a id="__codelineno-7-9" name="__codelineno-7-9"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">abstract</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">detach</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+<a id="__codelineno-7-10" name="__codelineno-7-10"></a>
+<a id="__codelineno-7-11" name="__codelineno-7-11"></a><span class="w">    </span><span class="c1">// 加载agent，agentmain方法靠的就是这个方法</span>
+<a id="__codelineno-7-12" name="__codelineno-7-12"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">loadAgent</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">agent</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span>
+<a id="__codelineno-7-13" name="__codelineno-7-13"></a>
+<a id="__codelineno-7-14" name="__codelineno-7-14"></a><span class="p">}</span>
+</code></pre></div></td></tr></tbody></table></div>
+<p>可以借此实现一个遍历，然后去获取到目标 JVM 的 PID 后加载 agent ：</p>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-8-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-8-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-8-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-8-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-8-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-8-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-8-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-8-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-8-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-8-10">10</a></span>
+<span class="normal"><a href="#__codelineno-8-11">11</a></span>
+<span class="normal"><a href="#__codelineno-8-12">12</a></span>
+<span class="normal"><a href="#__codelineno-8-13">13</a></span>
+<span class="normal"><a href="#__codelineno-8-14">14</a></span>
+<span class="normal"><a href="#__codelineno-8-15">15</a></span>
+<span class="normal"><a href="#__codelineno-8-16">16</a></span>
+<span class="normal"><a href="#__codelineno-8-17">17</a></span>
+<span class="normal"><a href="#__codelineno-8-18">18</a></span>
+<span class="normal"><a href="#__codelineno-8-19">19</a></span>
+<span class="normal"><a href="#__codelineno-8-20">20</a></span>
+<span class="normal"><a href="#__codelineno-8-21">21</a></span>
+<span class="normal"><a href="#__codelineno-8-22">22</a></span>
+<span class="normal"><a href="#__codelineno-8-23">23</a></span>
+<span class="normal"><a href="#__codelineno-8-24">24</a></span>
+<span class="normal"><a href="#__codelineno-8-25">25</a></span>
+<span class="normal"><a href="#__codelineno-8-26">26</a></span>
+<span class="normal"><a href="#__codelineno-8-27">27</a></span>
+<span class="normal"><a href="#__codelineno-8-28">28</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1"></a><span class="kn">package</span><span class="w"> </span><span class="nn">org.agent</span><span class="p">;</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2"></a>
+<a id="__codelineno-8-3" name="__codelineno-8-3"></a><span class="kn">import</span><span class="w"> </span><span class="nn">com.sun.tools.attach.*</span><span class="p">;</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4"></a>
+<a id="__codelineno-8-5" name="__codelineno-8-5"></a><span class="kn">import</span><span class="w"> </span><span class="nn">java.io.IOException</span><span class="p">;</span>
+<a id="__codelineno-8-6" name="__codelineno-8-6"></a><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.List</span><span class="p">;</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7"></a>
+<a id="__codelineno-8-8" name="__codelineno-8-8"></a><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">AttachMain</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-8-9" name="__codelineno-8-9"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span>
+<a id="__codelineno-8-10" name="__codelineno-8-10"></a><span class="w">            </span><span class="kd">throws</span><span class="w"> </span><span class="n">IOException</span><span class="p">,</span><span class="w"> </span><span class="n">AgentLoadException</span><span class="p">,</span><span class="w"> </span><span class="n">AgentInitializationException</span><span class="p">,</span><span class="w"> </span><span class="n">AttachNotSupportedException</span><span class="p">,</span><span class="w"> </span><span class="n">javassist</span><span class="p">.</span><span class="na">NotFoundException</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-8-11" name="__codelineno-8-11"></a><span class="w">        </span><span class="c1">// 1. 获得当前所有的 JVM 列表</span>
+<a id="__codelineno-8-12" name="__codelineno-8-12"></a><span class="w">        </span><span class="n">List</span><span class="o">&lt;</span><span class="n">VirtualMachineDescriptor</span><span class="o">&gt;</span><span class="w"> </span><span class="n">virtualMachineDescriptorList</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VirtualMachine</span><span class="p">.</span><span class="na">list</span><span class="p">();</span>
+<a id="__codelineno-8-13" name="__codelineno-8-13"></a>
+<a id="__codelineno-8-14" name="__codelineno-8-14"></a><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">VirtualMachineDescriptor</span><span class="w"> </span><span class="n">virtualMachineDescriptor</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">virtualMachineDescriptorList</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-8-15" name="__codelineno-8-15"></a><span class="w">            </span><span class="c1">// 2. 遍历获取目标 JVM</span>
+<a id="__codelineno-8-16" name="__codelineno-8-16"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">virtualMachineDescriptor</span><span class="p">.</span><span class="na">displayName</span><span class="p">().</span><span class="na">contains</span><span class="p">(</span><span class="s">"org.agent.BaseMain"</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-8-17" name="__codelineno-8-17"></a><span class="w">                </span><span class="c1">// 3. 连接到 JVM</span>
+<a id="__codelineno-8-18" name="__codelineno-8-18"></a><span class="w">                </span><span class="n">VirtualMachine</span><span class="w"> </span><span class="n">virtualMachine</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VirtualMachine</span><span class="p">.</span><span class="na">attach</span><span class="p">(</span><span class="n">virtualMachineDescriptor</span><span class="p">.</span><span class="na">id</span><span class="p">());</span>
+<a id="__codelineno-8-19" name="__codelineno-8-19"></a><span class="w">                </span><span class="c1">// 4. 加载 agent</span>
+<a id="__codelineno-8-20" name="__codelineno-8-20"></a><span class="w">                </span><span class="n">virtualMachine</span><span class="p">.</span><span class="na">loadAgent</span><span class="p">(</span><span class="s">"D:/Projects/java/AgentStudy/target/AgentStudy-1.0-SNAPSHOT-jar-with-dependencies.jar"</span><span class="p">);</span>
+<a id="__codelineno-8-21" name="__codelineno-8-21"></a><span class="w">                </span><span class="c1">// 5. 断开连接</span>
+<a id="__codelineno-8-22" name="__codelineno-8-22"></a><span class="w">                </span><span class="n">virtualMachine</span><span class="p">.</span><span class="na">detach</span><span class="p">();</span>
+<a id="__codelineno-8-23" name="__codelineno-8-23"></a><span class="w">                </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">printf</span><span class="p">(</span><span class="s">"Loaded agent %s Success !"</span><span class="p">,</span><span class="w"> </span><span class="n">virtualMachineDescriptor</span><span class="p">.</span><span class="na">displayName</span><span class="p">());</span>
+<a id="__codelineno-8-24" name="__codelineno-8-24"></a><span class="w">                </span><span class="k">break</span><span class="p">;</span>
+<a id="__codelineno-8-25" name="__codelineno-8-25"></a><span class="w">            </span><span class="p">}</span>
+<a id="__codelineno-8-26" name="__codelineno-8-26"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-8-27" name="__codelineno-8-27"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-8-28" name="__codelineno-8-28"></a><span class="p">}</span>
+</code></pre></div></td></tr></tbody></table></div>
+<p>​</p>
+<h2 id="agent-jvm">agent 修改 JVM 指定方法</h2>
+<p>上面的 attach 已经可以实现获取目标 JVM 的 PID 然后去加载 agent 程序，那么 agent 程序该如何去注入内存马？</p>
+<p>注入内存马其实就是去修改当前 JVM 中的指定类的指定方法，那么流程就是：</p>
+<ol>
+<li>获取到指定类</li>
+<li>获取到指定方法</li>
+<li>修改方法</li>
+</ol>
+<p>修改方法能实现了，那么内存马只是去修改对应环境的请求处理方法，给它加一个命令执行或者启动逻辑就好了。</p>
+<p>这个就需要用到 Instrumentation 和 javassist 了。</p>
+<h3 id="instrumentation">Instrumentation</h3>
+<p>Instrumentation 是 JVMTIAgent（JVM Tool Interface Agent）的一部分，Java agent 通过这个类和目标 JVM 进行交互，从而达到修改数据的效果。</p>
+<p>就是这里的参数：</p>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-9-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1"></a><span class="n">agentmain</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">agentArgs</span><span class="p">,</span><span class="w"> </span><span class="n">Instrumentation</span><span class="w"> </span><span class="n">inst</span><span class="p">)</span><span class="w"> </span>
+</code></pre></div></td></tr></tbody></table></div>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-10-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-10-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-10-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-10-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-10-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-10-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-10-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-10-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-10-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-10-10">10</a></span>
+<span class="normal"><a href="#__codelineno-10-11">11</a></span>
+<span class="normal"><a href="#__codelineno-10-12">12</a></span>
+<span class="normal"><a href="#__codelineno-10-13">13</a></span>
+<span class="normal"><a href="#__codelineno-10-14">14</a></span>
+<span class="normal"><a href="#__codelineno-10-15">15</a></span>
+<span class="normal"><a href="#__codelineno-10-16">16</a></span>
+<span class="normal"><a href="#__codelineno-10-17">17</a></span>
+<span class="normal"><a href="#__codelineno-10-18">18</a></span>
+<span class="normal"><a href="#__codelineno-10-19">19</a></span>
+<span class="normal"><a href="#__codelineno-10-20">20</a></span>
+<span class="normal"><a href="#__codelineno-10-21">21</a></span>
+<span class="normal"><a href="#__codelineno-10-22">22</a></span>
+<span class="normal"><a href="#__codelineno-10-23">23</a></span>
+<span class="normal"><a href="#__codelineno-10-24">24</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">Instrumentation</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2"></a>
+<a id="__codelineno-10-3" name="__codelineno-10-3"></a><span class="w">    </span><span class="c1">// 增加一个 Class 文件的转换器，转换器用于改变 Class 二进制流的数据，参数 canRetransform 设置是否允许重新转换。</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4"></a><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">addTransformer</span><span class="p">(</span><span class="n">ClassFileTransformer</span><span class="w"> </span><span class="n">transformer</span><span class="p">,</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="n">canRetransform</span><span class="p">);</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5"></a>
+<a id="__codelineno-10-6" name="__codelineno-10-6"></a><span class="w">    </span><span class="c1">// 在类加载之前，重新定义 Class 文件，ClassDefinition 表示对一个类新的定义，如果在类加载之后，需要使用 retransformClasses 方法重新定义。addTransformer方法配置之后，后续的类加载都会被Transformer拦截。对于已经加载过的类，可以执行retransformClasses来重新触发这个Transformer的拦截。类加载的字节码被修改后，除非再次被retransform，否则不会恢复。</span>
+<a id="__codelineno-10-7" name="__codelineno-10-7"></a><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">addTransformer</span><span class="p">(</span><span class="n">ClassFileTransformer</span><span class="w"> </span><span class="n">transformer</span><span class="p">);</span>
+<a id="__codelineno-10-8" name="__codelineno-10-8"></a>
+<a id="__codelineno-10-9" name="__codelineno-10-9"></a><span class="w">    </span><span class="c1">// 删除一个类转换器</span>
+<a id="__codelineno-10-10" name="__codelineno-10-10"></a><span class="w">    </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">removeTransformer</span><span class="p">(</span><span class="n">ClassFileTransformer</span><span class="w"> </span><span class="n">transformer</span><span class="p">);</span>
+<a id="__codelineno-10-11" name="__codelineno-10-11"></a>
+<a id="__codelineno-10-12" name="__codelineno-10-12"></a><span class="w">    </span><span class="c1">// 在类加载之后，重新定义 Class。这个很重要，该方法是1.6 之后加入的，事实上，该方法是 update 了一个类。</span>
+<a id="__codelineno-10-13" name="__codelineno-10-13"></a><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">retransformClasses</span><span class="p">(</span><span class="n">Class</span><span class="o">&lt;?&gt;</span><span class="p">...</span><span class="w"> </span><span class="n">classes</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">UnmodifiableClassException</span><span class="p">;</span>
+<a id="__codelineno-10-14" name="__codelineno-10-14"></a>
+<a id="__codelineno-10-15" name="__codelineno-10-15"></a><span class="w">    </span><span class="c1">// 判断一个类是否被修改</span>
+<a id="__codelineno-10-16" name="__codelineno-10-16"></a><span class="w">    </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">isModifiableClass</span><span class="p">(</span><span class="n">Class</span><span class="o">&lt;?&gt;</span><span class="w"> </span><span class="n">theClass</span><span class="p">);</span>
+<a id="__codelineno-10-17" name="__codelineno-10-17"></a>
+<a id="__codelineno-10-18" name="__codelineno-10-18"></a><span class="w">    </span><span class="c1">// 获取目标已经加载的类。</span>
+<a id="__codelineno-10-19" name="__codelineno-10-19"></a><span class="w">    </span><span class="n">Class</span><span class="o">[]</span><span class="w"> </span><span class="nf">getAllLoadedClasses</span><span class="p">();</span>
+<a id="__codelineno-10-20" name="__codelineno-10-20"></a>
+<a id="__codelineno-10-21" name="__codelineno-10-21"></a><span class="w">    </span><span class="c1">// 获取一个对象的大小</span>
+<a id="__codelineno-10-22" name="__codelineno-10-22"></a><span class="w">    </span><span class="kt">long</span><span class="w"> </span><span class="nf">getObjectSize</span><span class="p">(</span><span class="n">Object</span><span class="w"> </span><span class="n">objectToSize</span><span class="p">);</span>
+<a id="__codelineno-10-23" name="__codelineno-10-23"></a>
+<a id="__codelineno-10-24" name="__codelineno-10-24"></a><span class="p">}</span>
+</code></pre></div></td></tr></tbody></table></div>
+<p>通过 Instrumentation 我们可以做到：</p>
+<ol>
+<li>getAllLoadedClasses() 获取所有加载的类</li>
+<li>addTransformer(ClassFileTransformer transformer, boolean canRetransform) 增加一个转换器</li>
+<li>retransformClasses(Class&lt;?&gt;... classes) 重新加载类</li>
+</ol>
+<p>agent ：</p>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-11-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-11-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-11-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-11-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-11-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-11-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-11-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-11-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-11-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-11-10">10</a></span>
+<span class="normal"><a href="#__codelineno-11-11">11</a></span>
+<span class="normal"><a href="#__codelineno-11-12">12</a></span>
+<span class="normal"><a href="#__codelineno-11-13">13</a></span>
+<span class="normal"><a href="#__codelineno-11-14">14</a></span>
+<span class="normal"><a href="#__codelineno-11-15">15</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">agentmain</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">agentArgs</span><span class="p">,</span><span class="w"> </span><span class="n">Instrumentation</span><span class="w"> </span><span class="n">inst</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">UnmodifiableClassException</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2"></a><span class="w">        </span><span class="c1">// 1. 获取所有类</span>
+<a id="__codelineno-11-3" name="__codelineno-11-3"></a><span class="w">        </span><span class="n">Class</span><span class="o">[]</span><span class="w"> </span><span class="n">allLoadedClasses</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">inst</span><span class="p">.</span><span class="na">getAllLoadedClasses</span><span class="p">();</span>
+<a id="__codelineno-11-4" name="__codelineno-11-4"></a><span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">targetClassName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"org.agent.BaseMain"</span><span class="p">;</span>
+<a id="__codelineno-11-5" name="__codelineno-11-5"></a><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">Class</span><span class="w"> </span><span class="n">cls</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">allLoadedClasses</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-11-6" name="__codelineno-11-6"></a><span class="w">            </span><span class="c1">// 2. 获取到目标类</span>
+<a id="__codelineno-11-7" name="__codelineno-11-7"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">cls</span><span class="p">.</span><span class="na">getName</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="n">targetClassName</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-11-8" name="__codelineno-11-8"></a><span class="w">                </span><span class="k">continue</span><span class="p">;</span>
+<a id="__codelineno-11-9" name="__codelineno-11-9"></a><span class="w">            </span><span class="p">}</span>
+<a id="__codelineno-11-10" name="__codelineno-11-10"></a><span class="w">            </span><span class="c1">// 3. 添加一个 transformer</span>
+<a id="__codelineno-11-11" name="__codelineno-11-11"></a><span class="w">            </span><span class="n">inst</span><span class="p">.</span><span class="na">addTransformer</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">AgentTransformer</span><span class="p">(),</span><span class="w"> </span><span class="kc">true</span><span class="p">);</span>
+<a id="__codelineno-11-12" name="__codelineno-11-12"></a><span class="w">            </span><span class="c1">// 4. 重载该类</span>
+<a id="__codelineno-11-13" name="__codelineno-11-13"></a><span class="w">            </span><span class="n">inst</span><span class="p">.</span><span class="na">retransformClasses</span><span class="p">(</span><span class="n">cls</span><span class="p">);</span>
+<a id="__codelineno-11-14" name="__codelineno-11-14"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-11-15" name="__codelineno-11-15"></a><span class="w">    </span><span class="p">}</span>
+</code></pre></div></td></tr></tbody></table></div>
+<p>然后实现这个 ClassFileTransformer transformer：</p>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-12-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-12-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-12-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-12-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-12-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-12-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-12-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-12-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-12-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-12-10">10</a></span>
+<span class="normal"><a href="#__codelineno-12-11">11</a></span>
+<span class="normal"><a href="#__codelineno-12-12">12</a></span>
+<span class="normal"><a href="#__codelineno-12-13">13</a></span>
+<span class="normal"><a href="#__codelineno-12-14">14</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1"></a><span class="kn">package</span><span class="w"> </span><span class="nn">org.agent</span><span class="p">;</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2"></a>
+<a id="__codelineno-12-3" name="__codelineno-12-3"></a><span class="kn">import</span><span class="w"> </span><span class="nn">java.lang.instrument.ClassFileTransformer</span><span class="p">;</span>
+<a id="__codelineno-12-4" name="__codelineno-12-4"></a><span class="kn">import</span><span class="w"> </span><span class="nn">java.lang.instrument.IllegalClassFormatException</span><span class="p">;</span>
+<a id="__codelineno-12-5" name="__codelineno-12-5"></a><span class="kn">import</span><span class="w"> </span><span class="nn">java.security.ProtectionDomain</span><span class="p">;</span>
+<a id="__codelineno-12-6" name="__codelineno-12-6"></a>
+<a id="__codelineno-12-7" name="__codelineno-12-7"></a><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">AgentTransformer</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">ClassFileTransformer</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-12-8" name="__codelineno-12-8"></a>
+<a id="__codelineno-12-9" name="__codelineno-12-9"></a><span class="w">    </span><span class="nd">@Override</span>
+<a id="__codelineno-12-10" name="__codelineno-12-10"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">byte</span><span class="o">[]</span><span class="w"> </span><span class="nf">transform</span><span class="p">(</span><span class="n">ClassLoader</span><span class="w"> </span><span class="n">loader</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">className</span><span class="p">,</span><span class="w"> </span><span class="n">Class</span><span class="o">&lt;?&gt;</span><span class="w"> </span><span class="n">classBeingRedefined</span><span class="p">,</span><span class="w"> </span><span class="n">ProtectionDomain</span><span class="w"> </span><span class="n">protectionDomain</span><span class="p">,</span><span class="w"> </span><span class="kt">byte</span><span class="o">[]</span><span class="w"> </span><span class="n">classfileBuffer</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">IllegalClassFormatException</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-12-11" name="__codelineno-12-11"></a><span class="w">        </span><span class="c1">// 转换器操作, 对该类进行修改</span>
+<a id="__codelineno-12-12" name="__codelineno-12-12"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">byte</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">;</span>
+<a id="__codelineno-12-13" name="__codelineno-12-13"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-12-14" name="__codelineno-12-14"></a><span class="p">}</span>
+</code></pre></div></td></tr></tbody></table></div>
+<p>现在还差的就是 transformer 转换器中去实现修改指定类方法的功能了，这个就需要用到 javassist 去动态修改字节码。</p>
+<h3 id="javassist">javassist 动态修改字节码</h3>
+<p>先在 pom.xml 中添加相关依赖：</p>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-13-1">1</a></span>
+<span class="normal"><a href="#__codelineno-13-2">2</a></span>
+<span class="normal"><a href="#__codelineno-13-3">3</a></span>
+<span class="normal"><a href="#__codelineno-13-4">4</a></span>
+<span class="normal"><a href="#__codelineno-13-5">5</a></span>
+<span class="normal"><a href="#__codelineno-13-6">6</a></span>
+<span class="normal"><a href="#__codelineno-13-7">7</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1"></a><span class="nt">&lt;dependencies&gt;</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2"></a><span class="w">    </span><span class="nt">&lt;dependency&gt;</span>
+<a id="__codelineno-13-3" name="__codelineno-13-3"></a><span class="w">        </span><span class="nt">&lt;groupId&gt;</span>org.javassist<span class="nt">&lt;/groupId&gt;</span>
+<a id="__codelineno-13-4" name="__codelineno-13-4"></a><span class="w">        </span><span class="nt">&lt;artifactId&gt;</span>javassist<span class="nt">&lt;/artifactId&gt;</span>
+<a id="__codelineno-13-5" name="__codelineno-13-5"></a><span class="w">        </span><span class="nt">&lt;version&gt;</span>3.20.0-GA<span class="nt">&lt;/version&gt;</span>
+<a id="__codelineno-13-6" name="__codelineno-13-6"></a><span class="w">    </span><span class="nt">&lt;/dependency&gt;</span>
+<a id="__codelineno-13-7" name="__codelineno-13-7"></a><span class="nt">&lt;/dependencies&gt;</span>
+</code></pre></div></td></tr></tbody></table></div>
+<p>CtClass 对象提供了一些方法可以去直接修改目标类。也就可以通过该对象去实现内存马注入。</p>
+<p>该对象必须从 ClassPool 对象获取，它就是一个 CtClass 对象容器，然后通过 ClassPool 的 get 方法获取到对应类的 CtClass 对象（ 查找对应的类文件，然后封装为 CtClass 对象 ）。</p>
+<p>如果程序运行在 JBoss 或者 Tomcat 等 Web 服务器上，ClassPool 可能无法找到用户的类，因为 Web 服务器使用多个类加载器作为系统类加载器。在这种情况下，ClassPool 必须添加额外的类搜索路径，</p>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-14-1">1</a></span>
+<span class="normal"><a href="#__codelineno-14-2">2</a></span>
+<span class="normal"><a href="#__codelineno-14-3">3</a></span>
+<span class="normal"><a href="#__codelineno-14-4">4</a></span>
+<span class="normal"><a href="#__codelineno-14-5">5</a></span>
+<span class="normal"><a href="#__codelineno-14-6">6</a></span>
+<span class="normal"><a href="#__codelineno-14-7">7</a></span>
+<span class="normal"><a href="#__codelineno-14-8">8</a></span>
+<span class="normal"><a href="#__codelineno-14-9">9</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1"></a><span class="c1">// 获取 ctClass 对象容器</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2"></a><span class="n">ClassPool</span><span class="w"> </span><span class="n">cp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ClassPool</span><span class="p">.</span><span class="na">getDefault</span><span class="p">();</span>
+<a id="__codelineno-14-3" name="__codelineno-14-3"></a><span class="c1">// 获取到指定类名的 ctClass 对象</span>
+<a id="__codelineno-14-4" name="__codelineno-14-4"></a><span class="n">CtClass</span><span class="w"> </span><span class="n">ctClass</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cp</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">"org.agent.BaseMain"</span><span class="p">);</span>
+<a id="__codelineno-14-5" name="__codelineno-14-5"></a><span class="c1">// 添加额外的搜索路径</span>
+<a id="__codelineno-14-6" name="__codelineno-14-6"></a><span class="n">cp</span><span class="p">.</span><span class="na">insertClassPath</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ClassClassPath</span><span class="p">(</span><span class="o">&lt;</span><span class="n">Class</span><span class="o">&gt;</span><span class="p">));</span>
+<a id="__codelineno-14-7" name="__codelineno-14-7"></a><span class="c1">// 获取到指定方法</span>
+<a id="__codelineno-14-8" name="__codelineno-14-8"></a><span class="n">CtMethod</span><span class="w"> </span><span class="n">ctMethod</span><span class="o">=</span><span class="w"> </span><span class="n">ctClass</span><span class="p">.</span><span class="na">getDeclaredMethod</span><span class="p">(</span><span class="n">MethodName</span><span class="p">)</span>
+<a id="__codelineno-14-9" name="__codelineno-14-9"></a><span class="c1">// 使用 CtMethod 的方法去做修改</span>
+</code></pre></div></td></tr></tbody></table></div>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-15-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-15-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-15-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-15-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-15-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-15-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-15-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-15-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-15-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-15-10">10</a></span>
+<span class="normal"><a href="#__codelineno-15-11">11</a></span>
+<span class="normal"><a href="#__codelineno-15-12">12</a></span>
+<span class="normal"><a href="#__codelineno-15-13">13</a></span>
+<span class="normal"><a href="#__codelineno-15-14">14</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">CtMethod</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">CtBehavior</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2"></a><span class="p">}</span>
+<a id="__codelineno-15-3" name="__codelineno-15-3"></a>
+<a id="__codelineno-15-4" name="__codelineno-15-4"></a><span class="c1">// 父类 CtBehavior</span>
+<a id="__codelineno-15-5" name="__codelineno-15-5"></a><span class="kd">public</span><span class="w"> </span><span class="kd">abstract</span><span class="w"> </span><span class="kd">class</span> <span class="nc">CtBehavior</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">CtMember</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-15-6" name="__codelineno-15-6"></a><span class="w">    </span><span class="c1">// 设置方法体</span>
+<a id="__codelineno-15-7" name="__codelineno-15-7"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">setBody</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">src</span><span class="p">);</span>
+<a id="__codelineno-15-8" name="__codelineno-15-8"></a><span class="w">    </span><span class="c1">// 插入在方法体最前面</span>
+<a id="__codelineno-15-9" name="__codelineno-15-9"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">insertBefore</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">src</span><span class="p">);</span>
+<a id="__codelineno-15-10" name="__codelineno-15-10"></a><span class="w">    </span><span class="c1">// 插入在方法体最后面</span>
+<a id="__codelineno-15-11" name="__codelineno-15-11"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">insertAfter</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">src</span><span class="p">);</span>
+<a id="__codelineno-15-12" name="__codelineno-15-12"></a><span class="w">    </span><span class="c1">// 在方法体的某一行插入内容</span>
+<a id="__codelineno-15-13" name="__codelineno-15-13"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">insertAt</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">lineNum</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">src</span><span class="p">);</span>
+<a id="__codelineno-15-14" name="__codelineno-15-14"></a><span class="p">}</span>
+</code></pre></div></td></tr></tbody></table></div>
+<h3 id="_4">修改实现</h3>
+<p>把着上面两种手段结合起来：</p>
+<ol>
+<li>getAllLoadedClasses() 获取所有加载的类</li>
+<li>获取到指定的类</li>
+<li>
+<p>addTransformer(ClassFileTransformer transformer, boolean canRetransform) 增加一个转换器，转换器中使用 javassist 去实现方法的修改</p>
+<ol>
+<li>获取 ctClass 对象容器</li>
+<li>获取到指定类名的 ctClass 对象</li>
+<li>获取到指定的方法</li>
+<li>对方法进行修改</li>
+<li>retransformClasses(Class&lt;?&gt;... classes) 重新加载类</li>
+</ol>
+</li>
+</ol>
+<p>实现转换器：</p>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-16-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-16-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-16-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-16-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-16-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-16-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-16-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-16-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-16-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-16-10">10</a></span>
+<span class="normal"><a href="#__codelineno-16-11">11</a></span>
+<span class="normal"><a href="#__codelineno-16-12">12</a></span>
+<span class="normal"><a href="#__codelineno-16-13">13</a></span>
+<span class="normal"><a href="#__codelineno-16-14">14</a></span>
+<span class="normal"><a href="#__codelineno-16-15">15</a></span>
+<span class="normal"><a href="#__codelineno-16-16">16</a></span>
+<span class="normal"><a href="#__codelineno-16-17">17</a></span>
+<span class="normal"><a href="#__codelineno-16-18">18</a></span>
+<span class="normal"><a href="#__codelineno-16-19">19</a></span>
+<span class="normal"><a href="#__codelineno-16-20">20</a></span>
+<span class="normal"><a href="#__codelineno-16-21">21</a></span>
+<span class="normal"><a href="#__codelineno-16-22">22</a></span>
+<span class="normal"><a href="#__codelineno-16-23">23</a></span>
+<span class="normal"><a href="#__codelineno-16-24">24</a></span>
+<span class="normal"><a href="#__codelineno-16-25">25</a></span>
+<span class="normal"><a href="#__codelineno-16-26">26</a></span>
+<span class="normal"><a href="#__codelineno-16-27">27</a></span>
+<span class="normal"><a href="#__codelineno-16-28">28</a></span>
+<span class="normal"><a href="#__codelineno-16-29">29</a></span>
+<span class="normal"><a href="#__codelineno-16-30">30</a></span>
+<span class="normal"><a href="#__codelineno-16-31">31</a></span>
+<span class="normal"><a href="#__codelineno-16-32">32</a></span>
+<span class="normal"><a href="#__codelineno-16-33">33</a></span>
+<span class="normal"><a href="#__codelineno-16-34">34</a></span>
+<span class="normal"><a href="#__codelineno-16-35">35</a></span>
+<span class="normal"><a href="#__codelineno-16-36">36</a></span>
+<span class="normal"><a href="#__codelineno-16-37">37</a></span>
+<span class="normal"><a href="#__codelineno-16-38">38</a></span>
+<span class="normal"><a href="#__codelineno-16-39">39</a></span>
+<span class="normal"><a href="#__codelineno-16-40">40</a></span>
+<span class="normal"><a href="#__codelineno-16-41">41</a></span>
+<span class="normal"><a href="#__codelineno-16-42">42</a></span>
+<span class="normal"><a href="#__codelineno-16-43">43</a></span>
+<span class="normal"><a href="#__codelineno-16-44">44</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1"></a><span class="kn">package</span><span class="w"> </span><span class="nn">org.agent</span><span class="p">;</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2"></a>
+<a id="__codelineno-16-3" name="__codelineno-16-3"></a><span class="kn">import</span><span class="w"> </span><span class="nn">javassist.*</span><span class="p">;</span>
+<a id="__codelineno-16-4" name="__codelineno-16-4"></a>
+<a id="__codelineno-16-5" name="__codelineno-16-5"></a><span class="kn">import</span><span class="w"> </span><span class="nn">java.io.IOException</span><span class="p">;</span>
+<a id="__codelineno-16-6" name="__codelineno-16-6"></a><span class="kn">import</span><span class="w"> </span><span class="nn">java.lang.instrument.ClassFileTransformer</span><span class="p">;</span>
+<a id="__codelineno-16-7" name="__codelineno-16-7"></a><span class="kn">import</span><span class="w"> </span><span class="nn">java.lang.instrument.IllegalClassFormatException</span><span class="p">;</span>
+<a id="__codelineno-16-8" name="__codelineno-16-8"></a><span class="kn">import</span><span class="w"> </span><span class="nn">java.security.ProtectionDomain</span><span class="p">;</span>
+<a id="__codelineno-16-9" name="__codelineno-16-9"></a>
+<a id="__codelineno-16-10" name="__codelineno-16-10"></a><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">AgentTransformer</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">ClassFileTransformer</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-16-11" name="__codelineno-16-11"></a>
+<a id="__codelineno-16-12" name="__codelineno-16-12"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">className</span><span class="p">;</span>
+<a id="__codelineno-16-13" name="__codelineno-16-13"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">methodName</span><span class="p">;</span>
+<a id="__codelineno-16-14" name="__codelineno-16-14"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">beforeContent</span><span class="p">;</span>
+<a id="__codelineno-16-15" name="__codelineno-16-15"></a>
+<a id="__codelineno-16-16" name="__codelineno-16-16"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="nf">AgentTransformer</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">className</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">methodName</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">beforeContent</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-16-17" name="__codelineno-16-17"></a><span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">className</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">className</span><span class="p">;</span>
+<a id="__codelineno-16-18" name="__codelineno-16-18"></a><span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">methodName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">methodName</span><span class="p">;</span>
+<a id="__codelineno-16-19" name="__codelineno-16-19"></a><span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">beforeContent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">beforeContent</span><span class="p">;</span>
+<a id="__codelineno-16-20" name="__codelineno-16-20"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-16-21" name="__codelineno-16-21"></a>
+<a id="__codelineno-16-22" name="__codelineno-16-22"></a><span class="w">    </span><span class="nd">@Override</span>
+<a id="__codelineno-16-23" name="__codelineno-16-23"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">byte</span><span class="o">[]</span><span class="w"> </span><span class="nf">transform</span><span class="p">(</span><span class="n">ClassLoader</span><span class="w"> </span><span class="n">loader</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">className</span><span class="p">,</span><span class="w"> </span><span class="n">Class</span><span class="o">&lt;?&gt;</span><span class="w"> </span><span class="n">classBeingRedefined</span><span class="p">,</span><span class="w"> </span><span class="n">ProtectionDomain</span><span class="w"> </span><span class="n">protectionDomain</span><span class="p">,</span><span class="w"> </span><span class="kt">byte</span><span class="o">[]</span><span class="w"> </span><span class="n">classfileBuffer</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">IllegalClassFormatException</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-16-24" name="__codelineno-16-24"></a><span class="w">        </span><span class="c1">// 1. 获取 ClassPool</span>
+<a id="__codelineno-16-25" name="__codelineno-16-25"></a><span class="w">        </span><span class="n">ClassPool</span><span class="w"> </span><span class="n">classPool</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ClassPool</span><span class="p">.</span><span class="na">getDefault</span><span class="p">();</span>
+<a id="__codelineno-16-26" name="__codelineno-16-26"></a><span class="w">        </span><span class="c1">// 2. 添加额外的类搜索路径</span>
+<a id="__codelineno-16-27" name="__codelineno-16-27"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">classBeingRedefined</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-16-28" name="__codelineno-16-28"></a><span class="w">            </span><span class="n">ClassClassPath</span><span class="w"> </span><span class="n">ccp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ClassClassPath</span><span class="p">(</span><span class="n">classBeingRedefined</span><span class="p">);</span>
+<a id="__codelineno-16-29" name="__codelineno-16-29"></a><span class="w">            </span><span class="n">classPool</span><span class="p">.</span><span class="na">insertClassPath</span><span class="p">(</span><span class="n">ccp</span><span class="p">);</span>
+<a id="__codelineno-16-30" name="__codelineno-16-30"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-16-31" name="__codelineno-16-31"></a><span class="w">        </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-16-32" name="__codelineno-16-32"></a><span class="w">            </span><span class="c1">// 3. 获取目标类</span>
+<a id="__codelineno-16-33" name="__codelineno-16-33"></a><span class="w">            </span><span class="n">CtClass</span><span class="w"> </span><span class="n">ctClass</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">classPool</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="na">className</span><span class="p">);</span>
+<a id="__codelineno-16-34" name="__codelineno-16-34"></a><span class="w">            </span><span class="c1">// 4. 获取目标方法</span>
+<a id="__codelineno-16-35" name="__codelineno-16-35"></a><span class="w">            </span><span class="n">CtMethod</span><span class="w"> </span><span class="n">ctMethod</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ctClass</span><span class="p">.</span><span class="na">getDeclaredMethod</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="na">methodName</span><span class="p">);</span>
+<a id="__codelineno-16-36" name="__codelineno-16-36"></a><span class="w">            </span><span class="c1">// 5. 修改方法</span>
+<a id="__codelineno-16-37" name="__codelineno-16-37"></a><span class="w">            </span><span class="n">ctMethod</span><span class="p">.</span><span class="na">insertBefore</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="na">beforeContent</span><span class="p">);</span>
+<a id="__codelineno-16-38" name="__codelineno-16-38"></a><span class="w">            </span><span class="c1">// 6. 返回字节码</span>
+<a id="__codelineno-16-39" name="__codelineno-16-39"></a><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">ctClass</span><span class="p">.</span><span class="na">toBytecode</span><span class="p">();</span>
+<a id="__codelineno-16-40" name="__codelineno-16-40"></a><span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">NotFoundException</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">CannotCompileException</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">IOException</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-16-41" name="__codelineno-16-41"></a><span class="w">            </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">RuntimeException</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
+<a id="__codelineno-16-42" name="__codelineno-16-42"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-16-43" name="__codelineno-16-43"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-16-44" name="__codelineno-16-44"></a><span class="p">}</span>
+</code></pre></div></td></tr></tbody></table></div>
+<p>然后在 <code>agentmain</code>​ 里面写一下参数：</p>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-17-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-17-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-17-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-17-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-17-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-17-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-17-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-17-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-17-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-17-10">10</a></span>
+<span class="normal"><a href="#__codelineno-17-11">11</a></span>
+<span class="normal"><a href="#__codelineno-17-12">12</a></span>
+<span class="normal"><a href="#__codelineno-17-13">13</a></span>
+<span class="normal"><a href="#__codelineno-17-14">14</a></span>
+<span class="normal"><a href="#__codelineno-17-15">15</a></span>
+<span class="normal"><a href="#__codelineno-17-16">16</a></span>
+<span class="normal"><a href="#__codelineno-17-17">17</a></span>
+<span class="normal"><a href="#__codelineno-17-18">18</a></span>
+<span class="normal"><a href="#__codelineno-17-19">19</a></span>
+<span class="normal"><a href="#__codelineno-17-20">20</a></span>
+<span class="normal"><a href="#__codelineno-17-21">21</a></span>
+<span class="normal"><a href="#__codelineno-17-22">22</a></span>
+<span class="normal"><a href="#__codelineno-17-23">23</a></span>
+<span class="normal"><a href="#__codelineno-17-24">24</a></span>
+<span class="normal"><a href="#__codelineno-17-25">25</a></span>
+<span class="normal"><a href="#__codelineno-17-26">26</a></span>
+<span class="normal"><a href="#__codelineno-17-27">27</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1"></a><span class="kn">package</span><span class="w"> </span><span class="nn">org.agent</span><span class="p">;</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2"></a>
+<a id="__codelineno-17-3" name="__codelineno-17-3"></a><span class="kn">import</span><span class="w"> </span><span class="nn">javassist.convert.Transformer</span><span class="p">;</span>
+<a id="__codelineno-17-4" name="__codelineno-17-4"></a>
+<a id="__codelineno-17-5" name="__codelineno-17-5"></a><span class="kn">import</span><span class="w"> </span><span class="nn">java.lang.instrument.Instrumentation</span><span class="p">;</span>
+<a id="__codelineno-17-6" name="__codelineno-17-6"></a><span class="kn">import</span><span class="w"> </span><span class="nn">java.lang.instrument.UnmodifiableClassException</span><span class="p">;</span>
+<a id="__codelineno-17-7" name="__codelineno-17-7"></a>
+<a id="__codelineno-17-8" name="__codelineno-17-8"></a><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">SimpleAgent</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-17-9" name="__codelineno-17-9"></a>
+<a id="__codelineno-17-10" name="__codelineno-17-10"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">agentmain</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">agentArgs</span><span class="p">,</span><span class="w"> </span><span class="n">Instrumentation</span><span class="w"> </span><span class="n">inst</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">UnmodifiableClassException</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-17-11" name="__codelineno-17-11"></a><span class="w">        </span><span class="c1">// 1. 获取所有类</span>
+<a id="__codelineno-17-12" name="__codelineno-17-12"></a><span class="w">        </span><span class="n">Class</span><span class="o">[]</span><span class="w"> </span><span class="n">allLoadedClasses</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">inst</span><span class="p">.</span><span class="na">getAllLoadedClasses</span><span class="p">();</span>
+<a id="__codelineno-17-13" name="__codelineno-17-13"></a><span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">targetClassName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"org.agent.BaseMain"</span><span class="p">;</span>
+<a id="__codelineno-17-14" name="__codelineno-17-14"></a><span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">targetMethodName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"print"</span><span class="p">;</span>
+<a id="__codelineno-17-15" name="__codelineno-17-15"></a><span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">methodBeforeContent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"System.out.println(\"update this method success !\");"</span><span class="p">;</span>
+<a id="__codelineno-17-16" name="__codelineno-17-16"></a><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">Class</span><span class="w"> </span><span class="n">cls</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">allLoadedClasses</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-17-17" name="__codelineno-17-17"></a><span class="w">            </span><span class="c1">// 2. 获取到目标类</span>
+<a id="__codelineno-17-18" name="__codelineno-17-18"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">cls</span><span class="p">.</span><span class="na">getName</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="n">targetClassName</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-17-19" name="__codelineno-17-19"></a><span class="w">                </span><span class="k">continue</span><span class="p">;</span>
+<a id="__codelineno-17-20" name="__codelineno-17-20"></a><span class="w">            </span><span class="p">}</span>
+<a id="__codelineno-17-21" name="__codelineno-17-21"></a><span class="w">            </span><span class="c1">// 3. 添加一个 transformer</span>
+<a id="__codelineno-17-22" name="__codelineno-17-22"></a><span class="w">            </span><span class="n">inst</span><span class="p">.</span><span class="na">addTransformer</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">AgentTransformer</span><span class="p">(</span><span class="n">targetClassName</span><span class="p">,</span><span class="w"> </span><span class="n">targetMethodName</span><span class="p">,</span><span class="w"> </span><span class="n">methodBeforeContent</span><span class="p">),</span><span class="w"> </span><span class="kc">true</span><span class="p">);</span>
+<a id="__codelineno-17-23" name="__codelineno-17-23"></a><span class="w">            </span><span class="c1">// 4. 重载该类</span>
+<a id="__codelineno-17-24" name="__codelineno-17-24"></a><span class="w">            </span><span class="n">inst</span><span class="p">.</span><span class="na">retransformClasses</span><span class="p">(</span><span class="n">cls</span><span class="p">);</span>
+<a id="__codelineno-17-25" name="__codelineno-17-25"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-17-26" name="__codelineno-17-26"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-17-27" name="__codelineno-17-27"></a><span class="p">}</span>
+</code></pre></div></td></tr></tbody></table></div>
+<p>将 agent 重新编译后在 attach 后：</p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../assets/image-20241207161521-uxkorfp.png" data-desc-position="bottom"><img alt="image" src="../assets/image-20241207161521-uxkorfp.png"></a>​</p>
+<p>目前可以正常的修改方法，但是实际的环境下，可能是没有 tools 包的所以需要修改 attach 方法为反射实现：</p>
+<p>然后编译一下就可以了，需要注意的是 agent 的 jar 路径需要填绝对路径。</p>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-18-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-18-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-18-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-18-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-18-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-18-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-18-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-18-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-18-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-18-10">10</a></span>
+<span class="normal"><a href="#__codelineno-18-11">11</a></span>
+<span class="normal"><a href="#__codelineno-18-12">12</a></span>
+<span class="normal"><a href="#__codelineno-18-13">13</a></span>
+<span class="normal"><a href="#__codelineno-18-14">14</a></span>
+<span class="normal"><a href="#__codelineno-18-15">15</a></span>
+<span class="normal"><a href="#__codelineno-18-16">16</a></span>
+<span class="normal"><a href="#__codelineno-18-17">17</a></span>
+<span class="normal"><a href="#__codelineno-18-18">18</a></span>
+<span class="normal"><a href="#__codelineno-18-19">19</a></span>
+<span class="normal"><a href="#__codelineno-18-20">20</a></span>
+<span class="normal"><a href="#__codelineno-18-21">21</a></span>
+<span class="normal"><a href="#__codelineno-18-22">22</a></span>
+<span class="normal"><a href="#__codelineno-18-23">23</a></span>
+<span class="normal"><a href="#__codelineno-18-24">24</a></span>
+<span class="normal"><a href="#__codelineno-18-25">25</a></span>
+<span class="normal"><a href="#__codelineno-18-26">26</a></span>
+<span class="normal"><a href="#__codelineno-18-27">27</a></span>
+<span class="normal"><a href="#__codelineno-18-28">28</a></span>
+<span class="normal"><a href="#__codelineno-18-29">29</a></span>
+<span class="normal"><a href="#__codelineno-18-30">30</a></span>
+<span class="normal"><a href="#__codelineno-18-31">31</a></span>
+<span class="normal"><a href="#__codelineno-18-32">32</a></span>
+<span class="normal"><a href="#__codelineno-18-33">33</a></span>
+<span class="normal"><a href="#__codelineno-18-34">34</a></span>
+<span class="normal"><a href="#__codelineno-18-35">35</a></span>
+<span class="normal"><a href="#__codelineno-18-36">36</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1"></a><span class="kn">package</span><span class="w"> </span><span class="nn">org.agent</span><span class="p">;</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2"></a>
+<a id="__codelineno-18-3" name="__codelineno-18-3"></a><span class="kn">import</span><span class="w"> </span><span class="nn">java.lang.reflect.InvocationTargetException</span><span class="p">;</span>
+<a id="__codelineno-18-4" name="__codelineno-18-4"></a><span class="kn">import</span><span class="w"> </span><span class="nn">java.lang.reflect.Method</span><span class="p">;</span>
+<a id="__codelineno-18-5" name="__codelineno-18-5"></a><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.List</span><span class="p">;</span>
+<a id="__codelineno-18-6" name="__codelineno-18-6"></a>
+<a id="__codelineno-18-7" name="__codelineno-18-7"></a><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">AttachReflectionMain</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-18-8" name="__codelineno-18-8"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">ClassNotFoundException</span><span class="p">,</span><span class="w"> </span><span class="n">NoSuchMethodException</span><span class="p">,</span><span class="w"> </span><span class="n">InvocationTargetException</span><span class="p">,</span><span class="w"> </span><span class="n">IllegalAccessException</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-18-9" name="__codelineno-18-9"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">args</span><span class="p">.</span><span class="na">length</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-18-10" name="__codelineno-18-10"></a><span class="w">            </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"Usage: &lt;class-name&gt; &lt;full-agent-path&gt;"</span><span class="p">);</span>
+<a id="__codelineno-18-11" name="__codelineno-18-11"></a><span class="w">            </span><span class="k">return</span><span class="p">;</span>
+<a id="__codelineno-18-12" name="__codelineno-18-12"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-18-13" name="__codelineno-18-13"></a><span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">className</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">args</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">;</span>
+<a id="__codelineno-18-14" name="__codelineno-18-14"></a><span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">agentPath</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">args</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="p">;</span>
+<a id="__codelineno-18-15" name="__codelineno-18-15"></a><span class="w">        </span><span class="n">Class</span><span class="o">&lt;?&gt;</span><span class="w"> </span><span class="n">vmListClass</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Class</span><span class="p">.</span><span class="na">forName</span><span class="p">(</span><span class="s">"com.sun.tools.attach.VirtualMachine"</span><span class="p">);</span>
+<a id="__codelineno-18-16" name="__codelineno-18-16"></a><span class="w">        </span><span class="n">Class</span><span class="o">&lt;?&gt;</span><span class="w"> </span><span class="n">vmDescriptorClass</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Class</span><span class="p">.</span><span class="na">forName</span><span class="p">(</span><span class="s">"com.sun.tools.attach.VirtualMachineDescriptor"</span><span class="p">);</span>
+<a id="__codelineno-18-17" name="__codelineno-18-17"></a><span class="w">        </span><span class="n">Method</span><span class="w"> </span><span class="n">listMethod</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vmListClass</span><span class="p">.</span><span class="na">getDeclaredMethod</span><span class="p">(</span><span class="s">"list"</span><span class="p">);</span>
+<a id="__codelineno-18-18" name="__codelineno-18-18"></a><span class="w">        </span><span class="n">listMethod</span><span class="p">.</span><span class="na">setAccessible</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+<a id="__codelineno-18-19" name="__codelineno-18-19"></a><span class="w">        </span><span class="n">Object</span><span class="w"> </span><span class="n">virtualMachineDescriptorList</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">listMethod</span><span class="p">.</span><span class="na">invoke</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span>
+<a id="__codelineno-18-20" name="__codelineno-18-20"></a><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="p">((</span><span class="n">List</span><span class="o">&lt;?&gt;</span><span class="p">)</span><span class="w"> </span><span class="n">virtualMachineDescriptorList</span><span class="p">).</span><span class="na">size</span><span class="p">();</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-18-21" name="__codelineno-18-21"></a><span class="w">            </span><span class="n">Object</span><span class="w"> </span><span class="n">virtualMachineDescriptor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">((</span><span class="n">List</span><span class="o">&lt;?&gt;</span><span class="p">)</span><span class="w"> </span><span class="n">virtualMachineDescriptorList</span><span class="p">).</span><span class="na">get</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+<a id="__codelineno-18-22" name="__codelineno-18-22"></a><span class="w">            </span><span class="n">Method</span><span class="w"> </span><span class="n">displayNameMethod</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vmDescriptorClass</span><span class="p">.</span><span class="na">getMethod</span><span class="p">(</span><span class="s">"displayName"</span><span class="p">);</span>
+<a id="__codelineno-18-23" name="__codelineno-18-23"></a><span class="w">            </span><span class="n">String</span><span class="w"> </span><span class="n">displayName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">String</span><span class="p">)</span><span class="w"> </span><span class="n">displayNameMethod</span><span class="p">.</span><span class="na">invoke</span><span class="p">(</span><span class="n">virtualMachineDescriptor</span><span class="p">);</span>
+<a id="__codelineno-18-24" name="__codelineno-18-24"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">displayName</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="n">className</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-18-25" name="__codelineno-18-25"></a><span class="w">                </span><span class="n">Method</span><span class="w"> </span><span class="n">attachMethod</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vmListClass</span><span class="p">.</span><span class="na">getMethod</span><span class="p">(</span><span class="s">"attach"</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+<a id="__codelineno-18-26" name="__codelineno-18-26"></a><span class="w">                </span><span class="n">Object</span><span class="w"> </span><span class="n">virtualMachine</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">attachMethod</span><span class="p">.</span><span class="na">invoke</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span><span class="w"> </span><span class="p">((</span><span class="n">vmDescriptorClass</span><span class="p">.</span><span class="na">getMethod</span><span class="p">(</span><span class="s">"id"</span><span class="p">)).</span><span class="na">invoke</span><span class="p">(</span><span class="n">virtualMachineDescriptor</span><span class="p">)));</span>
+<a id="__codelineno-18-27" name="__codelineno-18-27"></a><span class="w">                </span><span class="n">Method</span><span class="w"> </span><span class="n">loadAgentMethod</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vmListClass</span><span class="p">.</span><span class="na">getMethod</span><span class="p">(</span><span class="s">"loadAgent"</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+<a id="__codelineno-18-28" name="__codelineno-18-28"></a><span class="w">                </span><span class="n">loadAgentMethod</span><span class="p">.</span><span class="na">invoke</span><span class="p">(</span><span class="n">virtualMachine</span><span class="p">,</span><span class="w"> </span><span class="n">agentPath</span><span class="p">);</span>
+<a id="__codelineno-18-29" name="__codelineno-18-29"></a><span class="w">                </span><span class="n">Method</span><span class="w"> </span><span class="n">detachMethod</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vmListClass</span><span class="p">.</span><span class="na">getMethod</span><span class="p">(</span><span class="s">"detach"</span><span class="p">);</span>
+<a id="__codelineno-18-30" name="__codelineno-18-30"></a><span class="w">                </span><span class="n">detachMethod</span><span class="p">.</span><span class="na">invoke</span><span class="p">(</span><span class="n">virtualMachine</span><span class="p">);</span>
+<a id="__codelineno-18-31" name="__codelineno-18-31"></a><span class="w">                </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">printf</span><span class="p">(</span><span class="s">"Loaded agent %s Success !"</span><span class="p">,</span><span class="w"> </span><span class="n">displayName</span><span class="p">);</span>
+<a id="__codelineno-18-32" name="__codelineno-18-32"></a><span class="w">                </span><span class="k">break</span><span class="p">;</span>
+<a id="__codelineno-18-33" name="__codelineno-18-33"></a><span class="w">            </span><span class="p">}</span>
+<a id="__codelineno-18-34" name="__codelineno-18-34"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-18-35" name="__codelineno-18-35"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-18-36" name="__codelineno-18-36"></a><span class="p">}</span>
+</code></pre></div></td></tr></tbody></table></div>
+<h2 id="_5">参考链接</h2>
+<ul>
+<li><a href="https://zhuanlan.zhihu.com/p/113523189">IDEA + maven 零基础构建 java agent 项目</a></li>
+<li><a href="https://drun1baby.top/2023/12/07/Java-Agent-%E5%86%85%E5%AD%98%E9%A9%AC%E5%AD%A6%E4%B9%A0/#Instrumentation">Java Agent 内存马学习</a></li>
+<li><a href="http://www.bmth666.cn/2022/11/16/Java-Agent%E5%86%85%E5%AD%98%E9%A9%AC%E5%AD%A6%E4%B9%A0/index.html#%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%B3%A8%E5%85%A5%E5%86%85%E5%AD%98%E9%A9%AC">Java Agent 内存马学习</a></li>
+</ul>
+<h2 id="_6">源码</h2>
+<p><a href="assets/AgentStudy-20241207183223-ksmacf2.7z">AgentStudy.7z</a></p>
+<p>‍</p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden="">
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "navigation.top", "toc.integrate", "content.code.copy", "content.code.annotate"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  
+<script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(()=>{ lightbox.reload(); });
+</script></body></html>

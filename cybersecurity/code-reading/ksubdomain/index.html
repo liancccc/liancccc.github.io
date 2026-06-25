@@ -1,0 +1,1839 @@
+<!DOCTYPE html><html lang="en" class="no-js"><head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../gospider/">
+      
+      
+        <link rel="next" href="../subfinder/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>ksubdomain 源码学习 - Lian's Blog</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  <link href="../../../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../../../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+            .gscrollbar-fixer { padding-right: 15px; }
+            .gdesc-inner { font-size: 0.75rem; }
+            body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color); }
+            body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
+            body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
+        </style></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Lian's Blog" class="md-header__button md-logo" aria-label="Lian's Blog" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Lian's Blog
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              ksubdomain 源码学习
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="" type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="" for="__palette_1" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"></path></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="" type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="" for="__palette_0" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"></path></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required="">
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix="">
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+
+
+
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  HOME
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../ai/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Ai
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../coding/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Coding
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Cybersecurity
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../life/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Life
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../projects/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Projects
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../tech/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Tech
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Lian's Blog" class="md-nav__button md-logo" aria-label="Lian's Blog" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+
+    </a>
+    Lian's Blog
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix="">
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc" checked="">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ksubdomain 源码学习
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ksubdomain 源码学习
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        项目介绍
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        基础知识
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="基础知识">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        无状态
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pcap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        pcap
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DNS协议
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DNS协议">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        报文格式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        报文头部
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        问题记录
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        资源记录
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        抓包分析
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        项目介绍
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        项目结构
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        源码分析
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        学习总结
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考链接
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+  <h1>ksubdomain 源码学习</h1>
+
+
+  <dl class="doc-meta">
+    <div class="doc-meta__item">
+      <dt>date</dt>
+      <dd>2023-09-16 23:07:53</dd>
+    </div>
+  </dl>
+
+<h2 id="_1">项目介绍</h2>
+<p><strong>KSubdomain 是一款基于无状态技术的子域名爆破工具，带来前所未有的扫描速度和极低的内存占用。</strong> 告别传统工具的效率瓶颈，体验闪电般的 DNS 查询，同时拥有可靠的状态表重发机制，确保结果的完整性。 KSubdomain 支持 Windows、Linux 和 macOS，是进行大规模DNS资产探测的理想选择。</p>
+<p>项目地址：https://github.com/boy-hack/ksubdomain</p>
+<h2 id="_2">基础知识</h2>
+<h3 id="_3">无状态</h3>
+<p>无状态连接是指无需关系 TCP、UDP 协议状态，不占用系统协议栈资源，忘记 SYN、ACK、FIN、TIMEWIT，不进行会话组包。在实现上也有可能把必要的信息存放在数据包本身。如 masscan、zmp 都使用了这种无状态技术。</p>
+<h3 id="pcap">pcap</h3>
+<p>Pcap是 <a href="https://zh.wikipedia.org/wiki/电子计算机">计算机</a> <a href="https://zh.wikipedia.org/wiki/网络管理">网络管理</a>领域中一个用于 <a href="https://zh.wikipedia.org/wiki/數據包分析器">捕获网络流量</a>的 <a href="https://zh.wikipedia.org/wiki/应用程序接口">应用程序接口</a>（API）。其名称来源于“抓包”（英语：packet capture）（并非它的正确名称）。Pcap是用 <a href="https://zh.wikipedia.org/wiki/C语言">C语言</a>编写的。在 <a href="https://zh.wikipedia.org/wiki/类Unix系统">类Unix系统</a>中libpcap <a href="https://zh.wikipedia.org/wiki/函式庫">库</a>实现了pcap；在 <a href="https://zh.wikipedia.org/wiki/Microsoft_Windows">Microsoft Windows</a>上，则由Npcap库移植了libpcap， <a href="https://zh.wikipedia.org/wiki/Windows_7">Windows 7</a>中可以使用WinPcap库的移植，但现已不再维护。</p>
+<p>监控软件可以使用 pcap 来捕获在 <a href="https://zh.wikipedia.org/wiki/電腦網路">计算机网络</a>上传输的 <a href="https://zh.wikipedia.org/wiki/網路封包">网络数据包</a>。</p>
+<h3 id="dns">DNS协议</h3>
+<p>DNS 域名解析协议，它的作用就是将域名解析为 IP 地址。</p>
+<h4 id="_4">报文格式</h4>
+<p>DNS 协议可以使用 UDP 或者 TCP 进行传输，使用的端口号都为 53，但大多数情况下 DNS 都使用 UDP 进行传输。</p>
+<p>DNS 报文包括请求报文和应答报文，它们格式是相同的，如下所示：</p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../assets/202309151713181.png" data-desc-position="bottom"><img alt="img" src="../assets/202309151713181.png"></a></p>
+<h4 id="_5">报文头部</h4>
+<ul>
+<li>标识 <code>(identifier)</code>：一个 16 位的 ID ，在应答中原样返回，以此匹配请求和应答；</li>
+<li>标志 <code>(flags)</code>：描述 DNS 报文的类别和工作特性，共 16 位；</li>
+<li>问题记录数 <code>(question count)</code>：一个 16 位整数，表示问题节中的记录个数；</li>
+<li>答案记录数 <code>(answer count)</code>：一个 16 位整数，表示答案节中的记录个数；</li>
+<li>授权信息记录数 <code>(authority record count)</code> ：一个 16 位整数，表示授权信息节中的记录个数；</li>
+<li>附加信息记录数 <code>(additional record count)</code> ：一个 16 位整数，表示附加信息节中的记录个数；</li>
+</ul>
+<p>标志：</p>
+<ul>
+<li><code>QR</code>：用来区别请求和应答，0 表示请求报文，1 表示应答报文，占 1 位</li>
+<li>操作码 <code>(Opcode)</code>：用来定义操作类型，占 4 位</li>
+<li>0 代表标准查询（ 正向解析 ）</li>
+<li>1 代表反向查询（ 反向解析 ）</li>
+<li>2 代表服务器状态请求</li>
+<li><code>AA</code> ： 权威回答<code>(authoritative answer)</code>，意味着当前查询结果是由域名的权威服务器给出的；</li>
+<li><code>TC</code> ： 截短<code>(truncated)</code>，使用 UDP 时，如果应答超过 512 字节，只返回前 512 个字节；</li>
+<li><code>RD</code> ：期望递归 <code>(recursion desired)</code>，在请求中设置，并在应答中返回；</li>
+<li>该位为 1 时，服务器必须处理这个请求：如果服务器没有授权回答，它必须替客户端请求其他 DNS 服务器，这也是所谓的 递归查询 ；</li>
+<li>该位为 0 时，如果服务器没有授权回答，它就返回一个能够处理该查询的服务器列表给客户端，由客户端自己进行 迭代查询 ；</li>
+<li><code>RA</code> ：可递归 <code>(recursion available)</code>，如果服务器支持递归查询，就会在应答中设置该位，以告知客户端</li>
+<li>保留：这 3 位目前未用，留作未来扩展；</li>
+<li>响应码 <code>(response code)</code>：占 4 位，表示请求结果，常见的值包括：</li>
+<li>0 表示没有差错；</li>
+<li>3 表示名字差错，该差错由权威服务器返回，表示待查询的域名不存在；</li>
+</ul>
+<h4 id="_6">问题记录</h4>
+<p>DNS 报文数据部分由 4 个变长部分组成，请求报文中常常只有问题部分有内容，而其他 3 个部分的资源记录数为 0 。</p>
+<p>DNS 问题部分由一组问题记录组成，包含如下内容：</p>
+<ul>
+<li>待查询域名 <code>(name)</code></li>
+<li>查询类型 <code>(type)</code></li>
+<li>查询类别 <code>(class)</code></li>
+</ul>
+<p>查询类型：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">查询类型</th>
+<th style="text-align: left;">名称代码</th>
+<th style="text-align: left;">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">A</td>
+<td style="text-align: left;">IPv4地址</td>
+</tr>
+<tr>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">NS</td>
+<td style="text-align: left;">名称服务器</td>
+</tr>
+<tr>
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">CNAME</td>
+<td style="text-align: left;">规范名称</td>
+</tr>
+<tr>
+<td style="text-align: left;">15</td>
+<td style="text-align: left;">MX</td>
+<td style="text-align: left;">电子邮件交互</td>
+</tr>
+<tr>
+<td style="text-align: left;">16</td>
+<td style="text-align: left;">TXT</td>
+<td style="text-align: left;">文本信息</td>
+</tr>
+<tr>
+<td style="text-align: left;">28</td>
+<td style="text-align: left;">AAAA</td>
+<td style="text-align: left;">IPv6地址</td>
+</tr>
+</tbody>
+</table>
+<p>查询类别：取 1 时表示 Internet 协议</p>
+<h4 id="_7">资源记录</h4>
+<p>服务端处理查询请求后，需要向客户端发送应答报文；域名查询结果作为资源记录，保存在答案以及其后两节中。</p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../assets/202309151737291.png" data-desc-position="bottom"><img alt="img" src="../assets/202309151737291.png"></a></p>
+<p>资源记录结构和问题记录非常相似，它总共有 6 个字段，前 3 个和问题记录完全一样：</p>
+<ul>
+<li>被查询域名</li>
+<li>查询类型</li>
+<li>类</li>
+<li>有效期 <code>(TTL)</code>：域名记录一般不会频繁改动，所以在有效期内可以将结果缓存起来，降低请求频率；</li>
+<li>数据长度 <code>(Resource Data Length)</code>：即查询结果的长度；</li>
+<li>数据 <code>(Resource Data)</code> ：即查询结果；</li>
+</ul>
+<h4 id="_8">抓包分析</h4>
+<p>请求报文：问题这里就是 <code>baidu.com</code> 的 A 记录：</p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../assets/202309151926753.png" data-desc-position="bottom"><img alt="image-20230915192613680" src="../assets/202309151926753.png"></a></p>
+<p>响应报文：</p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../assets/202309151926384.png" data-desc-position="bottom"><img alt="image-20230915192659251" src="../assets/202309151926384.png"></a></p>
+<h2 id="_9">项目介绍</h2>
+<p>ksubdomain 使用 pcap 发包和接收数据，会直接将数据包发送至网卡，不经过系统，使速度大大提升。</p>
+<p>由于又是 udp 协议，数据包丢失的情况很多，所以 ksubdomain 在程序中建立了“状态表”，用于检测数据包的状态，当数据包发送时，会记录下状态，当收到了这个数据包的回应时，会从状态表去除，如果一段时间发现数据包没有动作，便可以认为这个数据包已经丢失了，于是会进行重发，当重发到达一定次数时，就可以舍弃该数据包了。</p>
+<p>上面说 ksubdomain 是无状态发包，如何建立确认状态呢？</p>
+<p>根据 DNS 协议和 UDP 协议的一些特点，DNS 协议中 ID 字段，UDP 协议中 SrcPort 字段可以携带数据，在我们收到返回包时，这些字段的数据不会改变。所以利用这些字段的值来确认这个包是我们需要的，并且找到状态表中这个包的位置。</p>
+<h2 id="_10">项目结构</h2>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-0-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-0-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-0-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-0-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-0-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-0-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-0-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-0-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-0-10">10</a></span>
+<span class="normal"><a href="#__codelineno-0-11">11</a></span>
+<span class="normal"><a href="#__codelineno-0-12">12</a></span>
+<span class="normal"><a href="#__codelineno-0-13">13</a></span>
+<span class="normal"><a href="#__codelineno-0-14">14</a></span>
+<span class="normal"><a href="#__codelineno-0-15">15</a></span>
+<span class="normal"><a href="#__codelineno-0-16">16</a></span>
+<span class="normal"><a href="#__codelineno-0-17">17</a></span>
+<span class="normal"><a href="#__codelineno-0-18">18</a></span>
+<span class="normal"><a href="#__codelineno-0-19">19</a></span>
+<span class="normal"><a href="#__codelineno-0-20">20</a></span>
+<span class="normal"><a href="#__codelineno-0-21">21</a></span>
+<span class="normal"><a href="#__codelineno-0-22">22</a></span>
+<span class="normal"><a href="#__codelineno-0-23">23</a></span>
+<span class="normal"><a href="#__codelineno-0-24">24</a></span>
+<span class="normal"><a href="#__codelineno-0-25">25</a></span>
+<span class="normal"><a href="#__codelineno-0-26">26</a></span>
+<span class="normal"><a href="#__codelineno-0-27">27</a></span>
+<span class="normal"><a href="#__codelineno-0-28">28</a></span>
+<span class="normal"><a href="#__codelineno-0-29">29</a></span>
+<span class="normal"><a href="#__codelineno-0-30">30</a></span>
+<span class="normal"><a href="#__codelineno-0-31">31</a></span>
+<span class="normal"><a href="#__codelineno-0-32">32</a></span>
+<span class="normal"><a href="#__codelineno-0-33">33</a></span>
+<span class="normal"><a href="#__codelineno-0-34">34</a></span>
+<span class="normal"><a href="#__codelineno-0-35">35</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a>D:.
+<a id="__codelineno-0-2" name="__codelineno-0-2"></a>│<span class="w">  </span>ksubdomain.yaml<span class="w">      </span><span class="c1"># 网卡配置信息</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3"></a>├─cmd<span class="w">   </span><span class="c1"># 命令参数相关</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4"></a>│<span class="w">  </span>└─ksubdomain
+<a id="__codelineno-0-5" name="__codelineno-0-5"></a>│<span class="w">          </span>cmd.go
+<a id="__codelineno-0-6" name="__codelineno-0-6"></a>│<span class="w">          </span>enum.go<span class="w">      </span><span class="c1"># 枚举模式</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7"></a>│<span class="w">          </span>test.go<span class="w">      </span><span class="c1"># 测试本地网卡的最大发送速度</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8"></a>│<span class="w">          </span>verify.go<span class="w">    </span><span class="c1"># 验证模式</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9"></a>├─core
+<a id="__codelineno-0-10" name="__codelineno-0-10"></a>│<span class="w">  </span>│<span class="w">  </span>banner.go<span class="w">         </span><span class="c1"># Banner 信息</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11"></a>│<span class="w">  </span>│<span class="w">  </span>subdata.go<span class="w">        </span><span class="c1"># 子域名相关(内嵌,获取切片)</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12"></a>│<span class="w">  </span>│<span class="w">  </span>util.go<span class="w">           </span><span class="c1"># 工具类</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13"></a>│<span class="w">  </span>│<span class="w">  </span>wildcard.go<span class="w">       </span><span class="c1"># 泛解析域名判断</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14"></a>│<span class="w">  </span>├─device<span class="w">     </span>
+<a id="__codelineno-0-15" name="__codelineno-0-15"></a>│<span class="w">  </span>│<span class="w">      </span>device.go<span class="w">     </span><span class="c1"># 获取网卡信息,初始化 pcap</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16"></a>│<span class="w">  </span>│<span class="w">      </span>struct.go
+<a id="__codelineno-0-17" name="__codelineno-0-17"></a>│<span class="w">  </span>├─dns
+<a id="__codelineno-0-18" name="__codelineno-0-18"></a>│<span class="w">  </span>│<span class="w">      </span>ns.go<span class="w">         </span><span class="c1"># NS 记录</span>
+<a id="__codelineno-0-19" name="__codelineno-0-19"></a>│<span class="w">  </span>│<span class="w">      </span>ns_test.go
+<a id="__codelineno-0-20" name="__codelineno-0-20"></a>│<span class="w">  </span>├─gologger
+<a id="__codelineno-0-21" name="__codelineno-0-21"></a>│<span class="w">  </span>│<span class="w">      </span>gologger.go<span class="w">   </span><span class="c1"># 日志</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22"></a>│<span class="w">  </span>└─options
+<a id="__codelineno-0-23" name="__codelineno-0-23"></a>│<span class="w">          </span>options.go<span class="w">   </span><span class="c1"># 配置信息及相关方法</span>
+<a id="__codelineno-0-24" name="__codelineno-0-24"></a>└─runner
+<a id="__codelineno-0-25" name="__codelineno-0-25"></a><span class="w">    </span>│<span class="w">  </span>recv.go<span class="w">          </span><span class="c1"># 捕获数据包并获取其中的答案记录</span>
+<a id="__codelineno-0-26" name="__codelineno-0-26"></a><span class="w">    </span>│<span class="w">  </span>result.go<span class="w">        </span><span class="c1"># 结果相关</span>
+<a id="__codelineno-0-27" name="__codelineno-0-27"></a><span class="w">    </span>│<span class="w">  </span>retry.go<span class="w">         </span><span class="c1"># 超时重置机制</span>
+<a id="__codelineno-0-28" name="__codelineno-0-28"></a><span class="w">    </span>│<span class="w">  </span>runner.go<span class="w">        </span><span class="c1"># 枚举主函数</span>
+<a id="__codelineno-0-29" name="__codelineno-0-29"></a><span class="w">    </span>│<span class="w">  </span>send.go<span class="w">          </span><span class="c1"># 使用 gopacket 发送自定义的 DSN 数据包</span>
+<a id="__codelineno-0-30" name="__codelineno-0-30"></a><span class="w">    </span>│<span class="w">  </span>testspeed.go<span class="w">     </span><span class="c1"># 测试本地网卡的最大发送速度</span>
+<a id="__codelineno-0-31" name="__codelineno-0-31"></a><span class="w">    </span>│<span class="w">  </span>wildcard.go<span class="w">      </span><span class="c1"># 泛解析过滤</span>
+<a id="__codelineno-0-32" name="__codelineno-0-32"></a><span class="w">    </span>├─outputter<span class="w">         </span><span class="c1"># 输出相关</span>
+<a id="__codelineno-0-33" name="__codelineno-0-33"></a><span class="w">    </span>├─processbar<span class="w">        </span><span class="c1"># 过程(成功,失败...)</span>
+<a id="__codelineno-0-34" name="__codelineno-0-34"></a><span class="w">    </span>├─result<span class="w">            </span><span class="c1"># 结果结构体</span>
+<a id="__codelineno-0-35" name="__codelineno-0-35"></a><span class="w">    </span>└─statusdb<span class="w">          </span><span class="c1"># 使用 sync.Map 实现一个内存简易读写数据库</span>
+</code></pre></div></td></tr></tbody></table></div>
+<h2 id="_11">源码分析</h2>
+<p>枚举模块大致流程：</p>
+<ol>
+<li>根据根域名及前缀拼接获取总子域名</li>
+<li>通过请求域名然后捕获数据包提取本机的网卡信息</li>
+<li>启动接收线程 ，启动发送线程 ，启动输出线程</li>
+<li>向发送线程中传入总子域名目标</li>
+<li>发送完成后启动重试机制的线程</li>
+<li>然后就是一个死的 <code>for</code> 循环 + <code>select...case</code>，定时检测目标是否检测完成</li>
+<li>检测完成，退出各个线程，关闭各通道</li>
+</ol>
+<p><code>enum.go</code>：</p>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-1-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-1-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-1-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-1-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-1-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-1-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-1-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-1-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-1-10">10</a></span>
+<span class="normal"><a href="#__codelineno-1-11">11</a></span>
+<span class="normal"><a href="#__codelineno-1-12">12</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="c1">// 获取网卡配置</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="nx">opt</span><span class="p">.</span><span class="nx">EtherInfo</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">options</span><span class="p">.</span><span class="nx">GetDeviceConfig</span><span class="p">()</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="nx">ctx</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">Background</span><span class="p">()</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4"></a><span class="c1">// 创建一个 runner</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5"></a><span class="nx">r</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">runner</span><span class="p">.</span><span class="nx">New</span><span class="p">(</span><span class="nx">opt</span><span class="p">)</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6"></a><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7"></a><span class="w">    </span><span class="nx">gologger</span><span class="p">.</span><span class="nx">Fatalf</span><span class="p">(</span><span class="s">"%s\n"</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="p">.</span><span class="nx">Error</span><span class="p">())</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">nil</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9"></a><span class="p">}</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10"></a><span class="c1">// 启动枚举</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11"></a><span class="nx">r</span><span class="p">.</span><span class="nx">RunEnumeration</span><span class="p">(</span><span class="nx">ctx</span><span class="p">)</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12"></a><span class="nx">r</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+</code></pre></div></td></tr></tbody></table></div>
+<p>先看下获取网卡配置：</p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../assets/202309162132121.png" data-desc-position="bottom"><img alt="image-20230916213233036" src="../assets/202309162132121.png"></a></p>
+<p>主要是 <code>device.AutoGetDevices()</code> ：</p>
+<p>这个主要就是去使用 <code>net.LookupHost(domain)</code> 发起一个 DNS 请求，然后抓网卡包获取 DNS 数据包且问题为 <code>domain</code> 的，然后从它的 <code>Ethernet</code> 获取信息。</p>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1">  1</a></span>
+<span class="normal"><a href="#__codelineno-2-2">  2</a></span>
+<span class="normal"><a href="#__codelineno-2-3">  3</a></span>
+<span class="normal"><a href="#__codelineno-2-4">  4</a></span>
+<span class="normal"><a href="#__codelineno-2-5">  5</a></span>
+<span class="normal"><a href="#__codelineno-2-6">  6</a></span>
+<span class="normal"><a href="#__codelineno-2-7">  7</a></span>
+<span class="normal"><a href="#__codelineno-2-8">  8</a></span>
+<span class="normal"><a href="#__codelineno-2-9">  9</a></span>
+<span class="normal"><a href="#__codelineno-2-10"> 10</a></span>
+<span class="normal"><a href="#__codelineno-2-11"> 11</a></span>
+<span class="normal"><a href="#__codelineno-2-12"> 12</a></span>
+<span class="normal"><a href="#__codelineno-2-13"> 13</a></span>
+<span class="normal"><a href="#__codelineno-2-14"> 14</a></span>
+<span class="normal"><a href="#__codelineno-2-15"> 15</a></span>
+<span class="normal"><a href="#__codelineno-2-16"> 16</a></span>
+<span class="normal"><a href="#__codelineno-2-17"> 17</a></span>
+<span class="normal"><a href="#__codelineno-2-18"> 18</a></span>
+<span class="normal"><a href="#__codelineno-2-19"> 19</a></span>
+<span class="normal"><a href="#__codelineno-2-20"> 20</a></span>
+<span class="normal"><a href="#__codelineno-2-21"> 21</a></span>
+<span class="normal"><a href="#__codelineno-2-22"> 22</a></span>
+<span class="normal"><a href="#__codelineno-2-23"> 23</a></span>
+<span class="normal"><a href="#__codelineno-2-24"> 24</a></span>
+<span class="normal"><a href="#__codelineno-2-25"> 25</a></span>
+<span class="normal"><a href="#__codelineno-2-26"> 26</a></span>
+<span class="normal"><a href="#__codelineno-2-27"> 27</a></span>
+<span class="normal"><a href="#__codelineno-2-28"> 28</a></span>
+<span class="normal"><a href="#__codelineno-2-29"> 29</a></span>
+<span class="normal"><a href="#__codelineno-2-30"> 30</a></span>
+<span class="normal"><a href="#__codelineno-2-31"> 31</a></span>
+<span class="normal"><a href="#__codelineno-2-32"> 32</a></span>
+<span class="normal"><a href="#__codelineno-2-33"> 33</a></span>
+<span class="normal"><a href="#__codelineno-2-34"> 34</a></span>
+<span class="normal"><a href="#__codelineno-2-35"> 35</a></span>
+<span class="normal"><a href="#__codelineno-2-36"> 36</a></span>
+<span class="normal"><a href="#__codelineno-2-37"> 37</a></span>
+<span class="normal"><a href="#__codelineno-2-38"> 38</a></span>
+<span class="normal"><a href="#__codelineno-2-39"> 39</a></span>
+<span class="normal"><a href="#__codelineno-2-40"> 40</a></span>
+<span class="normal"><a href="#__codelineno-2-41"> 41</a></span>
+<span class="normal"><a href="#__codelineno-2-42"> 42</a></span>
+<span class="normal"><a href="#__codelineno-2-43"> 43</a></span>
+<span class="normal"><a href="#__codelineno-2-44"> 44</a></span>
+<span class="normal"><a href="#__codelineno-2-45"> 45</a></span>
+<span class="normal"><a href="#__codelineno-2-46"> 46</a></span>
+<span class="normal"><a href="#__codelineno-2-47"> 47</a></span>
+<span class="normal"><a href="#__codelineno-2-48"> 48</a></span>
+<span class="normal"><a href="#__codelineno-2-49"> 49</a></span>
+<span class="normal"><a href="#__codelineno-2-50"> 50</a></span>
+<span class="normal"><a href="#__codelineno-2-51"> 51</a></span>
+<span class="normal"><a href="#__codelineno-2-52"> 52</a></span>
+<span class="normal"><a href="#__codelineno-2-53"> 53</a></span>
+<span class="normal"><a href="#__codelineno-2-54"> 54</a></span>
+<span class="normal"><a href="#__codelineno-2-55"> 55</a></span>
+<span class="normal"><a href="#__codelineno-2-56"> 56</a></span>
+<span class="normal"><a href="#__codelineno-2-57"> 57</a></span>
+<span class="normal"><a href="#__codelineno-2-58"> 58</a></span>
+<span class="normal"><a href="#__codelineno-2-59"> 59</a></span>
+<span class="normal"><a href="#__codelineno-2-60"> 60</a></span>
+<span class="normal"><a href="#__codelineno-2-61"> 61</a></span>
+<span class="normal"><a href="#__codelineno-2-62"> 62</a></span>
+<span class="normal"><a href="#__codelineno-2-63"> 63</a></span>
+<span class="normal"><a href="#__codelineno-2-64"> 64</a></span>
+<span class="normal"><a href="#__codelineno-2-65"> 65</a></span>
+<span class="normal"><a href="#__codelineno-2-66"> 66</a></span>
+<span class="normal"><a href="#__codelineno-2-67"> 67</a></span>
+<span class="normal"><a href="#__codelineno-2-68"> 68</a></span>
+<span class="normal"><a href="#__codelineno-2-69"> 69</a></span>
+<span class="normal"><a href="#__codelineno-2-70"> 70</a></span>
+<span class="normal"><a href="#__codelineno-2-71"> 71</a></span>
+<span class="normal"><a href="#__codelineno-2-72"> 72</a></span>
+<span class="normal"><a href="#__codelineno-2-73"> 73</a></span>
+<span class="normal"><a href="#__codelineno-2-74"> 74</a></span>
+<span class="normal"><a href="#__codelineno-2-75"> 75</a></span>
+<span class="normal"><a href="#__codelineno-2-76"> 76</a></span>
+<span class="normal"><a href="#__codelineno-2-77"> 77</a></span>
+<span class="normal"><a href="#__codelineno-2-78"> 78</a></span>
+<span class="normal"><a href="#__codelineno-2-79"> 79</a></span>
+<span class="normal"><a href="#__codelineno-2-80"> 80</a></span>
+<span class="normal"><a href="#__codelineno-2-81"> 81</a></span>
+<span class="normal"><a href="#__codelineno-2-82"> 82</a></span>
+<span class="normal"><a href="#__codelineno-2-83"> 83</a></span>
+<span class="normal"><a href="#__codelineno-2-84"> 84</a></span>
+<span class="normal"><a href="#__codelineno-2-85"> 85</a></span>
+<span class="normal"><a href="#__codelineno-2-86"> 86</a></span>
+<span class="normal"><a href="#__codelineno-2-87"> 87</a></span>
+<span class="normal"><a href="#__codelineno-2-88"> 88</a></span>
+<span class="normal"><a href="#__codelineno-2-89"> 89</a></span>
+<span class="normal"><a href="#__codelineno-2-90"> 90</a></span>
+<span class="normal"><a href="#__codelineno-2-91"> 91</a></span>
+<span class="normal"><a href="#__codelineno-2-92"> 92</a></span>
+<span class="normal"><a href="#__codelineno-2-93"> 93</a></span>
+<span class="normal"><a href="#__codelineno-2-94"> 94</a></span>
+<span class="normal"><a href="#__codelineno-2-95"> 95</a></span>
+<span class="normal"><a href="#__codelineno-2-96"> 96</a></span>
+<span class="normal"><a href="#__codelineno-2-97"> 97</a></span>
+<span class="normal"><a href="#__codelineno-2-98"> 98</a></span>
+<span class="normal"><a href="#__codelineno-2-99"> 99</a></span>
+<span class="normal"><a href="#__codelineno-2-100">100</a></span>
+<span class="normal"><a href="#__codelineno-2-101">101</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="kd">func</span><span class="w"> </span><span class="nx">AutoGetDevices</span><span class="p">()</span><span class="w"> </span><span class="o">*</span><span class="nx">EtherTable</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2"></a><span class="w">    </span><span class="nx">domain</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">core</span><span class="p">.</span><span class="nx">RandomStr</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">".i.hacking8.com"</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3"></a><span class="w">    </span><span class="nx">signal</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nb">make</span><span class="p">(</span><span class="kd">chan</span><span class="w"> </span><span class="o">*</span><span class="nx">EtherTable</span><span class="p">)</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4"></a><span class="w">    </span><span class="c1">// 获取所有设备</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5"></a><span class="w">    </span><span class="nx">devices</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">pcap</span><span class="p">.</span><span class="nx">FindAllDevs</span><span class="p">()</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7"></a><span class="w">        </span><span class="nx">gologger</span><span class="p">.</span><span class="nx">Fatalf</span><span class="p">(</span><span class="s">"获取网络设备失败:%s\n"</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="p">.</span><span class="nx">Error</span><span class="p">())</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9"></a><span class="w">    </span><span class="nx">data</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nb">make</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="nx">net</span><span class="p">.</span><span class="nx">IP</span><span class="p">)</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10"></a><span class="w">    </span><span class="nx">keys</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="p">[]</span><span class="kt">string</span><span class="p">{}</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11"></a><span class="w">    </span><span class="c1">// 获取 ipv4 且不是回环地址的设备名称</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12"></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="nx">_</span><span class="p">,</span><span class="w"> </span><span class="nx">d</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="nx">devices</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-13" name="__codelineno-2-13"></a><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="nx">_</span><span class="p">,</span><span class="w"> </span><span class="nx">address</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="nx">d</span><span class="p">.</span><span class="nx">Addresses</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14"></a><span class="w">            </span><span class="nx">ip</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">address</span><span class="p">.</span><span class="nx">IP</span>
+<a id="__codelineno-2-15" name="__codelineno-2-15"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="nx">ip</span><span class="p">.</span><span class="nx">To4</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">!</span><span class="nx">ip</span><span class="p">.</span><span class="nx">IsLoopback</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-16" name="__codelineno-2-16"></a><span class="w">                </span><span class="nx">data</span><span class="p">[</span><span class="nx">d</span><span class="p">.</span><span class="nx">Name</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">ip</span>
+<a id="__codelineno-2-17" name="__codelineno-2-17"></a><span class="w">                </span><span class="nx">keys</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">append</span><span class="p">(</span><span class="nx">keys</span><span class="p">,</span><span class="w"> </span><span class="nx">d</span><span class="p">.</span><span class="nx">Name</span><span class="p">)</span>
+<a id="__codelineno-2-18" name="__codelineno-2-18"></a><span class="w">            </span><span class="p">}</span>
+<a id="__codelineno-2-19" name="__codelineno-2-19"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-2-20" name="__codelineno-2-20"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-2-21" name="__codelineno-2-21"></a><span class="w">    </span><span class="nx">ctx</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">Background</span><span class="p">()</span>
+<a id="__codelineno-2-22" name="__codelineno-2-22"></a><span class="w">    </span><span class="c1">// 在初始上下文的基础上创建一个有取消功能的上下文</span>
+<a id="__codelineno-2-23" name="__codelineno-2-23"></a><span class="w">    </span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="nx">cancel</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">WithCancel</span><span class="p">(</span><span class="nx">ctx</span><span class="p">)</span>
+<a id="__codelineno-2-24" name="__codelineno-2-24"></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="nx">_</span><span class="p">,</span><span class="w"> </span><span class="nx">drviceName</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="nx">keys</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-25" name="__codelineno-2-25"></a><span class="w">        </span><span class="k">go</span><span class="w"> </span><span class="kd">func</span><span class="p">(</span><span class="nx">drviceName</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">domain</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">ctx</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-26" name="__codelineno-2-26"></a><span class="w">            </span><span class="kd">var</span><span class="w"> </span><span class="p">(</span>
+<a id="__codelineno-2-27" name="__codelineno-2-27"></a><span class="w">                </span><span class="nx">snapshot_len</span><span class="w"> </span><span class="kt">int32</span><span class="w">         </span><span class="p">=</span><span class="w"> </span><span class="mi">1024</span>
+<a id="__codelineno-2-28" name="__codelineno-2-28"></a><span class="w">                </span><span class="nx">promiscuous</span><span class="w">  </span><span class="kt">bool</span><span class="w">          </span><span class="p">=</span><span class="w"> </span><span class="kc">false</span>
+<a id="__codelineno-2-29" name="__codelineno-2-29"></a><span class="w">                </span><span class="nx">timeout</span><span class="w">      </span><span class="nx">time</span><span class="p">.</span><span class="nx">Duration</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span>
+<a id="__codelineno-2-30" name="__codelineno-2-30"></a><span class="w">                </span><span class="nx">handle</span><span class="w">       </span><span class="o">*</span><span class="nx">pcap</span><span class="p">.</span><span class="nx">Handle</span>
+<a id="__codelineno-2-31" name="__codelineno-2-31"></a><span class="w">            </span><span class="p">)</span>
+<a id="__codelineno-2-32" name="__codelineno-2-32"></a><span class="w">            </span><span class="kd">var</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="kt">error</span>
+<a id="__codelineno-2-33" name="__codelineno-2-33"></a><span class="w">            </span><span class="c1">// 使用 pcap.OpenLive 打开设备的抓包会话</span>
+<a id="__codelineno-2-34" name="__codelineno-2-34"></a><span class="w">            </span><span class="nx">handle</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">pcap</span><span class="p">.</span><span class="nx">OpenLive</span><span class="p">(</span>
+<a id="__codelineno-2-35" name="__codelineno-2-35"></a><span class="w">                </span><span class="nx">drviceName</span><span class="p">,</span><span class="w">   </span><span class="c1">// 设备名</span>
+<a id="__codelineno-2-36" name="__codelineno-2-36"></a><span class="w">                </span><span class="nx">snapshot_len</span><span class="p">,</span><span class="w"> </span><span class="c1">// 捕获数据包的最大长度</span>
+<a id="__codelineno-2-37" name="__codelineno-2-37"></a><span class="w">                </span><span class="nx">promiscuous</span><span class="p">,</span><span class="w">  </span><span class="c1">// 不启用混杂模式 ( 只要发给自己的数据包 )</span>
+<a id="__codelineno-2-38" name="__codelineno-2-38"></a><span class="w">                </span><span class="nx">timeout</span><span class="p">,</span><span class="w">      </span><span class="c1">// 超时机制, -1 则一直等待重试</span>
+<a id="__codelineno-2-39" name="__codelineno-2-39"></a><span class="w">            </span><span class="p">)</span>
+<a id="__codelineno-2-40" name="__codelineno-2-40"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-41" name="__codelineno-2-41"></a><span class="w">                </span><span class="nx">gologger</span><span class="p">.</span><span class="nx">Errorf</span><span class="p">(</span><span class="s">"pcap打开失败:%s\n"</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="p">.</span><span class="nx">Error</span><span class="p">())</span>
+<a id="__codelineno-2-42" name="__codelineno-2-42"></a><span class="w">                </span><span class="k">return</span>
+<a id="__codelineno-2-43" name="__codelineno-2-43"></a><span class="w">            </span><span class="p">}</span>
+<a id="__codelineno-2-44" name="__codelineno-2-44"></a><span class="w">            </span><span class="k">defer</span><span class="w"> </span><span class="nx">handle</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+<a id="__codelineno-2-45" name="__codelineno-2-45"></a><span class="w">            </span><span class="c1">// Use the handle as a packet source to process all packets</span>
+<a id="__codelineno-2-46" name="__codelineno-2-46"></a><span class="w">            </span><span class="c1">// 创建一个数据包源，用于处理所有捕获到的数据包</span>
+<a id="__codelineno-2-47" name="__codelineno-2-47"></a><span class="w">            </span><span class="nx">packetSource</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">gopacket</span><span class="p">.</span><span class="nx">NewPacketSource</span><span class="p">(</span><span class="nx">handle</span><span class="p">,</span><span class="w"> </span><span class="nx">handle</span><span class="p">.</span><span class="nx">LinkType</span><span class="p">())</span>
+<a id="__codelineno-2-48" name="__codelineno-2-48"></a><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-49" name="__codelineno-2-49"></a><span class="w">                </span><span class="k">select</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-50" name="__codelineno-2-50"></a><span class="w">                </span><span class="k">case</span><span class="w"> </span><span class="o">&lt;-</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">Done</span><span class="p">():</span>
+<a id="__codelineno-2-51" name="__codelineno-2-51"></a><span class="w">                    </span><span class="k">return</span>
+<a id="__codelineno-2-52" name="__codelineno-2-52"></a><span class="w">                </span><span class="k">default</span><span class="p">:</span>
+<a id="__codelineno-2-53" name="__codelineno-2-53"></a><span class="w">                    </span><span class="c1">// 获取一个数据包</span>
+<a id="__codelineno-2-54" name="__codelineno-2-54"></a><span class="w">                    </span><span class="nx">packet</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">packetSource</span><span class="p">.</span><span class="nx">NextPacket</span><span class="p">()</span>
+<a id="__codelineno-2-55" name="__codelineno-2-55"></a><span class="w">                    </span><span class="nx">gologger</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">"."</span><span class="p">)</span>
+<a id="__codelineno-2-56" name="__codelineno-2-56"></a><span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-57" name="__codelineno-2-57"></a><span class="w">                        </span><span class="k">continue</span>
+<a id="__codelineno-2-58" name="__codelineno-2-58"></a><span class="w">                    </span><span class="p">}</span>
+<a id="__codelineno-2-59" name="__codelineno-2-59"></a><span class="w">                    </span><span class="c1">// 检查数据包是否包含 DNS 层</span>
+<a id="__codelineno-2-60" name="__codelineno-2-60"></a><span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="nx">dnsLayer</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">packet</span><span class="p">.</span><span class="nx">Layer</span><span class="p">(</span><span class="nx">layers</span><span class="p">.</span><span class="nx">LayerTypeDNS</span><span class="p">);</span><span class="w"> </span><span class="nx">dnsLayer</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-61" name="__codelineno-2-61"></a><span class="w">                        </span><span class="nx">dns</span><span class="p">,</span><span class="w"> </span><span class="nx">_</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">dnsLayer</span><span class="p">.(</span><span class="o">*</span><span class="nx">layers</span><span class="p">.</span><span class="nx">DNS</span><span class="p">)</span>
+<a id="__codelineno-2-62" name="__codelineno-2-62"></a><span class="w">                        </span><span class="c1">// 判断是否为应答报文</span>
+<a id="__codelineno-2-63" name="__codelineno-2-63"></a><span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="p">!</span><span class="nx">dns</span><span class="p">.</span><span class="nx">QR</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-64" name="__codelineno-2-64"></a><span class="w">                            </span><span class="k">continue</span>
+<a id="__codelineno-2-65" name="__codelineno-2-65"></a><span class="w">                        </span><span class="p">}</span>
+<a id="__codelineno-2-66" name="__codelineno-2-66"></a><span class="w">                        </span><span class="k">for</span><span class="w"> </span><span class="nx">_</span><span class="p">,</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="nx">dns</span><span class="p">.</span><span class="nx">Questions</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-67" name="__codelineno-2-67"></a><span class="w">                            </span><span class="k">if</span><span class="w"> </span><span class="nb">string</span><span class="p">(</span><span class="nx">v</span><span class="p">.</span><span class="nx">Name</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nx">domain</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-68" name="__codelineno-2-68"></a><span class="w">                                </span><span class="nx">ethLayer</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">packet</span><span class="p">.</span><span class="nx">Layer</span><span class="p">(</span><span class="nx">layers</span><span class="p">.</span><span class="nx">LayerTypeEthernet</span><span class="p">)</span>
+<a id="__codelineno-2-69" name="__codelineno-2-69"></a><span class="w">                                </span><span class="k">if</span><span class="w"> </span><span class="nx">ethLayer</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-70" name="__codelineno-2-70"></a><span class="w">                                    </span><span class="nx">eth</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">ethLayer</span><span class="p">.(</span><span class="o">*</span><span class="nx">layers</span><span class="p">.</span><span class="nx">Ethernet</span><span class="p">)</span>
+<a id="__codelineno-2-71" name="__codelineno-2-71"></a><span class="w">                                    </span><span class="c1">// 获取信息</span>
+<a id="__codelineno-2-72" name="__codelineno-2-72"></a><span class="w">                                    </span><span class="nx">etherTable</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">EtherTable</span><span class="p">{</span>
+<a id="__codelineno-2-73" name="__codelineno-2-73"></a><span class="w">                                        </span><span class="nx">SrcIp</span><span class="p">:</span><span class="w">  </span><span class="nx">data</span><span class="p">[</span><span class="nx">drviceName</span><span class="p">],</span>
+<a id="__codelineno-2-74" name="__codelineno-2-74"></a><span class="w">                                        </span><span class="nx">Device</span><span class="p">:</span><span class="w"> </span><span class="nx">drviceName</span><span class="p">,</span>
+<a id="__codelineno-2-75" name="__codelineno-2-75"></a><span class="w">                                        </span><span class="nx">SrcMac</span><span class="p">:</span><span class="w"> </span><span class="nx">SelfMac</span><span class="p">(</span><span class="nx">eth</span><span class="p">.</span><span class="nx">DstMAC</span><span class="p">),</span>
+<a id="__codelineno-2-76" name="__codelineno-2-76"></a><span class="w">                                        </span><span class="nx">DstMac</span><span class="p">:</span><span class="w"> </span><span class="nx">SelfMac</span><span class="p">(</span><span class="nx">eth</span><span class="p">.</span><span class="nx">SrcMAC</span><span class="p">),</span>
+<a id="__codelineno-2-77" name="__codelineno-2-77"></a><span class="w">                                    </span><span class="p">}</span>
+<a id="__codelineno-2-78" name="__codelineno-2-78"></a><span class="w">                                    </span><span class="nx">signal</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">etherTable</span>
+<a id="__codelineno-2-79" name="__codelineno-2-79"></a><span class="w">                                    </span><span class="k">return</span>
+<a id="__codelineno-2-80" name="__codelineno-2-80"></a><span class="w">                                </span><span class="p">}</span>
+<a id="__codelineno-2-81" name="__codelineno-2-81"></a><span class="w">                            </span><span class="p">}</span>
+<a id="__codelineno-2-82" name="__codelineno-2-82"></a><span class="w">                        </span><span class="p">}</span>
+<a id="__codelineno-2-83" name="__codelineno-2-83"></a><span class="w">                    </span><span class="p">}</span>
+<a id="__codelineno-2-84" name="__codelineno-2-84"></a><span class="w">                </span><span class="p">}</span>
+<a id="__codelineno-2-85" name="__codelineno-2-85"></a><span class="w">            </span><span class="p">}</span>
+<a id="__codelineno-2-86" name="__codelineno-2-86"></a><span class="w">        </span><span class="p">}(</span><span class="nx">drviceName</span><span class="p">,</span><span class="w"> </span><span class="nx">domain</span><span class="p">,</span><span class="w"> </span><span class="nx">ctx</span><span class="p">)</span>
+<a id="__codelineno-2-87" name="__codelineno-2-87"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-2-88" name="__codelineno-2-88"></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-89" name="__codelineno-2-89"></a><span class="w">        </span><span class="k">select</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-90" name="__codelineno-2-90"></a><span class="w">        </span><span class="c1">// 获取配置信息后退出协程</span>
+<a id="__codelineno-2-91" name="__codelineno-2-91"></a><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="nx">c</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="o">&lt;-</span><span class="nx">signal</span><span class="p">:</span>
+<a id="__codelineno-2-92" name="__codelineno-2-92"></a><span class="w">            </span><span class="nx">cancel</span><span class="p">()</span>
+<a id="__codelineno-2-93" name="__codelineno-2-93"></a><span class="w">            </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Print</span><span class="p">(</span><span class="s">"\n"</span><span class="p">)</span>
+<a id="__codelineno-2-94" name="__codelineno-2-94"></a><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="nx">c</span>
+<a id="__codelineno-2-95" name="__codelineno-2-95"></a><span class="w">        </span><span class="k">default</span><span class="p">:</span>
+<a id="__codelineno-2-96" name="__codelineno-2-96"></a><span class="w">            </span><span class="c1">// 发起 DNS 请求, 从数据包中获取硬件信息</span>
+<a id="__codelineno-2-97" name="__codelineno-2-97"></a><span class="w">            </span><span class="nx">_</span><span class="p">,</span><span class="w"> </span><span class="nx">_</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">net</span><span class="p">.</span><span class="nx">LookupHost</span><span class="p">(</span><span class="nx">domain</span><span class="p">)</span>
+<a id="__codelineno-2-98" name="__codelineno-2-98"></a><span class="w">            </span><span class="nx">time</span><span class="p">.</span><span class="nx">Sleep</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-2-99" name="__codelineno-2-99"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-2-100" name="__codelineno-2-100"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-2-101" name="__codelineno-2-101"></a><span class="p">}</span>
+</code></pre></div></td></tr></tbody></table></div>
+<p><code>runner.New(opt)</code>：</p>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-3-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-3-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-3-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-3-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-3-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-3-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-3-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-3-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-3-10">10</a></span>
+<span class="normal"><a href="#__codelineno-3-11">11</a></span>
+<span class="normal"><a href="#__codelineno-3-12">12</a></span>
+<span class="normal"><a href="#__codelineno-3-13">13</a></span>
+<span class="normal"><a href="#__codelineno-3-14">14</a></span>
+<span class="normal"><a href="#__codelineno-3-15">15</a></span>
+<span class="normal"><a href="#__codelineno-3-16">16</a></span>
+<span class="normal"><a href="#__codelineno-3-17">17</a></span>
+<span class="normal"><a href="#__codelineno-3-18">18</a></span>
+<span class="normal"><a href="#__codelineno-3-19">19</a></span>
+<span class="normal"><a href="#__codelineno-3-20">20</a></span>
+<span class="normal"><a href="#__codelineno-3-21">21</a></span>
+<span class="normal"><a href="#__codelineno-3-22">22</a></span>
+<span class="normal"><a href="#__codelineno-3-23">23</a></span>
+<span class="normal"><a href="#__codelineno-3-24">24</a></span>
+<span class="normal"><a href="#__codelineno-3-25">25</a></span>
+<span class="normal"><a href="#__codelineno-3-26">26</a></span>
+<span class="normal"><a href="#__codelineno-3-27">27</a></span>
+<span class="normal"><a href="#__codelineno-3-28">28</a></span>
+<span class="normal"><a href="#__codelineno-3-29">29</a></span>
+<span class="normal"><a href="#__codelineno-3-30">30</a></span>
+<span class="normal"><a href="#__codelineno-3-31">31</a></span>
+<span class="normal"><a href="#__codelineno-3-32">32</a></span>
+<span class="normal"><a href="#__codelineno-3-33">33</a></span>
+<span class="normal"><a href="#__codelineno-3-34">34</a></span>
+<span class="normal"><a href="#__codelineno-3-35">35</a></span>
+<span class="normal"><a href="#__codelineno-3-36">36</a></span>
+<span class="normal"><a href="#__codelineno-3-37">37</a></span>
+<span class="normal"><a href="#__codelineno-3-38">38</a></span>
+<span class="normal"><a href="#__codelineno-3-39">39</a></span>
+<span class="normal"><a href="#__codelineno-3-40">40</a></span>
+<span class="normal"><a href="#__codelineno-3-41">41</a></span>
+<span class="normal"><a href="#__codelineno-3-42">42</a></span>
+<span class="normal"><a href="#__codelineno-3-43">43</a></span>
+<span class="normal"><a href="#__codelineno-3-44">44</a></span>
+<span class="normal"><a href="#__codelineno-3-45">45</a></span>
+<span class="normal"><a href="#__codelineno-3-46">46</a></span>
+<span class="normal"><a href="#__codelineno-3-47">47</a></span>
+<span class="normal"><a href="#__codelineno-3-48">48</a></span>
+<span class="normal"><a href="#__codelineno-3-49">49</a></span>
+<span class="normal"><a href="#__codelineno-3-50">50</a></span>
+<span class="normal"><a href="#__codelineno-3-51">51</a></span>
+<span class="normal"><a href="#__codelineno-3-52">52</a></span>
+<span class="normal"><a href="#__codelineno-3-53">53</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1"></a><span class="kd">func</span><span class="w"> </span><span class="nx">New</span><span class="p">(</span><span class="nx">opt</span><span class="w"> </span><span class="o">*</span><span class="nx">options</span><span class="p">.</span><span class="nx">Options</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="nx">runner</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2"></a><span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="kt">error</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3"></a><span class="w">    </span><span class="nx">version</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">pcap</span><span class="p">.</span><span class="nx">Version</span><span class="p">()</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4"></a><span class="w">    </span><span class="nx">r</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nb">new</span><span class="p">(</span><span class="nx">runner</span><span class="p">)</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5"></a><span class="w">    </span><span class="nx">gologger</span><span class="p">.</span><span class="nx">Infof</span><span class="p">(</span><span class="nx">version</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">"\n"</span><span class="p">)</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6"></a><span class="w">    </span><span class="nx">r</span><span class="p">.</span><span class="nx">options</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">opt</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7"></a><span class="w">    </span><span class="nx">r</span><span class="p">.</span><span class="nx">hm</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">statusdb</span><span class="p">.</span><span class="nx">CreateMemoryDB</span><span class="p">()</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8"></a><span class="w">    </span><span class="nx">gologger</span><span class="p">.</span><span class="nx">Infof</span><span class="p">(</span><span class="s">"Default DNS:%s\n"</span><span class="p">,</span><span class="w"> </span><span class="nx">core</span><span class="p">.</span><span class="nx">SliceToString</span><span class="p">(</span><span class="nx">opt</span><span class="p">.</span><span class="nx">Resolvers</span><span class="p">))</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="nx">opt</span><span class="p">.</span><span class="nx">SpecialResolvers</span><span class="p">)</span><span class="w"> </span><span class="p">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10"></a><span class="w">        </span><span class="kd">var</span><span class="w"> </span><span class="nx">keys</span><span class="w"> </span><span class="p">[]</span><span class="kt">string</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11"></a><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="nx">k</span><span class="p">,</span><span class="w"> </span><span class="nx">_</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="nx">opt</span><span class="p">.</span><span class="nx">SpecialResolvers</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12"></a><span class="w">            </span><span class="nx">keys</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">append</span><span class="p">(</span><span class="nx">keys</span><span class="p">,</span><span class="w"> </span><span class="nx">k</span><span class="p">)</span>
+<a id="__codelineno-3-13" name="__codelineno-3-13"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-3-14" name="__codelineno-3-14"></a><span class="w">        </span><span class="nx">gologger</span><span class="p">.</span><span class="nx">Infof</span><span class="p">(</span><span class="s">"Special DNS:%s\n"</span><span class="p">,</span><span class="w"> </span><span class="nx">core</span><span class="p">.</span><span class="nx">SliceToString</span><span class="p">(</span><span class="nx">keys</span><span class="p">))</span>
+<a id="__codelineno-3-15" name="__codelineno-3-15"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-3-16" name="__codelineno-3-16"></a><span class="w">    </span><span class="c1">// 打开 Pcap 捕获数据包</span>
+<a id="__codelineno-3-17" name="__codelineno-3-17"></a><span class="w">    </span><span class="nx">r</span><span class="p">.</span><span class="nx">handle</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">device</span><span class="p">.</span><span class="nx">PcapInit</span><span class="p">(</span><span class="nx">opt</span><span class="p">.</span><span class="nx">EtherInfo</span><span class="p">.</span><span class="nx">Device</span><span class="p">)</span>
+<a id="__codelineno-3-18" name="__codelineno-3-18"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-19" name="__codelineno-3-19"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="kc">nil</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span>
+<a id="__codelineno-3-20" name="__codelineno-3-20"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-3-21" name="__codelineno-3-21"></a><span class="w">    </span><span class="c1">// 根据发包总数和 timeout 时间来分配每秒速度</span>
+<a id="__codelineno-3-22" name="__codelineno-3-22"></a><span class="w">    </span><span class="nx">allPacket</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">opt</span><span class="p">.</span><span class="nx">DomainTotal</span>
+<a id="__codelineno-3-23" name="__codelineno-3-23"></a><span class="w">    </span><span class="nx">calcLimit</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nb">float64</span><span class="p">(</span><span class="nx">allPacket</span><span class="o">/</span><span class="nx">opt</span><span class="p">.</span><span class="nx">TimeOut</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">0.85</span>
+<a id="__codelineno-3-24" name="__codelineno-3-24"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">calcLimit</span><span class="w"> </span><span class="p">&lt;</span><span class="w"> </span><span class="mi">5000</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-25" name="__codelineno-3-25"></a><span class="w">        </span><span class="nx">calcLimit</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">5000</span>
+<a id="__codelineno-3-26" name="__codelineno-3-26"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-3-27" name="__codelineno-3-27"></a><span class="w">    </span><span class="nx">limit</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nb">int</span><span class="p">(</span><span class="nx">math</span><span class="p">.</span><span class="nx">Min</span><span class="p">(</span><span class="nx">calcLimit</span><span class="p">,</span><span class="w"> </span><span class="nb">float64</span><span class="p">(</span><span class="nx">opt</span><span class="p">.</span><span class="nx">Rate</span><span class="p">)))</span>
+<a id="__codelineno-3-28" name="__codelineno-3-28"></a><span class="w">    </span><span class="c1">// 限制单位时间内允许通过的请求数目</span>
+<a id="__codelineno-3-29" name="__codelineno-3-29"></a><span class="w">    </span><span class="nx">r</span><span class="p">.</span><span class="nx">limit</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">ratelimit</span><span class="p">.</span><span class="nx">New</span><span class="p">(</span><span class="nx">limit</span><span class="p">)</span>
+<a id="__codelineno-3-30" name="__codelineno-3-30"></a><span class="w">    </span><span class="nx">gologger</span><span class="p">.</span><span class="nx">Infof</span><span class="p">(</span><span class="s">"Domain Count:%d\n"</span><span class="p">,</span><span class="w"> </span><span class="nx">r</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">DomainTotal</span><span class="p">)</span>
+<a id="__codelineno-3-31" name="__codelineno-3-31"></a><span class="w">    </span><span class="nx">gologger</span><span class="p">.</span><span class="nx">Infof</span><span class="p">(</span><span class="s">"Rate:%dpps\n"</span><span class="p">,</span><span class="w"> </span><span class="nx">limit</span><span class="p">)</span>
+<a id="__codelineno-3-32" name="__codelineno-3-32"></a>
+<a id="__codelineno-3-33" name="__codelineno-3-33"></a><span class="w">    </span><span class="nx">r</span><span class="p">.</span><span class="nx">sender</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">make</span><span class="p">(</span><span class="kd">chan</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="mi">99</span><span class="p">)</span><span class="w">        </span><span class="c1">// 协程发送缓冲</span>
+<a id="__codelineno-3-34" name="__codelineno-3-34"></a><span class="w">    </span><span class="nx">r</span><span class="p">.</span><span class="nx">recver</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">make</span><span class="p">(</span><span class="kd">chan</span><span class="w"> </span><span class="nx">result</span><span class="p">.</span><span class="nx">Result</span><span class="p">,</span><span class="w"> </span><span class="mi">99</span><span class="p">)</span><span class="w"> </span><span class="c1">// 协程接收缓冲</span>
+<a id="__codelineno-3-35" name="__codelineno-3-35"></a><span class="w">    </span><span class="c1">// 获取一个空闲的端口</span>
+<a id="__codelineno-3-36" name="__codelineno-3-36"></a><span class="w">    </span><span class="nx">freePort</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">freeport</span><span class="p">.</span><span class="nx">GetFreePort</span><span class="p">()</span>
+<a id="__codelineno-3-37" name="__codelineno-3-37"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-38" name="__codelineno-3-38"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="kc">nil</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span>
+<a id="__codelineno-3-39" name="__codelineno-3-39"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-3-40" name="__codelineno-3-40"></a><span class="w">    </span><span class="c1">// 获取 layers 类型</span>
+<a id="__codelineno-3-41" name="__codelineno-3-41"></a><span class="w">    </span><span class="nx">r</span><span class="p">.</span><span class="nx">dnsType</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">options</span><span class="p">.</span><span class="nx">DnsType</span><span class="p">(</span><span class="nx">opt</span><span class="p">.</span><span class="nx">DnsType</span><span class="p">)</span>
+<a id="__codelineno-3-42" name="__codelineno-3-42"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-43" name="__codelineno-3-43"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="kc">nil</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span>
+<a id="__codelineno-3-44" name="__codelineno-3-44"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-3-45" name="__codelineno-3-45"></a><span class="w">    </span><span class="nx">r</span><span class="p">.</span><span class="nx">freeport</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">freePort</span>
+<a id="__codelineno-3-46" name="__codelineno-3-46"></a><span class="w">    </span><span class="nx">gologger</span><span class="p">.</span><span class="nx">Infof</span><span class="p">(</span><span class="s">"FreePort:%d\n"</span><span class="p">,</span><span class="w"> </span><span class="nx">freePort</span><span class="p">)</span>
+<a id="__codelineno-3-47" name="__codelineno-3-47"></a><span class="w">    </span><span class="nx">r</span><span class="p">.</span><span class="nx">dnsid</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mh">0x2021</span><span class="w"> </span><span class="c1">// set dnsid 65500</span>
+<a id="__codelineno-3-48" name="__codelineno-3-48"></a><span class="w">    </span><span class="nx">r</span><span class="p">.</span><span class="nx">maxRetry</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">opt</span><span class="p">.</span><span class="nx">Retry</span>
+<a id="__codelineno-3-49" name="__codelineno-3-49"></a><span class="w">    </span><span class="nx">r</span><span class="p">.</span><span class="nx">timeout</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">int64</span><span class="p">(</span><span class="nx">opt</span><span class="p">.</span><span class="nx">TimeOut</span><span class="p">)</span>
+<a id="__codelineno-3-50" name="__codelineno-3-50"></a><span class="w">    </span><span class="nx">r</span><span class="p">.</span><span class="nx">fisrtloadChanel</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">make</span><span class="p">(</span><span class="kd">chan</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span>
+<a id="__codelineno-3-51" name="__codelineno-3-51"></a><span class="w">    </span><span class="nx">r</span><span class="p">.</span><span class="nx">startTime</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">time</span><span class="p">.</span><span class="nx">Now</span><span class="p">()</span>
+<a id="__codelineno-3-52" name="__codelineno-3-52"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">r</span><span class="p">,</span><span class="w"> </span><span class="kc">nil</span>
+<a id="__codelineno-3-53" name="__codelineno-3-53"></a><span class="p">}</span>
+</code></pre></div></td></tr></tbody></table></div>
+<p>然后就是一个 <code>RunEnumeration</code>：</p>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-4-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-4-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-4-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-4-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-4-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-4-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-4-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-4-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-4-10">10</a></span>
+<span class="normal"><a href="#__codelineno-4-11">11</a></span>
+<span class="normal"><a href="#__codelineno-4-12">12</a></span>
+<span class="normal"><a href="#__codelineno-4-13">13</a></span>
+<span class="normal"><a href="#__codelineno-4-14">14</a></span>
+<span class="normal"><a href="#__codelineno-4-15">15</a></span>
+<span class="normal"><a href="#__codelineno-4-16">16</a></span>
+<span class="normal"><a href="#__codelineno-4-17">17</a></span>
+<span class="normal"><a href="#__codelineno-4-18">18</a></span>
+<span class="normal"><a href="#__codelineno-4-19">19</a></span>
+<span class="normal"><a href="#__codelineno-4-20">20</a></span>
+<span class="normal"><a href="#__codelineno-4-21">21</a></span>
+<span class="normal"><a href="#__codelineno-4-22">22</a></span>
+<span class="normal"><a href="#__codelineno-4-23">23</a></span>
+<span class="normal"><a href="#__codelineno-4-24">24</a></span>
+<span class="normal"><a href="#__codelineno-4-25">25</a></span>
+<span class="normal"><a href="#__codelineno-4-26">26</a></span>
+<span class="normal"><a href="#__codelineno-4-27">27</a></span>
+<span class="normal"><a href="#__codelineno-4-28">28</a></span>
+<span class="normal"><a href="#__codelineno-4-29">29</a></span>
+<span class="normal"><a href="#__codelineno-4-30">30</a></span>
+<span class="normal"><a href="#__codelineno-4-31">31</a></span>
+<span class="normal"><a href="#__codelineno-4-32">32</a></span>
+<span class="normal"><a href="#__codelineno-4-33">33</a></span>
+<span class="normal"><a href="#__codelineno-4-34">34</a></span>
+<span class="normal"><a href="#__codelineno-4-35">35</a></span>
+<span class="normal"><a href="#__codelineno-4-36">36</a></span>
+<span class="normal"><a href="#__codelineno-4-37">37</a></span>
+<span class="normal"><a href="#__codelineno-4-38">38</a></span>
+<span class="normal"><a href="#__codelineno-4-39">39</a></span>
+<span class="normal"><a href="#__codelineno-4-40">40</a></span>
+<span class="normal"><a href="#__codelineno-4-41">41</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1"></a><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">r</span><span class="w"> </span><span class="o">*</span><span class="nx">runner</span><span class="p">)</span><span class="w"> </span><span class="nx">RunEnumeration</span><span class="p">(</span><span class="nx">ctx</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2"></a><span class="w">    </span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="nx">cancel</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">WithCancel</span><span class="p">(</span><span class="nx">ctx</span><span class="p">)</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3"></a><span class="w">    </span><span class="k">defer</span><span class="w"> </span><span class="nx">cancel</span><span class="p">()</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4"></a><span class="w">    </span><span class="k">go</span><span class="w"> </span><span class="nx">r</span><span class="p">.</span><span class="nx">recvChanel</span><span class="p">(</span><span class="nx">ctx</span><span class="p">)</span><span class="w"> </span><span class="c1">// 启动接收线程</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5"></a><span class="w">    </span><span class="k">go</span><span class="w"> </span><span class="nx">r</span><span class="p">.</span><span class="nx">sendCycle</span><span class="p">()</span><span class="w">     </span><span class="c1">// 启动发送线程</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6"></a><span class="w">    </span><span class="k">go</span><span class="w"> </span><span class="nx">r</span><span class="p">.</span><span class="nx">handleResult</span><span class="p">()</span><span class="w">  </span><span class="c1">// 处理结果，打印输出</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7"></a><span class="w">    </span><span class="k">go</span><span class="w"> </span><span class="kd">func</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8"></a><span class="w">        </span><span class="c1">// 向发送线程中传入目标域名</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9"></a><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="nx">domain</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="nx">r</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">Domain</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-10" name="__codelineno-4-10"></a><span class="w">            </span><span class="nx">r</span><span class="p">.</span><span class="nx">sender</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nx">domain</span>
+<a id="__codelineno-4-11" name="__codelineno-4-11"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-4-12" name="__codelineno-4-12"></a><span class="w">        </span><span class="nx">r</span><span class="p">.</span><span class="nx">fisrtloadChanel</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s">"ok"</span>
+<a id="__codelineno-4-13" name="__codelineno-4-13"></a><span class="w">    </span><span class="p">}()</span>
+<a id="__codelineno-4-14" name="__codelineno-4-14"></a><span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">isLoadOver</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="kc">false</span>
+<a id="__codelineno-4-15" name="__codelineno-4-15"></a><span class="w">    </span><span class="c1">// 1s 定时器</span>
+<a id="__codelineno-4-16" name="__codelineno-4-16"></a><span class="w">    </span><span class="nx">t</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">time</span><span class="p">.</span><span class="nx">NewTicker</span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+<a id="__codelineno-4-17" name="__codelineno-4-17"></a><span class="w">    </span><span class="k">defer</span><span class="w"> </span><span class="nx">t</span><span class="p">.</span><span class="nx">Stop</span><span class="p">()</span>
+<a id="__codelineno-4-18" name="__codelineno-4-18"></a><span class="w">    </span><span class="c1">// 等待协程运行完成</span>
+<a id="__codelineno-4-19" name="__codelineno-4-19"></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-20" name="__codelineno-4-20"></a><span class="w">        </span><span class="k">select</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-21" name="__codelineno-4-21"></a><span class="w">        </span><span class="c1">// 每秒都发送一次, 判断是否完成</span>
+<a id="__codelineno-4-22" name="__codelineno-4-22"></a><span class="w">        </span><span class="c1">// 完成之后 return 出 for 循环, defer cancel() 退出接收协程 </span>
+<a id="__codelineno-4-23" name="__codelineno-4-23"></a><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="o">&lt;-</span><span class="nx">t</span><span class="p">.</span><span class="nx">C</span><span class="p">:</span>
+<a id="__codelineno-4-24" name="__codelineno-4-24"></a><span class="w">            </span><span class="nx">r</span><span class="p">.</span><span class="nx">printStatus</span><span class="p">()</span>
+<a id="__codelineno-4-25" name="__codelineno-4-25"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="nx">isLoadOver</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-26" name="__codelineno-4-26"></a><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="nx">r</span><span class="p">.</span><span class="nx">hm</span><span class="p">.</span><span class="nx">Length</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-27" name="__codelineno-4-27"></a><span class="w">                    </span><span class="nx">gologger</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">"\n"</span><span class="p">)</span>
+<a id="__codelineno-4-28" name="__codelineno-4-28"></a><span class="w">                    </span><span class="nx">gologger</span><span class="p">.</span><span class="nx">Infof</span><span class="p">(</span><span class="s">"扫描完毕"</span><span class="p">)</span>
+<a id="__codelineno-4-29" name="__codelineno-4-29"></a><span class="w">                    </span><span class="k">return</span>
+<a id="__codelineno-4-30" name="__codelineno-4-30"></a><span class="w">                </span><span class="p">}</span>
+<a id="__codelineno-4-31" name="__codelineno-4-31"></a><span class="w">            </span><span class="p">}</span>
+<a id="__codelineno-4-32" name="__codelineno-4-32"></a><span class="w">        </span><span class="c1">// 目标域名发送完成后就开始进行重试测试</span>
+<a id="__codelineno-4-33" name="__codelineno-4-33"></a><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="o">&lt;-</span><span class="nx">r</span><span class="p">.</span><span class="nx">fisrtloadChanel</span><span class="p">:</span>
+<a id="__codelineno-4-34" name="__codelineno-4-34"></a><span class="w">            </span><span class="k">go</span><span class="w"> </span><span class="nx">r</span><span class="p">.</span><span class="nx">retry</span><span class="p">(</span><span class="nx">ctx</span><span class="p">)</span>
+<a id="__codelineno-4-35" name="__codelineno-4-35"></a><span class="w">            </span><span class="nx">isLoadOver</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="kc">true</span>
+<a id="__codelineno-4-36" name="__codelineno-4-36"></a><span class="w">        </span><span class="c1">// 程序结束</span>
+<a id="__codelineno-4-37" name="__codelineno-4-37"></a><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="o">&lt;-</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">Done</span><span class="p">():</span>
+<a id="__codelineno-4-38" name="__codelineno-4-38"></a><span class="w">            </span><span class="k">return</span>
+<a id="__codelineno-4-39" name="__codelineno-4-39"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-4-40" name="__codelineno-4-40"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-4-41" name="__codelineno-4-41"></a><span class="p">}</span>
+</code></pre></div></td></tr></tbody></table></div>
+<p><code>sendCycle()</code>，</p>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-5-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-5-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-5-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-5-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-5-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-5-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-5-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-5-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-5-10">10</a></span>
+<span class="normal"><a href="#__codelineno-5-11">11</a></span>
+<span class="normal"><a href="#__codelineno-5-12">12</a></span>
+<span class="normal"><a href="#__codelineno-5-13">13</a></span>
+<span class="normal"><a href="#__codelineno-5-14">14</a></span>
+<span class="normal"><a href="#__codelineno-5-15">15</a></span>
+<span class="normal"><a href="#__codelineno-5-16">16</a></span>
+<span class="normal"><a href="#__codelineno-5-17">17</a></span>
+<span class="normal"><a href="#__codelineno-5-18">18</a></span>
+<span class="normal"><a href="#__codelineno-5-19">19</a></span>
+<span class="normal"><a href="#__codelineno-5-20">20</a></span>
+<span class="normal"><a href="#__codelineno-5-21">21</a></span>
+<span class="normal"><a href="#__codelineno-5-22">22</a></span>
+<span class="normal"><a href="#__codelineno-5-23">23</a></span>
+<span class="normal"><a href="#__codelineno-5-24">24</a></span>
+<span class="normal"><a href="#__codelineno-5-25">25</a></span>
+<span class="normal"><a href="#__codelineno-5-26">26</a></span>
+<span class="normal"><a href="#__codelineno-5-27">27</a></span>
+<span class="normal"><a href="#__codelineno-5-28">28</a></span>
+<span class="normal"><a href="#__codelineno-5-29">29</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1"></a><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">r</span><span class="w"> </span><span class="o">*</span><span class="nx">runner</span><span class="p">)</span><span class="w"> </span><span class="nx">sendCycle</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2"></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="nx">domain</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="nx">r</span><span class="p">.</span><span class="nx">sender</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3"></a><span class="w">        </span><span class="c1">// 启动速率限制</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4"></a><span class="w">        </span><span class="nx">r</span><span class="p">.</span><span class="nx">limit</span><span class="p">.</span><span class="nx">Take</span><span class="p">()</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5"></a><span class="w">        </span><span class="c1">// 判断是否为重试的目标</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6"></a><span class="w">        </span><span class="nx">v</span><span class="p">,</span><span class="w"> </span><span class="nx">ok</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">r</span><span class="p">.</span><span class="nx">hm</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="nx">domain</span><span class="p">)</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">!</span><span class="nx">ok</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8"></a><span class="w">            </span><span class="nx">v</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">statusdb</span><span class="p">.</span><span class="nx">Item</span><span class="p">{</span>
+<a id="__codelineno-5-9" name="__codelineno-5-9"></a><span class="w">                </span><span class="nx">Domain</span><span class="p">:</span><span class="w">      </span><span class="nx">domain</span><span class="p">,</span>
+<a id="__codelineno-5-10" name="__codelineno-5-10"></a><span class="w">                </span><span class="c1">// 获取一个随机的 DNS 服务器地址, 或者根据域名获取特殊的 DNS 服务器地址</span>
+<a id="__codelineno-5-11" name="__codelineno-5-11"></a><span class="w">                </span><span class="nx">Dns</span><span class="p">:</span><span class="w">         </span><span class="nx">r</span><span class="p">.</span><span class="nx">choseDns</span><span class="p">(</span><span class="nx">domain</span><span class="p">),</span>
+<a id="__codelineno-5-12" name="__codelineno-5-12"></a><span class="w">                </span><span class="nx">Time</span><span class="p">:</span><span class="w">        </span><span class="nx">time</span><span class="p">.</span><span class="nx">Now</span><span class="p">(),</span>
+<a id="__codelineno-5-13" name="__codelineno-5-13"></a><span class="w">                </span><span class="nx">Retry</span><span class="p">:</span><span class="w">       </span><span class="mi">0</span><span class="p">,</span>
+<a id="__codelineno-5-14" name="__codelineno-5-14"></a><span class="w">                </span><span class="nx">DomainLevel</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<a id="__codelineno-5-15" name="__codelineno-5-15"></a><span class="w">            </span><span class="p">}</span>
+<a id="__codelineno-5-16" name="__codelineno-5-16"></a><span class="w">            </span><span class="nx">r</span><span class="p">.</span><span class="nx">hm</span><span class="p">.</span><span class="nx">Add</span><span class="p">(</span><span class="nx">domain</span><span class="p">,</span><span class="w"> </span><span class="nx">v</span><span class="p">)</span>
+<a id="__codelineno-5-17" name="__codelineno-5-17"></a><span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-5-18" name="__codelineno-5-18"></a><span class="w">            </span><span class="c1">// 重试次数 +1</span>
+<a id="__codelineno-5-19" name="__codelineno-5-19"></a><span class="w">            </span><span class="nx">v</span><span class="p">.</span><span class="nx">Retry</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">1</span>
+<a id="__codelineno-5-20" name="__codelineno-5-20"></a><span class="w">            </span><span class="nx">v</span><span class="p">.</span><span class="nx">Time</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">time</span><span class="p">.</span><span class="nx">Now</span><span class="p">()</span>
+<a id="__codelineno-5-21" name="__codelineno-5-21"></a><span class="w">            </span><span class="nx">v</span><span class="p">.</span><span class="nx">Dns</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">r</span><span class="p">.</span><span class="nx">choseDns</span><span class="p">(</span><span class="nx">domain</span><span class="p">)</span>
+<a id="__codelineno-5-22" name="__codelineno-5-22"></a><span class="w">            </span><span class="nx">r</span><span class="p">.</span><span class="nx">hm</span><span class="p">.</span><span class="nx">Set</span><span class="p">(</span><span class="nx">domain</span><span class="p">,</span><span class="w"> </span><span class="nx">v</span><span class="p">)</span>
+<a id="__codelineno-5-23" name="__codelineno-5-23"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-5-24" name="__codelineno-5-24"></a><span class="w">        </span><span class="c1">// 发送操作</span>
+<a id="__codelineno-5-25" name="__codelineno-5-25"></a><span class="w">        </span><span class="nx">send</span><span class="p">(</span><span class="nx">domain</span><span class="p">,</span><span class="w"> </span><span class="nx">v</span><span class="p">.</span><span class="nx">Dns</span><span class="p">,</span><span class="w"> </span><span class="nx">r</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">EtherInfo</span><span class="p">,</span><span class="w"> </span><span class="nx">r</span><span class="p">.</span><span class="nx">dnsid</span><span class="p">,</span><span class="w"> </span><span class="nb">uint16</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">freeport</span><span class="p">),</span><span class="w"> </span><span class="nx">r</span><span class="p">.</span><span class="nx">handle</span><span class="p">,</span><span class="w"> </span><span class="nx">r</span><span class="p">.</span><span class="nx">dnsType</span><span class="p">)</span>
+<a id="__codelineno-5-26" name="__codelineno-5-26"></a><span class="w">        </span><span class="c1">// 并发安全的计数器 +1</span>
+<a id="__codelineno-5-27" name="__codelineno-5-27"></a><span class="w">        </span><span class="nx">atomic</span><span class="p">.</span><span class="nx">AddUint64</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">r</span><span class="p">.</span><span class="nx">sendIndex</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-5-28" name="__codelineno-5-28"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-5-29" name="__codelineno-5-29"></a><span class="p">}</span>
+</code></pre></div></td></tr></tbody></table></div>
+<p>看一下 <code>send</code> 使用<code>pacp</code> 网卡进行发包：</p>
+<p>其实就是模拟一个 DNS 协议的包，然后在 DNS 的 ID 字段携带一个标识，这个就是用来区分是否为 Ksubdomain 发送的请求包。</p>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-6-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-6-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-6-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-6-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-6-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-6-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-6-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-6-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-6-10">10</a></span>
+<span class="normal"><a href="#__codelineno-6-11">11</a></span>
+<span class="normal"><a href="#__codelineno-6-12">12</a></span>
+<span class="normal"><a href="#__codelineno-6-13">13</a></span>
+<span class="normal"><a href="#__codelineno-6-14">14</a></span>
+<span class="normal"><a href="#__codelineno-6-15">15</a></span>
+<span class="normal"><a href="#__codelineno-6-16">16</a></span>
+<span class="normal"><a href="#__codelineno-6-17">17</a></span>
+<span class="normal"><a href="#__codelineno-6-18">18</a></span>
+<span class="normal"><a href="#__codelineno-6-19">19</a></span>
+<span class="normal"><a href="#__codelineno-6-20">20</a></span>
+<span class="normal"><a href="#__codelineno-6-21">21</a></span>
+<span class="normal"><a href="#__codelineno-6-22">22</a></span>
+<span class="normal"><a href="#__codelineno-6-23">23</a></span>
+<span class="normal"><a href="#__codelineno-6-24">24</a></span>
+<span class="normal"><a href="#__codelineno-6-25">25</a></span>
+<span class="normal"><a href="#__codelineno-6-26">26</a></span>
+<span class="normal"><a href="#__codelineno-6-27">27</a></span>
+<span class="normal"><a href="#__codelineno-6-28">28</a></span>
+<span class="normal"><a href="#__codelineno-6-29">29</a></span>
+<span class="normal"><a href="#__codelineno-6-30">30</a></span>
+<span class="normal"><a href="#__codelineno-6-31">31</a></span>
+<span class="normal"><a href="#__codelineno-6-32">32</a></span>
+<span class="normal"><a href="#__codelineno-6-33">33</a></span>
+<span class="normal"><a href="#__codelineno-6-34">34</a></span>
+<span class="normal"><a href="#__codelineno-6-35">35</a></span>
+<span class="normal"><a href="#__codelineno-6-36">36</a></span>
+<span class="normal"><a href="#__codelineno-6-37">37</a></span>
+<span class="normal"><a href="#__codelineno-6-38">38</a></span>
+<span class="normal"><a href="#__codelineno-6-39">39</a></span>
+<span class="normal"><a href="#__codelineno-6-40">40</a></span>
+<span class="normal"><a href="#__codelineno-6-41">41</a></span>
+<span class="normal"><a href="#__codelineno-6-42">42</a></span>
+<span class="normal"><a href="#__codelineno-6-43">43</a></span>
+<span class="normal"><a href="#__codelineno-6-44">44</a></span>
+<span class="normal"><a href="#__codelineno-6-45">45</a></span>
+<span class="normal"><a href="#__codelineno-6-46">46</a></span>
+<span class="normal"><a href="#__codelineno-6-47">47</a></span>
+<span class="normal"><a href="#__codelineno-6-48">48</a></span>
+<span class="normal"><a href="#__codelineno-6-49">49</a></span>
+<span class="normal"><a href="#__codelineno-6-50">50</a></span>
+<span class="normal"><a href="#__codelineno-6-51">51</a></span>
+<span class="normal"><a href="#__codelineno-6-52">52</a></span>
+<span class="normal"><a href="#__codelineno-6-53">53</a></span>
+<span class="normal"><a href="#__codelineno-6-54">54</a></span>
+<span class="normal"><a href="#__codelineno-6-55">55</a></span>
+<span class="normal"><a href="#__codelineno-6-56">56</a></span>
+<span class="normal"><a href="#__codelineno-6-57">57</a></span>
+<span class="normal"><a href="#__codelineno-6-58">58</a></span>
+<span class="normal"><a href="#__codelineno-6-59">59</a></span>
+<span class="normal"><a href="#__codelineno-6-60">60</a></span>
+<span class="normal"><a href="#__codelineno-6-61">61</a></span>
+<span class="normal"><a href="#__codelineno-6-62">62</a></span>
+<span class="normal"><a href="#__codelineno-6-63">63</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1"></a><span class="c1">// send 使用 gopacket 去发送数据包</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2"></a><span class="kd">func</span><span class="w"> </span><span class="nx">send</span><span class="p">(</span><span class="nx">domain</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">dnsname</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">ether</span><span class="w"> </span><span class="o">*</span><span class="nx">device</span><span class="p">.</span><span class="nx">EtherTable</span><span class="p">,</span><span class="w"> </span><span class="nx">dnsid</span><span class="w"> </span><span class="kt">uint16</span><span class="p">,</span><span class="w"> </span><span class="nx">freeport</span><span class="w"> </span><span class="kt">uint16</span><span class="p">,</span><span class="w"> </span><span class="nx">handle</span><span class="w"> </span><span class="o">*</span><span class="nx">pcap</span><span class="p">.</span><span class="nx">Handle</span><span class="p">,</span><span class="w"> </span><span class="nx">dnsType</span><span class="w"> </span><span class="nx">layers</span><span class="p">.</span><span class="nx">DNSType</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3"></a><span class="w">    </span><span class="c1">// dns 服务器地址</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4"></a><span class="w">    </span><span class="nx">DstIp</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">net</span><span class="p">.</span><span class="nx">ParseIP</span><span class="p">(</span><span class="nx">dnsname</span><span class="p">).</span><span class="nx">To4</span><span class="p">()</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5"></a><span class="w">    </span><span class="nx">eth</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">layers</span><span class="p">.</span><span class="nx">Ethernet</span><span class="p">{</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6"></a><span class="w">        </span><span class="nx">SrcMAC</span><span class="p">:</span><span class="w">       </span><span class="nx">ether</span><span class="p">.</span><span class="nx">SrcMac</span><span class="p">.</span><span class="nx">HardwareAddr</span><span class="p">(),</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7"></a><span class="w">        </span><span class="nx">DstMAC</span><span class="p">:</span><span class="w">       </span><span class="nx">ether</span><span class="p">.</span><span class="nx">DstMac</span><span class="p">.</span><span class="nx">HardwareAddr</span><span class="p">(),</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8"></a><span class="w">        </span><span class="nx">EthernetType</span><span class="p">:</span><span class="w"> </span><span class="nx">layers</span><span class="p">.</span><span class="nx">EthernetTypeIPv4</span><span class="p">,</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-6-10" name="__codelineno-6-10"></a><span class="w">    </span><span class="c1">// Our IPv4 header</span>
+<a id="__codelineno-6-11" name="__codelineno-6-11"></a><span class="w">    </span><span class="nx">ip</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">layers</span><span class="p">.</span><span class="nx">IPv4</span><span class="p">{</span>
+<a id="__codelineno-6-12" name="__codelineno-6-12"></a><span class="w">        </span><span class="nx">Version</span><span class="p">:</span><span class="w">    </span><span class="mi">4</span><span class="p">,</span>
+<a id="__codelineno-6-13" name="__codelineno-6-13"></a><span class="w">        </span><span class="nx">IHL</span><span class="p">:</span><span class="w">        </span><span class="mi">5</span><span class="p">,</span>
+<a id="__codelineno-6-14" name="__codelineno-6-14"></a><span class="w">        </span><span class="nx">TOS</span><span class="p">:</span><span class="w">        </span><span class="mi">0</span><span class="p">,</span>
+<a id="__codelineno-6-15" name="__codelineno-6-15"></a><span class="w">        </span><span class="nx">Length</span><span class="p">:</span><span class="w">     </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="c1">// FIX</span>
+<a id="__codelineno-6-16" name="__codelineno-6-16"></a><span class="w">        </span><span class="nx">Id</span><span class="p">:</span><span class="w">         </span><span class="mi">0</span><span class="p">,</span>
+<a id="__codelineno-6-17" name="__codelineno-6-17"></a><span class="w">        </span><span class="nx">Flags</span><span class="p">:</span><span class="w">      </span><span class="nx">layers</span><span class="p">.</span><span class="nx">IPv4DontFragment</span><span class="p">,</span>
+<a id="__codelineno-6-18" name="__codelineno-6-18"></a><span class="w">        </span><span class="nx">FragOffset</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<a id="__codelineno-6-19" name="__codelineno-6-19"></a><span class="w">        </span><span class="nx">TTL</span><span class="p">:</span><span class="w">        </span><span class="mi">255</span><span class="p">,</span>
+<a id="__codelineno-6-20" name="__codelineno-6-20"></a><span class="w">        </span><span class="nx">Protocol</span><span class="p">:</span><span class="w">   </span><span class="nx">layers</span><span class="p">.</span><span class="nx">IPProtocolUDP</span><span class="p">,</span>
+<a id="__codelineno-6-21" name="__codelineno-6-21"></a><span class="w">        </span><span class="nx">Checksum</span><span class="p">:</span><span class="w">   </span><span class="mi">0</span><span class="p">,</span>
+<a id="__codelineno-6-22" name="__codelineno-6-22"></a><span class="w">        </span><span class="nx">SrcIP</span><span class="p">:</span><span class="w">      </span><span class="nx">ether</span><span class="p">.</span><span class="nx">SrcIp</span><span class="p">,</span>
+<a id="__codelineno-6-23" name="__codelineno-6-23"></a><span class="w">        </span><span class="nx">DstIP</span><span class="p">:</span><span class="w">      </span><span class="nx">DstIp</span><span class="p">,</span>
+<a id="__codelineno-6-24" name="__codelineno-6-24"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-6-25" name="__codelineno-6-25"></a><span class="w">    </span><span class="c1">// Our UDP header</span>
+<a id="__codelineno-6-26" name="__codelineno-6-26"></a><span class="w">    </span><span class="nx">udp</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">layers</span><span class="p">.</span><span class="nx">UDP</span><span class="p">{</span>
+<a id="__codelineno-6-27" name="__codelineno-6-27"></a><span class="w">        </span><span class="nx">SrcPort</span><span class="p">:</span><span class="w"> </span><span class="nx">layers</span><span class="p">.</span><span class="nx">UDPPort</span><span class="p">(</span><span class="nx">freeport</span><span class="p">),</span>
+<a id="__codelineno-6-28" name="__codelineno-6-28"></a><span class="w">        </span><span class="nx">DstPort</span><span class="p">:</span><span class="w"> </span><span class="nx">layers</span><span class="p">.</span><span class="nx">UDPPort</span><span class="p">(</span><span class="mi">53</span><span class="p">),</span>
+<a id="__codelineno-6-29" name="__codelineno-6-29"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-6-30" name="__codelineno-6-30"></a><span class="w">    </span><span class="c1">// Our DNS header</span>
+<a id="__codelineno-6-31" name="__codelineno-6-31"></a><span class="w">    </span><span class="nx">dns</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">layers</span><span class="p">.</span><span class="nx">DNS</span><span class="p">{</span>
+<a id="__codelineno-6-32" name="__codelineno-6-32"></a><span class="w">        </span><span class="c1">// Ksubdomain 的标识 0x2021 </span>
+<a id="__codelineno-6-33" name="__codelineno-6-33"></a><span class="w">        </span><span class="nx">ID</span><span class="p">:</span><span class="w">      </span><span class="nx">dnsid</span><span class="p">,</span>
+<a id="__codelineno-6-34" name="__codelineno-6-34"></a><span class="w">        </span><span class="nx">QDCount</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<a id="__codelineno-6-35" name="__codelineno-6-35"></a><span class="w">        </span><span class="nx">RD</span><span class="p">:</span><span class="w">      </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="c1">//递归查询标识</span>
+<a id="__codelineno-6-36" name="__codelineno-6-36"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-6-37" name="__codelineno-6-37"></a><span class="w">    </span><span class="nx">dns</span><span class="p">.</span><span class="nx">Questions</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">append</span><span class="p">(</span><span class="nx">dns</span><span class="p">.</span><span class="nx">Questions</span><span class="p">,</span>
+<a id="__codelineno-6-38" name="__codelineno-6-38"></a><span class="w">        </span><span class="nx">layers</span><span class="p">.</span><span class="nx">DNSQuestion</span><span class="p">{</span>
+<a id="__codelineno-6-39" name="__codelineno-6-39"></a><span class="w">            </span><span class="nx">Name</span><span class="p">:</span><span class="w">  </span><span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">domain</span><span class="p">),</span>
+<a id="__codelineno-6-40" name="__codelineno-6-40"></a><span class="w">            </span><span class="nx">Type</span><span class="p">:</span><span class="w">  </span><span class="nx">dnsType</span><span class="p">,</span>
+<a id="__codelineno-6-41" name="__codelineno-6-41"></a><span class="w">            </span><span class="nx">Class</span><span class="p">:</span><span class="w"> </span><span class="nx">layers</span><span class="p">.</span><span class="nx">DNSClassIN</span><span class="p">,</span>
+<a id="__codelineno-6-42" name="__codelineno-6-42"></a><span class="w">        </span><span class="p">})</span>
+<a id="__codelineno-6-43" name="__codelineno-6-43"></a><span class="w">    </span><span class="c1">// Our UDP header</span>
+<a id="__codelineno-6-44" name="__codelineno-6-44"></a><span class="w">    </span><span class="nx">_</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">udp</span><span class="p">.</span><span class="nx">SetNetworkLayerForChecksum</span><span class="p">(</span><span class="nx">ip</span><span class="p">)</span>
+<a id="__codelineno-6-45" name="__codelineno-6-45"></a><span class="w">    </span><span class="nx">buf</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">gopacket</span><span class="p">.</span><span class="nx">NewSerializeBuffer</span><span class="p">()</span>
+<a id="__codelineno-6-46" name="__codelineno-6-46"></a><span class="w">    </span><span class="c1">// 把所有层序列化到缓冲区中</span>
+<a id="__codelineno-6-47" name="__codelineno-6-47"></a><span class="w">    </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">gopacket</span><span class="p">.</span><span class="nx">SerializeLayers</span><span class="p">(</span>
+<a id="__codelineno-6-48" name="__codelineno-6-48"></a><span class="w">        </span><span class="nx">buf</span><span class="p">,</span>
+<a id="__codelineno-6-49" name="__codelineno-6-49"></a><span class="w">        </span><span class="nx">gopacket</span><span class="p">.</span><span class="nx">SerializeOptions</span><span class="p">{</span>
+<a id="__codelineno-6-50" name="__codelineno-6-50"></a><span class="w">            </span><span class="nx">ComputeChecksums</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="c1">// automatically compute checksums</span>
+<a id="__codelineno-6-51" name="__codelineno-6-51"></a><span class="w">            </span><span class="nx">FixLengths</span><span class="p">:</span><span class="w">       </span><span class="kc">true</span><span class="p">,</span>
+<a id="__codelineno-6-52" name="__codelineno-6-52"></a><span class="w">        </span><span class="p">},</span>
+<a id="__codelineno-6-53" name="__codelineno-6-53"></a><span class="w">        </span><span class="nx">eth</span><span class="p">,</span><span class="w"> </span><span class="nx">ip</span><span class="p">,</span><span class="w"> </span><span class="nx">udp</span><span class="p">,</span><span class="w"> </span><span class="nx">dns</span><span class="p">,</span>
+<a id="__codelineno-6-54" name="__codelineno-6-54"></a><span class="w">    </span><span class="p">)</span>
+<a id="__codelineno-6-55" name="__codelineno-6-55"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-6-56" name="__codelineno-6-56"></a><span class="w">        </span><span class="nx">gologger</span><span class="p">.</span><span class="nx">Warningf</span><span class="p">(</span><span class="s">"SerializeLayers faild:%s\n"</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="p">.</span><span class="nx">Error</span><span class="p">())</span>
+<a id="__codelineno-6-57" name="__codelineno-6-57"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-6-58" name="__codelineno-6-58"></a><span class="w">    </span><span class="c1">// 发送</span>
+<a id="__codelineno-6-59" name="__codelineno-6-59"></a><span class="w">    </span><span class="nx">err</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">handle</span><span class="p">.</span><span class="nx">WritePacketData</span><span class="p">(</span><span class="nx">buf</span><span class="p">.</span><span class="nx">Bytes</span><span class="p">())</span>
+<a id="__codelineno-6-60" name="__codelineno-6-60"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-6-61" name="__codelineno-6-61"></a><span class="w">        </span><span class="nx">gologger</span><span class="p">.</span><span class="nx">Warningf</span><span class="p">(</span><span class="s">"WritePacketDate error:%s\n"</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="p">.</span><span class="nx">Error</span><span class="p">())</span>
+<a id="__codelineno-6-62" name="__codelineno-6-62"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-6-63" name="__codelineno-6-63"></a><span class="p">}</span>
+</code></pre></div></td></tr></tbody></table></div>
+<p>看一下接收操作：</p>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-1">  1</a></span>
+<span class="normal"><a href="#__codelineno-7-2">  2</a></span>
+<span class="normal"><a href="#__codelineno-7-3">  3</a></span>
+<span class="normal"><a href="#__codelineno-7-4">  4</a></span>
+<span class="normal"><a href="#__codelineno-7-5">  5</a></span>
+<span class="normal"><a href="#__codelineno-7-6">  6</a></span>
+<span class="normal"><a href="#__codelineno-7-7">  7</a></span>
+<span class="normal"><a href="#__codelineno-7-8">  8</a></span>
+<span class="normal"><a href="#__codelineno-7-9">  9</a></span>
+<span class="normal"><a href="#__codelineno-7-10"> 10</a></span>
+<span class="normal"><a href="#__codelineno-7-11"> 11</a></span>
+<span class="normal"><a href="#__codelineno-7-12"> 12</a></span>
+<span class="normal"><a href="#__codelineno-7-13"> 13</a></span>
+<span class="normal"><a href="#__codelineno-7-14"> 14</a></span>
+<span class="normal"><a href="#__codelineno-7-15"> 15</a></span>
+<span class="normal"><a href="#__codelineno-7-16"> 16</a></span>
+<span class="normal"><a href="#__codelineno-7-17"> 17</a></span>
+<span class="normal"><a href="#__codelineno-7-18"> 18</a></span>
+<span class="normal"><a href="#__codelineno-7-19"> 19</a></span>
+<span class="normal"><a href="#__codelineno-7-20"> 20</a></span>
+<span class="normal"><a href="#__codelineno-7-21"> 21</a></span>
+<span class="normal"><a href="#__codelineno-7-22"> 22</a></span>
+<span class="normal"><a href="#__codelineno-7-23"> 23</a></span>
+<span class="normal"><a href="#__codelineno-7-24"> 24</a></span>
+<span class="normal"><a href="#__codelineno-7-25"> 25</a></span>
+<span class="normal"><a href="#__codelineno-7-26"> 26</a></span>
+<span class="normal"><a href="#__codelineno-7-27"> 27</a></span>
+<span class="normal"><a href="#__codelineno-7-28"> 28</a></span>
+<span class="normal"><a href="#__codelineno-7-29"> 29</a></span>
+<span class="normal"><a href="#__codelineno-7-30"> 30</a></span>
+<span class="normal"><a href="#__codelineno-7-31"> 31</a></span>
+<span class="normal"><a href="#__codelineno-7-32"> 32</a></span>
+<span class="normal"><a href="#__codelineno-7-33"> 33</a></span>
+<span class="normal"><a href="#__codelineno-7-34"> 34</a></span>
+<span class="normal"><a href="#__codelineno-7-35"> 35</a></span>
+<span class="normal"><a href="#__codelineno-7-36"> 36</a></span>
+<span class="normal"><a href="#__codelineno-7-37"> 37</a></span>
+<span class="normal"><a href="#__codelineno-7-38"> 38</a></span>
+<span class="normal"><a href="#__codelineno-7-39"> 39</a></span>
+<span class="normal"><a href="#__codelineno-7-40"> 40</a></span>
+<span class="normal"><a href="#__codelineno-7-41"> 41</a></span>
+<span class="normal"><a href="#__codelineno-7-42"> 42</a></span>
+<span class="normal"><a href="#__codelineno-7-43"> 43</a></span>
+<span class="normal"><a href="#__codelineno-7-44"> 44</a></span>
+<span class="normal"><a href="#__codelineno-7-45"> 45</a></span>
+<span class="normal"><a href="#__codelineno-7-46"> 46</a></span>
+<span class="normal"><a href="#__codelineno-7-47"> 47</a></span>
+<span class="normal"><a href="#__codelineno-7-48"> 48</a></span>
+<span class="normal"><a href="#__codelineno-7-49"> 49</a></span>
+<span class="normal"><a href="#__codelineno-7-50"> 50</a></span>
+<span class="normal"><a href="#__codelineno-7-51"> 51</a></span>
+<span class="normal"><a href="#__codelineno-7-52"> 52</a></span>
+<span class="normal"><a href="#__codelineno-7-53"> 53</a></span>
+<span class="normal"><a href="#__codelineno-7-54"> 54</a></span>
+<span class="normal"><a href="#__codelineno-7-55"> 55</a></span>
+<span class="normal"><a href="#__codelineno-7-56"> 56</a></span>
+<span class="normal"><a href="#__codelineno-7-57"> 57</a></span>
+<span class="normal"><a href="#__codelineno-7-58"> 58</a></span>
+<span class="normal"><a href="#__codelineno-7-59"> 59</a></span>
+<span class="normal"><a href="#__codelineno-7-60"> 60</a></span>
+<span class="normal"><a href="#__codelineno-7-61"> 61</a></span>
+<span class="normal"><a href="#__codelineno-7-62"> 62</a></span>
+<span class="normal"><a href="#__codelineno-7-63"> 63</a></span>
+<span class="normal"><a href="#__codelineno-7-64"> 64</a></span>
+<span class="normal"><a href="#__codelineno-7-65"> 65</a></span>
+<span class="normal"><a href="#__codelineno-7-66"> 66</a></span>
+<span class="normal"><a href="#__codelineno-7-67"> 67</a></span>
+<span class="normal"><a href="#__codelineno-7-68"> 68</a></span>
+<span class="normal"><a href="#__codelineno-7-69"> 69</a></span>
+<span class="normal"><a href="#__codelineno-7-70"> 70</a></span>
+<span class="normal"><a href="#__codelineno-7-71"> 71</a></span>
+<span class="normal"><a href="#__codelineno-7-72"> 72</a></span>
+<span class="normal"><a href="#__codelineno-7-73"> 73</a></span>
+<span class="normal"><a href="#__codelineno-7-74"> 74</a></span>
+<span class="normal"><a href="#__codelineno-7-75"> 75</a></span>
+<span class="normal"><a href="#__codelineno-7-76"> 76</a></span>
+<span class="normal"><a href="#__codelineno-7-77"> 77</a></span>
+<span class="normal"><a href="#__codelineno-7-78"> 78</a></span>
+<span class="normal"><a href="#__codelineno-7-79"> 79</a></span>
+<span class="normal"><a href="#__codelineno-7-80"> 80</a></span>
+<span class="normal"><a href="#__codelineno-7-81"> 81</a></span>
+<span class="normal"><a href="#__codelineno-7-82"> 82</a></span>
+<span class="normal"><a href="#__codelineno-7-83"> 83</a></span>
+<span class="normal"><a href="#__codelineno-7-84"> 84</a></span>
+<span class="normal"><a href="#__codelineno-7-85"> 85</a></span>
+<span class="normal"><a href="#__codelineno-7-86"> 86</a></span>
+<span class="normal"><a href="#__codelineno-7-87"> 87</a></span>
+<span class="normal"><a href="#__codelineno-7-88"> 88</a></span>
+<span class="normal"><a href="#__codelineno-7-89"> 89</a></span>
+<span class="normal"><a href="#__codelineno-7-90"> 90</a></span>
+<span class="normal"><a href="#__codelineno-7-91"> 91</a></span>
+<span class="normal"><a href="#__codelineno-7-92"> 92</a></span>
+<span class="normal"><a href="#__codelineno-7-93"> 93</a></span>
+<span class="normal"><a href="#__codelineno-7-94"> 94</a></span>
+<span class="normal"><a href="#__codelineno-7-95"> 95</a></span>
+<span class="normal"><a href="#__codelineno-7-96"> 96</a></span>
+<span class="normal"><a href="#__codelineno-7-97"> 97</a></span>
+<span class="normal"><a href="#__codelineno-7-98"> 98</a></span>
+<span class="normal"><a href="#__codelineno-7-99"> 99</a></span>
+<span class="normal"><a href="#__codelineno-7-100">100</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1"></a><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">r</span><span class="w"> </span><span class="o">*</span><span class="nx">runner</span><span class="p">)</span><span class="w"> </span><span class="nx">recvChanel</span><span class="p">(</span><span class="nx">ctx</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span><span class="w"> </span><span class="kt">error</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2"></a><span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="p">(</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3"></a><span class="w">        </span><span class="nx">snapshotLen</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">65536</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4"></a><span class="w">        </span><span class="nx">timeout</span><span class="w">     </span><span class="p">=</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5"></a><span class="w">        </span><span class="nx">err</span><span class="w">         </span><span class="kt">error</span>
+<a id="__codelineno-7-6" name="__codelineno-7-6"></a><span class="w">    </span><span class="p">)</span>
+<a id="__codelineno-7-7" name="__codelineno-7-7"></a><span class="w">    </span><span class="c1">// 创建一个 pcap 句柄</span>
+<a id="__codelineno-7-8" name="__codelineno-7-8"></a><span class="w">    </span><span class="nx">inactive</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">pcap</span><span class="p">.</span><span class="nx">NewInactiveHandle</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">EtherInfo</span><span class="p">.</span><span class="nx">Device</span><span class="p">)</span>
+<a id="__codelineno-7-9" name="__codelineno-7-9"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-10" name="__codelineno-7-10"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nx">err</span>
+<a id="__codelineno-7-11" name="__codelineno-7-11"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-7-12" name="__codelineno-7-12"></a><span class="w">    </span><span class="nx">err</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">inactive</span><span class="p">.</span><span class="nx">SetSnapLen</span><span class="p">(</span><span class="nx">snapshotLen</span><span class="p">)</span>
+<a id="__codelineno-7-13" name="__codelineno-7-13"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-14" name="__codelineno-7-14"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nx">err</span>
+<a id="__codelineno-7-15" name="__codelineno-7-15"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-7-16" name="__codelineno-7-16"></a><span class="w">    </span><span class="k">defer</span><span class="w"> </span><span class="nx">inactive</span><span class="p">.</span><span class="nx">CleanUp</span><span class="p">()</span>
+<a id="__codelineno-7-17" name="__codelineno-7-17"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">inactive</span><span class="p">.</span><span class="nx">SetTimeout</span><span class="p">(</span><span class="nx">timeout</span><span class="p">);</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-18" name="__codelineno-7-18"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nx">err</span>
+<a id="__codelineno-7-19" name="__codelineno-7-19"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-7-20" name="__codelineno-7-20"></a><span class="w">    </span><span class="nx">err</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">inactive</span><span class="p">.</span><span class="nx">SetImmediateMode</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span>
+<a id="__codelineno-7-21" name="__codelineno-7-21"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-22" name="__codelineno-7-22"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nx">err</span>
+<a id="__codelineno-7-23" name="__codelineno-7-23"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-7-24" name="__codelineno-7-24"></a><span class="w">    </span><span class="c1">// 启动开始监听抓包</span>
+<a id="__codelineno-7-25" name="__codelineno-7-25"></a><span class="w">    </span><span class="nx">handle</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">inactive</span><span class="p">.</span><span class="nx">Activate</span><span class="p">()</span>
+<a id="__codelineno-7-26" name="__codelineno-7-26"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-27" name="__codelineno-7-27"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nx">err</span>
+<a id="__codelineno-7-28" name="__codelineno-7-28"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-7-29" name="__codelineno-7-29"></a><span class="w">    </span><span class="k">defer</span><span class="w"> </span><span class="nx">handle</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+<a id="__codelineno-7-30" name="__codelineno-7-30"></a><span class="w">    </span><span class="c1">// 设置过滤器</span>
+<a id="__codelineno-7-31" name="__codelineno-7-31"></a><span class="w">    </span><span class="nx">err</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">handle</span><span class="p">.</span><span class="nx">SetBPFFilter</span><span class="p">(</span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Sprintf</span><span class="p">(</span><span class="s">"udp and src port 53 and dst port %d"</span><span class="p">,</span><span class="w"> </span><span class="nx">r</span><span class="p">.</span><span class="nx">freeport</span><span class="p">))</span>
+<a id="__codelineno-7-32" name="__codelineno-7-32"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-33" name="__codelineno-7-33"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nx">errors</span><span class="p">.</span><span class="nx">New</span><span class="p">(</span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Sprintf</span><span class="p">(</span><span class="s">"SetBPFFilter Faild:%s"</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="p">.</span><span class="nx">Error</span><span class="p">()))</span>
+<a id="__codelineno-7-34" name="__codelineno-7-34"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-7-35" name="__codelineno-7-35"></a>
+<a id="__codelineno-7-36" name="__codelineno-7-36"></a><span class="w">    </span><span class="c1">// Listening</span>
+<a id="__codelineno-7-37" name="__codelineno-7-37"></a>
+<a id="__codelineno-7-38" name="__codelineno-7-38"></a><span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">udp</span><span class="w"> </span><span class="nx">layers</span><span class="p">.</span><span class="nx">UDP</span>
+<a id="__codelineno-7-39" name="__codelineno-7-39"></a><span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">dns</span><span class="w"> </span><span class="nx">layers</span><span class="p">.</span><span class="nx">DNS</span>
+<a id="__codelineno-7-40" name="__codelineno-7-40"></a><span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">eth</span><span class="w"> </span><span class="nx">layers</span><span class="p">.</span><span class="nx">Ethernet</span>
+<a id="__codelineno-7-41" name="__codelineno-7-41"></a><span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">ipv4</span><span class="w"> </span><span class="nx">layers</span><span class="p">.</span><span class="nx">IPv4</span>
+<a id="__codelineno-7-42" name="__codelineno-7-42"></a><span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">ipv6</span><span class="w"> </span><span class="nx">layers</span><span class="p">.</span><span class="nx">IPv6</span>
+<a id="__codelineno-7-43" name="__codelineno-7-43"></a><span class="w">    </span><span class="c1">// 解码器</span>
+<a id="__codelineno-7-44" name="__codelineno-7-44"></a><span class="w">    </span><span class="nx">parser</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">gopacket</span><span class="p">.</span><span class="nx">NewDecodingLayerParser</span><span class="p">(</span>
+<a id="__codelineno-7-45" name="__codelineno-7-45"></a><span class="w">        </span><span class="nx">layers</span><span class="p">.</span><span class="nx">LayerTypeEthernet</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">eth</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">ipv4</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">ipv6</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">udp</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">dns</span><span class="p">)</span>
+<a id="__codelineno-7-46" name="__codelineno-7-46"></a>
+<a id="__codelineno-7-47" name="__codelineno-7-47"></a><span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">data</span><span class="w"> </span><span class="p">[]</span><span class="kt">byte</span>
+<a id="__codelineno-7-48" name="__codelineno-7-48"></a><span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">decoded</span><span class="w"> </span><span class="p">[]</span><span class="nx">gopacket</span><span class="p">.</span><span class="nx">LayerType</span>
+<a id="__codelineno-7-49" name="__codelineno-7-49"></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-50" name="__codelineno-7-50"></a><span class="w">        </span><span class="k">select</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-51" name="__codelineno-7-51"></a><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="o">&lt;-</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">Done</span><span class="p">():</span>
+<a id="__codelineno-7-52" name="__codelineno-7-52"></a><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="kc">nil</span>
+<a id="__codelineno-7-53" name="__codelineno-7-53"></a><span class="w">        </span><span class="k">default</span><span class="p">:</span>
+<a id="__codelineno-7-54" name="__codelineno-7-54"></a><span class="w">            </span><span class="nx">data</span><span class="p">,</span><span class="w"> </span><span class="nx">_</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">handle</span><span class="p">.</span><span class="nx">ReadPacketData</span><span class="p">()</span>
+<a id="__codelineno-7-55" name="__codelineno-7-55"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-56" name="__codelineno-7-56"></a><span class="w">                </span><span class="k">continue</span>
+<a id="__codelineno-7-57" name="__codelineno-7-57"></a><span class="w">            </span><span class="p">}</span>
+<a id="__codelineno-7-58" name="__codelineno-7-58"></a><span class="w">            </span><span class="nx">err</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">parser</span><span class="p">.</span><span class="nx">DecodeLayers</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">decoded</span><span class="p">)</span>
+<a id="__codelineno-7-59" name="__codelineno-7-59"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-60" name="__codelineno-7-60"></a><span class="w">                </span><span class="k">continue</span>
+<a id="__codelineno-7-61" name="__codelineno-7-61"></a><span class="w">            </span><span class="p">}</span>
+<a id="__codelineno-7-62" name="__codelineno-7-62"></a><span class="w">            </span><span class="c1">// 是否为应答报文</span>
+<a id="__codelineno-7-63" name="__codelineno-7-63"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">!</span><span class="nx">dns</span><span class="p">.</span><span class="nx">QR</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-64" name="__codelineno-7-64"></a><span class="w">                </span><span class="k">continue</span>
+<a id="__codelineno-7-65" name="__codelineno-7-65"></a><span class="w">            </span><span class="p">}</span>
+<a id="__codelineno-7-66" name="__codelineno-7-66"></a><span class="w">            </span><span class="c1">// 是否为 Ksubdomain 发送的数据包</span>
+<a id="__codelineno-7-67" name="__codelineno-7-67"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="nx">dns</span><span class="p">.</span><span class="nx">ID</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nx">r</span><span class="p">.</span><span class="nx">dnsid</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-68" name="__codelineno-7-68"></a><span class="w">                </span><span class="k">continue</span>
+<a id="__codelineno-7-69" name="__codelineno-7-69"></a><span class="w">            </span><span class="p">}</span>
+<a id="__codelineno-7-70" name="__codelineno-7-70"></a><span class="w">            </span><span class="c1">// DNS 请求成功计数器 +1</span>
+<a id="__codelineno-7-71" name="__codelineno-7-71"></a><span class="w">            </span><span class="nx">atomic</span><span class="p">.</span><span class="nx">AddUint64</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">r</span><span class="p">.</span><span class="nx">recvIndex</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-7-72" name="__codelineno-7-72"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="nx">dns</span><span class="p">.</span><span class="nx">Questions</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-73" name="__codelineno-7-73"></a><span class="w">                </span><span class="k">continue</span>
+<a id="__codelineno-7-74" name="__codelineno-7-74"></a><span class="w">            </span><span class="p">}</span>
+<a id="__codelineno-7-75" name="__codelineno-7-75"></a><span class="w">            </span><span class="c1">// 获取可解析的子域名</span>
+<a id="__codelineno-7-76" name="__codelineno-7-76"></a><span class="w">            </span><span class="nx">subdomain</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nb">string</span><span class="p">(</span><span class="nx">dns</span><span class="p">.</span><span class="nx">Questions</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">Name</span><span class="p">)</span>
+<a id="__codelineno-7-77" name="__codelineno-7-77"></a><span class="w">            </span><span class="c1">// 从 Map 中删除, 这里就证明了 DNS 请求成功, 但不能确定是否可解析</span>
+<a id="__codelineno-7-78" name="__codelineno-7-78"></a><span class="w">            </span><span class="nx">r</span><span class="p">.</span><span class="nx">hm</span><span class="p">.</span><span class="nx">Del</span><span class="p">(</span><span class="nx">subdomain</span><span class="p">)</span>
+<a id="__codelineno-7-79" name="__codelineno-7-79"></a><span class="w">            </span><span class="c1">// 看是否有答案返回, 有说明是可解析的, 也就是一个存在的域名</span>
+<a id="__codelineno-7-80" name="__codelineno-7-80"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="nx">dns</span><span class="p">.</span><span class="nx">ANCount</span><span class="w"> </span><span class="p">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-81" name="__codelineno-7-81"></a><span class="w">                </span><span class="c1">// 成功的计数器 +1</span>
+<a id="__codelineno-7-82" name="__codelineno-7-82"></a><span class="w">                </span><span class="nx">atomic</span><span class="p">.</span><span class="nx">AddUint64</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">r</span><span class="p">.</span><span class="nx">successIndex</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-7-83" name="__codelineno-7-83"></a><span class="w">                </span><span class="kd">var</span><span class="w"> </span><span class="nx">answers</span><span class="w"> </span><span class="p">[]</span><span class="kt">string</span>
+<a id="__codelineno-7-84" name="__codelineno-7-84"></a><span class="w">                </span><span class="k">for</span><span class="w"> </span><span class="nx">_</span><span class="p">,</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="nx">dns</span><span class="p">.</span><span class="nx">Answers</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-85" name="__codelineno-7-85"></a><span class="w">                    </span><span class="c1">// 获取答案记录值, A,AAA...</span>
+<a id="__codelineno-7-86" name="__codelineno-7-86"></a><span class="w">                    </span><span class="nx">answer</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">dnsRecord2String</span><span class="p">(</span><span class="nx">v</span><span class="p">)</span>
+<a id="__codelineno-7-87" name="__codelineno-7-87"></a><span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-88" name="__codelineno-7-88"></a><span class="w">                        </span><span class="k">continue</span>
+<a id="__codelineno-7-89" name="__codelineno-7-89"></a><span class="w">                    </span><span class="p">}</span>
+<a id="__codelineno-7-90" name="__codelineno-7-90"></a><span class="w">                    </span><span class="nx">answers</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">append</span><span class="p">(</span><span class="nx">answers</span><span class="p">,</span><span class="w"> </span><span class="nx">answer</span><span class="p">)</span>
+<a id="__codelineno-7-91" name="__codelineno-7-91"></a><span class="w">                </span><span class="p">}</span>
+<a id="__codelineno-7-92" name="__codelineno-7-92"></a><span class="w">                </span><span class="c1">// 放入结果通道</span>
+<a id="__codelineno-7-93" name="__codelineno-7-93"></a><span class="w">                </span><span class="nx">r</span><span class="p">.</span><span class="nx">recver</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nx">result</span><span class="p">.</span><span class="nx">Result</span><span class="p">{</span>
+<a id="__codelineno-7-94" name="__codelineno-7-94"></a><span class="w">                    </span><span class="nx">Subdomain</span><span class="p">:</span><span class="w"> </span><span class="nx">subdomain</span><span class="p">,</span>
+<a id="__codelineno-7-95" name="__codelineno-7-95"></a><span class="w">                    </span><span class="nx">Answers</span><span class="p">:</span><span class="w">   </span><span class="nx">answers</span><span class="p">,</span>
+<a id="__codelineno-7-96" name="__codelineno-7-96"></a><span class="w">                </span><span class="p">}</span>
+<a id="__codelineno-7-97" name="__codelineno-7-97"></a><span class="w">            </span><span class="p">}</span>
+<a id="__codelineno-7-98" name="__codelineno-7-98"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-7-99" name="__codelineno-7-99"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-7-100" name="__codelineno-7-100"></a><span class="p">}</span>
+</code></pre></div></td></tr></tbody></table></div>
+<p>这里抓下包，这个 ID 就是 "无状态" 模式下，确定是 Ksubdomain 的方法：</p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../assets/202309162227404.png" data-desc-position="bottom"><img alt="image-20230916222710286" src="../assets/202309162227404.png"></a></p>
+<p>再看一下重试机制：</p>
+<p>当目标域名发送完成后就开启重试协程：</p>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-8-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-8-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-8-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-8-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-8-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-8-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-8-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-8-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-8-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-8-10">10</a></span>
+<span class="normal"><a href="#__codelineno-8-11">11</a></span>
+<span class="normal"><a href="#__codelineno-8-12">12</a></span>
+<span class="normal"><a href="#__codelineno-8-13">13</a></span>
+<span class="normal"><a href="#__codelineno-8-14">14</a></span>
+<span class="normal"><a href="#__codelineno-8-15">15</a></span>
+<span class="normal"><a href="#__codelineno-8-16">16</a></span>
+<span class="normal"><a href="#__codelineno-8-17">17</a></span>
+<span class="normal"><a href="#__codelineno-8-18">18</a></span>
+<span class="normal"><a href="#__codelineno-8-19">19</a></span>
+<span class="normal"><a href="#__codelineno-8-20">20</a></span>
+<span class="normal"><a href="#__codelineno-8-21">21</a></span>
+<span class="normal"><a href="#__codelineno-8-22">22</a></span>
+<span class="normal"><a href="#__codelineno-8-23">23</a></span>
+<span class="normal"><a href="#__codelineno-8-24">24</a></span>
+<span class="normal"><a href="#__codelineno-8-25">25</a></span>
+<span class="normal"><a href="#__codelineno-8-26">26</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1"></a><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">r</span><span class="w"> </span><span class="o">*</span><span class="nx">runner</span><span class="p">)</span><span class="w"> </span><span class="nx">retry</span><span class="p">(</span><span class="nx">ctx</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2"></a><span class="w">    </span><span class="nx">t</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">time</span><span class="p">.</span><span class="nx">NewTicker</span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3"></a><span class="w">    </span><span class="k">defer</span><span class="w"> </span><span class="nx">t</span><span class="p">.</span><span class="nx">Stop</span><span class="p">()</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4"></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-8-5" name="__codelineno-8-5"></a><span class="w">        </span><span class="k">select</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-8-6" name="__codelineno-8-6"></a><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="o">&lt;-</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">Done</span><span class="p">():</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7"></a><span class="w">            </span><span class="k">return</span>
+<a id="__codelineno-8-8" name="__codelineno-8-8"></a><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="o">&lt;-</span><span class="nx">t</span><span class="p">.</span><span class="nx">C</span><span class="p">:</span>
+<a id="__codelineno-8-9" name="__codelineno-8-9"></a><span class="w">            </span><span class="nx">now</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">time</span><span class="p">.</span><span class="nx">Now</span><span class="p">()</span>
+<a id="__codelineno-8-10" name="__codelineno-8-10"></a><span class="w">            </span><span class="nx">r</span><span class="p">.</span><span class="nx">hm</span><span class="p">.</span><span class="nx">Scan</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">key</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="nx">statusdb</span><span class="p">.</span><span class="nx">Item</span><span class="p">)</span><span class="w"> </span><span class="kt">error</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-8-11" name="__codelineno-8-11"></a><span class="w">                </span><span class="c1">// 当前重试次数 &gt; 0 且 当前重试次数 &gt; 最大重试次数</span>
+<a id="__codelineno-8-12" name="__codelineno-8-12"></a><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="nx">r</span><span class="p">.</span><span class="nx">maxRetry</span><span class="w"> </span><span class="p">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nx">v</span><span class="p">.</span><span class="nx">Retry</span><span class="w"> </span><span class="p">&gt;</span><span class="w"> </span><span class="nx">r</span><span class="p">.</span><span class="nx">maxRetry</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-8-13" name="__codelineno-8-13"></a><span class="w">                    </span><span class="nx">r</span><span class="p">.</span><span class="nx">hm</span><span class="p">.</span><span class="nx">Del</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span>
+<a id="__codelineno-8-14" name="__codelineno-8-14"></a><span class="w">                    </span><span class="nx">atomic</span><span class="p">.</span><span class="nx">AddUint64</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">r</span><span class="p">.</span><span class="nx">faildIndex</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-8-15" name="__codelineno-8-15"></a><span class="w">                    </span><span class="k">return</span><span class="w"> </span><span class="kc">nil</span>
+<a id="__codelineno-8-16" name="__codelineno-8-16"></a><span class="w">                </span><span class="p">}</span>
+<a id="__codelineno-8-17" name="__codelineno-8-17"></a><span class="w">                </span><span class="c1">// 数据包发送的时间和当前时间是否超过指定的超时时间</span>
+<a id="__codelineno-8-18" name="__codelineno-8-18"></a><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="nb">int64</span><span class="p">(</span><span class="nx">now</span><span class="p">.</span><span class="nx">Sub</span><span class="p">(</span><span class="nx">v</span><span class="p">.</span><span class="nx">Time</span><span class="p">))</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="nx">r</span><span class="p">.</span><span class="nx">timeout</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-8-19" name="__codelineno-8-19"></a><span class="w">                    </span><span class="c1">// 重新发送</span>
+<a id="__codelineno-8-20" name="__codelineno-8-20"></a><span class="w">                    </span><span class="nx">r</span><span class="p">.</span><span class="nx">sender</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nx">key</span>
+<a id="__codelineno-8-21" name="__codelineno-8-21"></a><span class="w">                </span><span class="p">}</span>
+<a id="__codelineno-8-22" name="__codelineno-8-22"></a><span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="kc">nil</span>
+<a id="__codelineno-8-23" name="__codelineno-8-23"></a><span class="w">            </span><span class="p">})</span>
+<a id="__codelineno-8-24" name="__codelineno-8-24"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-8-25" name="__codelineno-8-25"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-8-26" name="__codelineno-8-26"></a><span class="p">}</span>
+</code></pre></div></td></tr></tbody></table></div>
+<p>这个 Scan 就是去遍历每一个键值对，然后去进行重试方面的测试：</p>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-9-1">1</a></span>
+<span class="normal"><a href="#__codelineno-9-2">2</a></span>
+<span class="normal"><a href="#__codelineno-9-3">3</a></span>
+<span class="normal"><a href="#__codelineno-9-4">4</a></span>
+<span class="normal"><a href="#__codelineno-9-5">5</a></span>
+<span class="normal"><a href="#__codelineno-9-6">6</a></span>
+<span class="normal"><a href="#__codelineno-9-7">7</a></span>
+<span class="normal"><a href="#__codelineno-9-8">8</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1"></a><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">r</span><span class="w"> </span><span class="o">*</span><span class="nx">StatusDb</span><span class="p">)</span><span class="w"> </span><span class="nx">Scan</span><span class="p">(</span><span class="nx">f</span><span class="w"> </span><span class="kd">func</span><span class="p">(</span><span class="nx">key</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">value</span><span class="w"> </span><span class="nx">Item</span><span class="p">)</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2"></a><span class="w">    </span><span class="nx">r</span><span class="p">.</span><span class="nx">Items</span><span class="p">.</span><span class="nx">Range</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span><span class="w"> </span><span class="nx">value</span><span class="w"> </span><span class="kd">interface</span><span class="p">{})</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3"></a><span class="w">        </span><span class="nx">k</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">key</span><span class="p">.(</span><span class="kt">string</span><span class="p">)</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4"></a><span class="w">        </span><span class="nx">item</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">value</span><span class="p">.(</span><span class="nx">Item</span><span class="p">)</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5"></a><span class="w">        </span><span class="nx">f</span><span class="p">(</span><span class="nx">k</span><span class="p">,</span><span class="w"> </span><span class="nx">item</span><span class="p">)</span>
+<a id="__codelineno-9-6" name="__codelineno-9-6"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span>
+<a id="__codelineno-9-7" name="__codelineno-9-7"></a><span class="w">    </span><span class="p">})</span>
+<a id="__codelineno-9-8" name="__codelineno-9-8"></a><span class="p">}</span>
+</code></pre></div></td></tr></tbody></table></div>
+<p>然后就是 <code>defer cancel()</code>，关闭各种管道啥的</p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="assets/202309162246765.png" data-desc-position="bottom"><img src="assets/202309162246765.png" alt="image-20230916224651715" style="zoom:67%;"></a></p>
+<h2 id="_12">学习总结</h2>
+<p>大概看了一遍代码后学习到了不少东西：</p>
+<ul>
+<li><code>strings.Builder</code> 构建字符串</li>
+<li><code>Printf</code> 中使用 <code>\r</code> 实现类动态更新</li>
+<li><code>//go:embed file</code> 内嵌文件到变量中</li>
+<li><code>sync.Map</code> 的使用</li>
+<li><code>atomic.AddUint64(&amp;r.recvIndex, 1)</code> 并发安全的计数器操作</li>
+<li>多个协程之间使用管道进行数据传递且通过 <code>死循环 + 多路复用 + 上下文 + time.NewTicker</code> 控制协程退出</li>
+</ul>
+<h2 id="_13">参考链接</h2>
+<ul>
+<li><a href="https://paper.seebug.org/1325/">ksubdomain 无状态域名爆破工具</a></li>
+</ul>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden="">
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "navigation.top", "toc.integrate", "content.code.copy", "content.code.annotate"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  
+<script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(()=>{ lightbox.reload(); });
+</script></body></html>

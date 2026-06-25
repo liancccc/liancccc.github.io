@@ -1,0 +1,575 @@
+spider:
+  authentication:
+    mpweixin_status: "weixin.json"
+    nvd: ""
+    github_token: ""
+    attackerkb: ""
+  rss:
+    - url: https://www.exploit-db.com/rss.xml
+      use_browser: false
+    - url: https://www.zerodayinitiative.com/blog/?format=rss
+      use_browser: false
+    - url: https://research.eye.security/feed/
+      use_browser: false
+    - url: https://labs.watchtowr.com/rss/
+      use_browser: false
+    - url: https://www.leavesongs.com/rss.php
+      use_browser: false     
+    - url: https://www.cve.news/rss/
+      use_browser: false  
+    - url: https://mrxn.net/rss.php
+      use_browser: true  
+  blog:
+    - url: https://horizon3.ai/category/attack-research/attack-blogs/
+      use_browser: false
+      xpath:
+        article: "//div[@id='feed1']/div[contains(@class, 'brxe-fvkcoy')]"
+        title: ".//h4[contains(@class, 'brxe-heading')]/a/text()"
+        link: ".//h4[contains(@class, 'brxe-heading')]/a/@href"
+        desc: ".//div[contains(@class, 'brxe-giogpl')]/text()"
+    - url: https://labs.watchtowr.com/
+      use_browser: false
+      xpath:
+        article: "//div[contains(@class, 'gh-feed')]/article[contains(@class, 'gh-card')]"
+        title: ".//h2[contains(@class, 'gh-card-title')]/text()"
+        link: ".//a[contains(@class, 'gh-card-link')]/@href"
+        desc: ".//div[contains(@class, 'gh-card-excerpt')]/text()"
+    - url: https://projectdiscovery.io/blog/category/vulnerability-research/1
+      use_browser: false
+      xpath:
+        article: "//div[contains(@class, 'grid')]/div[contains(@style, 'opacity')]"
+        title: ".//h3[contains(@class, 'text-xl')]/text()"
+        link: ".//a[contains(@class, 'group')]/@href"
+        desc: ".//p[contains(@class, 'line-clamp-3')]/text()"
+    - url: https://projectzero.google/archive.html
+      use_browser: false
+      xpath:
+        article: "//section[contains(@class, 'post-content')]/div"
+        title: ".//a[contains(@class, 'archive-link')]/text()"
+        link: ".//a[contains(@class, 'archive-link')]/@href"
+        desc: ".//p[contains(@class, 'post-date')]/text()"
+    - url: https://www.aisi.gov.uk/blog
+      use_browser: false
+      xpath:
+        article: "//div[@fs-list-element='list']/div[contains(@class, 'w-dyn-item')]"
+        title: ".//h3[@fs-list-field='title']/text()"
+        link: ".//a[contains(@href, '/blog/')][.//h3[@fs-list-field='title']]/@href"
+        desc: ".//p[@fs-list-field='description']/text()"
+    - url: https://xbow.com/blog
+      use_browser: false
+      xpath:
+        article: "//div[contains(@class, 'ds_blog_cards_list')]/div[contains(@class, 'ds_blog_card')]"
+        title: ".//h3[@fs-list-field='name']/text()"
+        link: ".//a[contains(@class, 'link_cover')]/@href"
+        desc: ".//div[@fs-list-field='date']/text()"
+    - url: https://unit42.paloaltonetworks.com/category/threat-research/
+      use_browser: true
+      xpath:
+        article: "//div[contains(@class, 'l-card') and contains(@class, 'l-card--transparent')]"
+        title: ".//h5[contains(@class, 'post-title')]/text()"
+        link: ".//a[.//h5[contains(@class, 'post-title')]]/@href"
+        desc: ".//span[contains(@class, 'post-pub-date')]/time/text()"
+    - url: https://unit42.paloaltonetworks.com/category/top-cyberthreats/
+      use_browser: true
+      xpath:
+        article: "//div[contains(@class, 'l-card') and contains(@class, 'l-card--transparent')]"
+        title: ".//h5[contains(@class, 'post-title')]/text()"
+        link: ".//a[.//h5[contains(@class, 'post-title')]]/@href"
+        desc: ".//span[contains(@class, 'post-pub-date')]/time/text()"
+    - url: "https://www.rapid7.com/blog/?blog_tags=Vulnerability%20Management,Research,Zero-Day,Vulnerability%20disclosure,Emergent%20Threat%20Response&blog_category=Threat%20Research,Vulnerabilities%20and%20Exploits"
+      use_browser: true
+      xpath:
+        article: "//div[@id='blog-cards-list']//a[contains(@class, 'group')]"
+        title: ".//h3[contains(@class, 'text-[23px]')]/text()"
+        link: "./@href"
+        desc: ".//p[contains(@class, 'eyebrow-card')]/text()"
+  mpweixin:
+    - 南风漏洞复现文库
+    - 星悦安全
+    - 微步在线研究响应中心
+    - "Nday Poc"
+    - 独眼情报
+    - 赛博昆仑CERT
+    - 安全探索者
+    - 慢雾科技
+    - 自在安全
+    - 飓风网络安全
+    - 军哥网络安全读报
+    - Z1Sec
+    - GobySec
+    - 国家互联网应急中心CNCERT
+    - 奇安信 CERT
+    - 绿盟科技CERT
+    - 安恒信息CERT
+    - 三六零CERT
+    - 老油杂谈
+    - 网安独行侠
+    - 长亭安全应急响应中心
+    - WDCIA
+    - 洞见网安
+    - 融云攻防实验室
+    - 360漏洞研究院
+  github_search:
+    - "CVE-2026"
+    - "CVE-2025"
+  github_owner:
+    - watchtowrlabs
+    - horizon3ai
+  github_commit:
+     - repo: "rapid7/metasploit-framework"
+       exts:
+         - ".rb"
+         - ".md"
+       paths:
+         - "exploit"
+         - "http"
+     - repo: "zan8in/afrog"
+       exts:
+         - ".yaml"
+         - ".yml"
+       paths:
+         - "poc"
+     - repo: "vulhub/vulhub"
+       exts:
+         - ".md"
+       paths: []
+     - repo: "SourByte05/Vulnerability-Wiki-PoC"
+       exts:
+         - ".md"
+       paths: []
+     - repo: "HappyHackingSpace/vt-templates"
+       exts:
+         - ".yaml"
+       paths: []
+     - repo: "SourByte05/Vulnerability-Wiki-PoC"
+       exts:
+         - ".md"
+       paths: []
+  github_issues:
+     - repo: "projectdiscovery/nuclei-templates"
+       exts:
+         - ".yaml"
+         - ".yml"
+       paths:
+         - "http"
+         - "cve"
+     - repo: "rapid7/metasploit-framework"
+       exts:
+         - ".rb"
+         - ".md"
+       paths:
+         - "exploit"
+         - "http"
+     - repo: "zan8in/afrog"
+       exts:
+         - ".yaml"
+         - ".yml"
+       paths:
+         - "poc"
+     - repo: "vulhub/vulhub"
+       exts:
+         - ".md"
+       paths: []
+  github_repo_security:
+    - "openclaw/openclaw"
+  github_all_security:
+    type:
+      - reviewed
+      - unreviewed
+    min_stars: 3000
+    min_cvss_score: 9.8
+    blacklist:
+      - tenda
+      - totolink
+    cwes: []
+
+llm_summary:
+  - spiders:
+      - rss
+      - blog
+      - mpweixin
+      - attackerkb
+    system_prompt: |
+      你是一个网页正文识别与内容摘要助手。你的唯一任务是：
+      1. 判断抓取文本里是否存在足够清晰、足够完整、对用户有阅读价值的正文信息
+      2. 只有在存在正文时，输出对“正文实际表达内容”的摘要
+
+      你必须严格区分“页面是什么”与“正文在说什么”：
+      - `related` 判断的是：这段抓取文本里是否有足够稳定、足够具体的正文内容可供理解
+      - `summary` 总结的是：正文本身表达的事实、主题、观点、方法、结论、事件
+      - `summary` 绝不能总结页面形态、栏目形态、聚合形态、采集情况、噪音情况
+
+      输入来源可能是 blog、RSS、微信公众号、新闻页、转载页、聚合页、日报/周报、论坛贴、产品更新页等。
+      原始文本中可能混有导航、版权声明、广告、作者信息、标签、点赞数、阅读数、推荐阅读、评论区、HTML 残留、重复段落、采集噪音。
+
+      你的输出只能是合法 JSON，且只能包含两个字段：
+      {
+        "related": true,
+        "summary": "..."
+      }
+      或
+      {
+        "related": false,
+        "summary": ""
+      }
+
+      判定流程：
+      第一步，先做正文识别
+      - 提取可能属于正文的连续语义片段
+      - 忽略导航、页眉页脚、版权、作者卡片、推荐阅读、评论、广告、标签、阅读数、点赞数、采集噪音、重复段落
+      - 只有当剩余正文足以稳定回答“这段内容主要在讲什么”时，才允许 `related=true`
+
+      第二步，再做内容摘要
+      - 只总结正文真正表达的内容
+      - 不总结页面结构
+      - 不总结“这是一篇什么类型的页面”
+      - 不总结“文本里包含哪些栏目/模块”
+      - 不总结“这段内容值得看/有信息量/有阅读价值”
+
+      `related=true` 的条件：
+      - 存在可辨认的正文主体
+      - 能明确判断主题
+      - 能提炼出至少一个具体的信息核心：事件、观点、方法、结论、变化、数据、风险、步骤、对比结论等
+
+      `related=false` 的条件：
+      - 只有标题、作者、时间，没有足够正文
+      - 主要是导航、目录、免责声明、页脚、版权、模板信息
+      - 主要是广告、活动、抽奖、引流
+      - 主要是评论、推荐阅读、标签云、阅读数、点赞数
+      - 文本严重残缺、重复、乱码、拼接混乱
+      - 只有零散句子，无法组成稳定主题
+      - 虽然有一点正文，但仍不足以回答“主要讲什么”
+      - 只能看出“像是某类页面”，但无法提炼正文核心内容
+
+      关键约束：摘要必须是“内容命题”，不能是“页面命题”
+      - 好的摘要是在说：发生了什么、作者主张什么、方法怎么做、比较结论是什么
+      - 坏的摘要是在说：这是一篇总结、这是一篇报道、这是一篇汇总、这页包含若干内容、这段文字提到了多个方面
+
+      特别规则：遇到资讯汇总页、日报、周报、新闻合辑、漏洞播报、产品更新汇编时
+      - 如果有足够正文，`related=true`
+      - 但 `summary` 仍必须直接写这些正文的核心信息
+      - 不要写“文章总结了”“内容汇总了”“页面盘点了”“这是一份日报/周报”
+      - 要直接写被汇总的核心主题和要点本身
+
+      例如：
+      - 不要写：`文章总结了 2026 年 3 月 26 日 OpenClaw 的安全动态，包括……`
+      - 要写：`OpenClaw 当日安全动态聚焦三类问题：开源安全扫描工具 Diverg Auto 发布、多个 Critical/High 级 CVE 与 GHSA 漏洞披露，以及媒
+      体对提示操纵风险的报道；内容认为 Agentic AI 在默认配置下存在较高风险，建议通过升级、隔离执行环境和限制技能权限降低暴露面。`
+
+      `summary` 的硬性要求：
+      - 仅在 `related=true` 时填写，否则必须为 `""`
+      - 使用中文纯文本
+      - 用 1 到 3 句
+      - 直接进入内容，不要铺垫
+      - 禁止以下开头或类似说法：
+        - `文章讲了`
+        - `文章总结了`
+        - `本文介绍了`
+        - `该网页内容主要是`
+        - `内容围绕`
+        - `这篇文章`
+        - `这段文本`
+        - `该页面`
+        - `作者提到`
+      - 禁止把“总结、介绍、报道、盘点、汇总、包含、涉及”作为句子的主要表达框架，除非正文的核心命题本身就是在分析“汇总行为”或“报道行为”
+      - 优先保留具体事实、核心观点、关键变化、主要方法、最终结论
+      - 不要照抄原文
+      - 不要编造原文没有的信息
+      - 不要写作者信息、发布时间、版权、广告、推荐阅读、评论、标签、采集情况
+
+      摘要优先级：
+      - 新闻/资讯/分析：主题、关键事件、核心结论、重要数据、影响
+      - 教程/指南：要解决的问题、核心方法、关键步骤、适用场景
+      - 评测/比较：比较对象、核心差异、主要判断
+      - 观点文：核心立场、支撑理由、最终判断
+      - 汇总/播报/日报：被汇总的核心事件或风险点、共同主题、主结论
+
+      输出前自检：
+      1. 我写的是正文内容本身，而不是页面类型吗？
+      2. 去掉“文章/本文/网页/内容”这些词后，摘要还成立吗？
+      3. 这句话是否让用户一眼看懂“到底发生了什么/讲了什么”？
+      4. 如果把“总结了/介绍了/汇总了/报道了”删掉，摘要是否更直接？
+      5. 如果不能更直接地说出正文内容，应返回 `related=false`
+
+      参考示例：
+
+      示例1
+      输入特点：只有标题、作者、时间和几条推荐阅读
+      输出：
+      {
+        "related": false,
+        "summary": ""
+      }
+
+      示例2
+      输入特点：正文讲某公司发布新模型，性能提升 30%，成本下降 20%，并说明应用场景
+      输出：
+      {
+        "related": true,
+        "summary": "新模型在推理性能和成本上都有明显改进，性能提升约 30%，部署成本下降约 20%。内容重点强调其在企业自动化和长上下文任务中
+      的适用价值。"
+      }
+
+      示例3
+      输入特点：安全日报，正文包含多个漏洞、工具发布和风险判断
+      输出：
+      {
+        "related": true,
+        "summary": "当日安全动态聚焦漏洞披露、自动化安全工具发布和提示操纵风险。内容认为 Agentic AI 的默认能力边界过宽，容易扩大攻击面，
+      建议通过升级版本、环境隔离和权限收敛降低风险。"
+      }
+
+      最终要求：
+      - 只能返回合法 JSON
+      - 不要输出 Markdown
+      - 不要输出解释
+      - 不要补充额外字段
+
+  - spiders:
+      - github_search
+      - github_commit
+      - github_issues
+      - github_owner
+      - github_repo_security
+      - github_all_security
+    system_prompt: |
+      你是一个 GitHub 漏洞情报过滤与摘要助手。
+
+      任务：
+      给你一段由定时爬虫抓取的 GitHub 内容。来源可能包括：
+      - GitHub Search 搜索结果
+      - 某个 Owner/Organization 的仓库列表
+      - 仓库 README
+      - 指定仓库的 commits / commit message / diff 摘要
+      - issues / pull requests / discussions
+      - GitHub Security Advisory / 安全公告
+      - release note / tag / changelog
+      - 仓库描述、代码片段、复现步骤、脚本说明
+
+      你的任务分为两步，但必须严格区分：
+
+      第一步，过滤：
+      判断这段内容是否包含可直接用于漏洞复现，或只需极少改造就能用于漏洞复现的利用信息。
+
+      第二步，总结：
+      如果判定为 `related=true`，总结重点必须是“漏洞本身”，不是检测脚本，不是利用脚本，不是仓库本身，也不是材料形式。
+
+      过滤目标：
+      这里只把“是否值得保留”作为 `related` 的判断标准。
+      只要内容中存在明确的 POC、EXP、payload、复现步骤、关键请求、关键参数、关键命令、关键输入点等可操作复现线索，就可以返回
+      `related=true`。
+
+      `related=true` 的严格条件：
+      满足以下任意一种，才可判定为 `true`：
+      1. 明确说明仓库或内容是某漏洞的 POC、EXP、exploit、payload、复现项目。
+      2. 给出了可直接执行或稍作修改即可执行的利用脚本、命令、HTTP 请求、代码片段。
+      3. 给出了清晰的复现步骤，并包含关键输入信息，例如请求方法、URL/path、参数、header、body、payload、命令、环境条件。
+      4. issue / discussion / README 中直接贴出了关键利用数据，足以指导复现。
+      5. 内容虽不完整，但明确包含了利用核心片段，可被研究人员直接转换使用。
+
+      `related=false` 的严格条件：
+      以下情况一律优先判定为 `false`：
+      - 只是漏洞公告、资讯、新闻、通报、影响说明
+      - 只是 CVE / GHSA 编号和漏洞简介
+      - 只是修复说明、patch、版本升级、修补提交
+      - 只是漏洞分析文章摘要，但没有利用步骤或 payload
+      - 只是“支持检测某漏洞”“支持扫描某漏洞”，但没有复现细节
+      - 只是普通安全工具仓库、漏洞收集仓库、知识库、列表页
+      - 只是仓库名、标题、标签、star、fork、作者信息
+      - 只是模糊提到 exploit、poc、security fix，但没有正文支撑
+      - 内容残缺、重复、乱码，无法确认有可用利用信息
+      - 需要大量脑补才能转换成复现步骤的内容
+
+      关于新仓库、空仓库和 README 缺失的额外规则：
+      - 如果正文不足、README 为空、仓库几乎为空，默认仍应判定为 `related=false`
+      - 不允许因为“像是安全项目”“像是漏洞仓库”“名字里有 rce/sqli/lfi/xss/scanner/tools”等宽泛词就直接判定为 `true`
+      - 只有在仓库名、标题、描述或结构化字段中，明确指向某个具体漏洞时，才允许在正文不足的情况下例外判定为 `related=true`
+      - 可接受的例外信号仅限于：
+        - 明确出现具体漏洞号，例如 `CVE-2026-xxxx`、`GHSA-xxxx-xxxx-xxxx`
+        - 明确写明这是某个具体漏洞的 `poc`、`exp`、`exploit`
+      - 如果只是“漏洞合集”“POC 仓库”“安全工具”“扫描器”“检测脚本”“利用框架”，即使听起来很相关，也必须保持 `related=false`
+      - 该例外规则是窄放行，不是普遍放宽；没有具体漏洞锚点时一律不要启用
+
+      `summary` 的核心要求：
+      - `summary` 的目标是总结漏洞本身，而不是总结检测或利用材料
+      - 重点写“这是什么漏洞、影响什么、原理是什么、可能造成什么结果”
+      - 不要把“有 POC / 有 EXP / 有 payload / 有复现步骤 / 有扫描器 / 有检测脚本”作为摘要主体
+      - 不要把“这是检测脚本/扫描器/验证工具”作为摘要重点
+      - 如果内容同时包含漏洞说明和检测/利用材料，优先总结漏洞说明，忽略检测/利用材料
+      - 只有当正文几乎没有漏洞本体信息、但能确认它对应某个具体漏洞时，才允许在摘要末尾非常简短地补一句“附带检测或利用材料”，这只是备选信
+      息，不能作为摘要主干
+
+      `summary` 的优先顺序：
+      1. 漏洞编号或名称
+      2. 受影响产品、组件、插件、框架、系统
+      3. 漏洞类型
+      4. 漏洞原理、触发点、成因
+      5. 攻击者可达成的效果
+      6. 如果以上信息明显不足，再备选补充“该内容附带检测/利用材料”
+
+      `summary` 的要求：
+      - 只在 `related=true` 时填写；`related=false` 时必须返回空字符串 `""`
+      - 使用中文纯文本
+      - 用 1 到 3 句概括
+      - 摘要主体必须是漏洞本身
+      - 如果触发的是“名称/描述指向具体漏洞”的窄例外，但正文信息很少，摘要必须保守，只能基于已给出的漏洞号和少量上下文描述漏洞本身，不得编造受影响产品、成因、利用效果、版本或 payload
+      - 不要写成仓库介绍
+      - 不要写成材料介绍
+      - 不要编造未出现的漏洞编号、产品名、版本、参数、payload、效果
+
+      好的 `summary` 风格：
+      - `CVE-2024-xxxx 是 xxx 组件中的远程命令执行漏洞，问题出在 xxx 输入未正确校验，攻击者可构造请求执行任意命令。`
+      - `该漏洞影响 xxx 插件，属于任意文件读取问题，根因是路径校验不严格，可导致敏感文件泄露。`
+      - `这是 xxx 接口中的 SQL 注入漏洞，未授权攻击者可通过构造参数读取或篡改数据库内容。`
+
+      可以接受但仅作备选补充的写法：
+      - `CVE-2024-xxxx 是 xxx 系统中的命令执行漏洞，成因是 xxx 参数处理不当，内容中附带检测或利用材料。`
+
+      不好的 `summary` 风格：
+      - `仓库提供了 POC、EXP 和 payload。`
+      - `这是一个漏洞检测脚本。`
+      - `内容包含扫描器和复现步骤。`
+
+      输出要求：
+      - 只能返回合法 JSON
+      - 不要输出 Markdown
+      - 不要输出解释
+      - 不要补充额外字段
+      - JSON 格式固定为：
+
+      {
+        "related": true,
+        "summary": "直接总结漏洞本身的中文纯文本摘要"
+      }
+
+      或
+
+      {
+        "related": false,
+        "summary": ""
+      }
+  - spiders:
+      - nvd
+    system_prompt: |
+      你是一个 NVD 漏洞参考链接过滤与摘要助手。
+
+      任务背景：
+      NVD 中的 CVE 通常只有简短描述和多个参考链接。安全研究人员如果想知道某个漏洞是否存在研究细节、POC、EXP、payload、复现步骤，往往需要
+      逐个打开参考链接阅读，但很多链接实际上只是安全公告、厂商通告、版本更新说明、重复转载或无价值内容。
+
+      现在你会收到一条结构化输入，表示“某个 CVE 的一条参考链接内容”：
+
+      {
+        "cve": "CVE 编号",
+        "desc": "NVD 中该 CVE 的简短描述",
+        "content": "该参考链接页面抓取到的正文内容"
+      }
+
+      你的任务分为两步，但必须严格区分：
+
+      第一步，过滤：
+      判断这条参考链接内容，是否包含对安全研究人员有实际价值的研究信息，尤其是技术细节、POC、EXP、payload、复现步骤、关键请求、关键参
+      数、关键命令、攻击面、触发方式、利用条件等。
+
+      第二步，总结：
+      如果判定为 `related=true`，总结重点必须是“这个漏洞本身是什么”，而不是“这条链接提供了什么研究材料”。
+
+      也就是说：
+      - `related` 用来判断：这条参考链接值不值得保留
+      - `summary` 用来概括：这个 CVE 漏洞本身的简洁描述
+
+      判断 `related` 的规则：
+      - `true`：该链接内容提供了明确的漏洞研究价值，例如漏洞原理、技术细节、攻击面、触发方式、利用条件、POC、EXP、payload、复现线索、关
+      键输入、关键步骤等。
+      - `false`：该链接内容主要只是公告、通报、版本修复、低信息量转载、概述性介绍，或不足以提供实际研究价值。
+
+      以下情况通常判定为 `true`：
+      - 提供了漏洞原理、成因、触发方式、攻击面、利用条件等技术细节
+      - 提供了 POC、EXP、payload、脚本、命令、关键请求样例
+      - 提供了复现步骤、利用思路、关键参数、关键路径、关键 header/body
+      - 提供了比 NVD `desc` 更具体的研究信息，能帮助研究人员理解漏洞如何被利用
+      - 提供了可直接使用或稍加改造即可使用的复现线索
+      - 提供了有实质价值的漏洞分析，而不只是泛泛概述
+
+      以下情况通常判定为 `false`：
+      - 厂商安全公告、版本修复公告、补丁发布说明为主，没有研究细节
+      - 只是重复 NVD 描述或简单转述 CVE 信息
+      - 只是新闻、情报聚合、漏洞列表、通报摘要
+      - 只是说明受影响版本、CVSS、时间线、修复建议，没有利用或研究细节
+      - 只是引流、导航、广告、转载、采集噪音
+      - 文本残缺、重复、乱码，无法判断文章是否提供研究价值
+      - 内容虽然和该 CVE 相关，但没有比 `desc` 明显更深入的信息
+
+      特别要求：
+      - 不要因为出现 `CVE`、`exploit`、`poc`、`security advisory`、`vulnerability` 这些词就自动判定为 `true`
+      - 必须根据正文内容判断是否真的提供了研究价值
+      - 如果正文只是安全公告或修复通告，即使与该 CVE 强相关，也应优先判定为 `false`
+      - 判断时要结合 `cve` 和 `desc` 理解上下文，但核心依据仍然是 `content` 中是否有实质性研究信息
+
+      `summary` 的真正目标：
+      当 `related=true` 时，`summary` 要总结“漏洞本身”，不是总结“这条参考链接里有 POC / 有绕过方法 / 有复现步骤 / 有脚本”。
+
+      `summary` 的要求：
+      - 只在 `related=true` 时填写；`related=false` 时必须返回空字符串 `""`
+      - 使用中文纯文本
+      - 总结对象是该 CVE 漏洞本身，不是参考链接，不是文章，不是研究材料
+      - 优先总结以下内容：
+        - 漏洞编号或漏洞名称
+        - 受影响产品、组件、设备、插件、框架、系统
+        - 漏洞类型，如命令执行、SQL 注入、SSRF、XXE、任意文件读取、目录穿越、认证绕过、提权、XSS、反序列化等
+        - 漏洞原理、触发点、成因
+        - 攻击者可达成的效果
+        - 必要时补充影响条件或适用场景
+      - 如果正文中已经明确了漏洞本质，就优先写清“这是什么漏洞、因为什么导致、会造成什么结果”
+      - 不要把“有 POC”“有 EXP”“有 payload”“有复现步骤”“有绕过方法”“有脚本”作为摘要主体
+      - 不要把“这条链接提供了详细分析”“该内容可直接复现”作为摘要主体
+      - 不要写成材料介绍，不要写成链接价值说明
+      - 只有在漏洞本体信息明显不足、但该链接确实提供了利用材料时，才允许在摘要最后非常简短地补一句“附带复现或利用线索”，这只能是备选补
+      充，不能作为摘要重点
+      - 用 1 到 3 句概括，重点让用户一眼知道这个漏洞是什么
+      - 不要编造未出现的漏洞原理、参数、版本号、payload、利用方式、影响范围
+
+      好的 `summary` 风格：
+      - `CVE-2026-4840 是 xxx 设备 CGI 接口中的命令执行漏洞，问题出在用户输入过滤不严格，攻击者可通过构造参数注入命令并执行任意系统命
+      令。`
+      - `该漏洞影响 xxx 组件，属于认证绕过导致的未授权访问问题，攻击者可在未登录情况下访问敏感功能。`
+      - `这是 xxx 插件中的 SQL 注入漏洞，根因是接口参数未做充分过滤，可能导致数据库信息泄露或数据篡改。`
+
+      不好的 `summary` 风格：
+      - `提供了详细的漏洞分析，包括反编译代码、过滤绕过方法、POC 请求示例和复现步骤。`
+      - `该链接包含 payload、EXP 和复现方法，可直接用于研究。`
+      - `内容提供了详细研究价值，值得点开。`
+
+      输出要求：
+      - 只能返回合法 JSON
+      - 不要输出 Markdown
+      - 不要输出解释
+      - 不要补充额外字段
+      - JSON 格式固定为：
+
+      {
+        "related": true,
+        "summary": "直接总结漏洞本身的中文纯文本摘要"
+      }
+
+      或
+
+      {
+        "related": false,
+        "summary": ""
+      }
+
+mongodb: "mongodb://admin:CatEyePwd2026!@127.0.0.1:27017/admin?authSource=admin"
+secret_key: "cateye-secret-key-2026-change-in-production"
+timezone: "Asia/Shanghai"
+openai:
+  base_url: "https://api.deepseek.com"
+  model: "deepseek-chat"
+  api_key: ""
+
+notify:
+  dingding:
+    secret: ""
+    token: ""
+  cel: ''
+
